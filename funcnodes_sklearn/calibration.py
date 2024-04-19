@@ -9,17 +9,17 @@ from sklearn.svm import LinearSVC
 
 
 class Method(Enum):
-    sigmoid = "sigmoid"
-    isotonic = "isotonic"
+    SIGMOID = "sigmoid"
+    ISOTONIC = "isotonic"
 
     @classmethod
     def default(cls):
-        return cls.sigmoid.value
+        return cls.ISOTONIC.value
 
 
 # @NodeDecorator(
 #     node_id="calibrated_classifier_cv",
-#     name="Calibrated Classifier CV",
+#     name="CalibratedClassifierCV",
 # )
 def calibrated_classifier_cv(
     estimator: BaseEstimator = LinearSVC(),
@@ -232,17 +232,17 @@ def calibrated_classifier_cv(
 
 
 class Strategy(Enum):
-    uniform = "uniform"
-    quantile = "quantile"
+    UNIFORM = "uniform"
+    QUANTILE = "quantile"
 
     @classmethod
     def default(cls):
-        return cls.uniform.value
+        return cls.UNIFORM.value
 
 
 # @NodeDecorator(
 #     node_id="calibration_curve",
-#     name="Calibration Curve",
+#     name="calibration_curve",
 # )
 def calibrationcurve(
     y_true: np.ndarray,

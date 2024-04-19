@@ -99,8 +99,8 @@ class TestCalibratedClassifierCV(unittest.TestCase):
         X, y = make_classification(
             n_samples=100, n_features=2, n_redundant=0, random_state=42
         )
-        self.assertIsInstance(Method.isotonic.value, str)
-        calibrated_clf = calibrated_classifier_cv(method=Method.isotonic.value)
+        self.assertIsInstance(Method.ISOTONIC.value, str)
+        calibrated_clf = calibrated_classifier_cv(method=Method.ISOTONIC.value)
         self.assertIsInstance(calibrated_clf, ClassifierMixin)
         X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
         calibrated_clf.fit(X_train, y_train)
@@ -121,7 +121,7 @@ class TestCalibrationCurve(unittest.TestCase):
         y_true = np.array([0, 0, 0, 0, 1, 1, 1, 1, 1])
         y_prob = np.array([0.1, 0.2, 0.3, 0.4, 0.65, 0.7, 0.8, 0.9, 1.0])
         prob_true, prob_pred = calibrationcurve(
-            y_true, y_prob, n_bins=3, strategy=Strategy.quantile.value
+            y_true, y_prob, n_bins=3, strategy=Strategy.QUANTILE.value
         )
         self.assertIsInstance(prob_true, np.ndarray)
         self.assertIsInstance(prob_pred, np.ndarray)
