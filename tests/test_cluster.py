@@ -1,6 +1,6 @@
 import numpy as np
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
 from sklearn.cluster import (
     AffinityPropagation,
     AgglomerativeClustering,
@@ -8,6 +8,13 @@ from sklearn.cluster import (
     DBSCAN,
     FeatureAgglomeration,
     KMeans,
+    BisectingKMeans,
+    MiniBatchKMeans,
+    MeanShift,
+    OPTICS,
+    SpectralClustering,
+    SpectralBiclustering,
+    SpectralCoclustering
 )
 from funcnodes_sklearn.cluster import (
     affinity_propagation,
@@ -21,6 +28,17 @@ from funcnodes_sklearn.cluster import (
     kmeans,
     KMeansAlgorithm,
     feature_agglomeration,
+    bisecting_kmeans,
+    BisectingStrategy,
+    mini_batch_kmeans,
+    mean_shift,
+    optics,
+    spectral_clustering,
+    AssignLabels,
+    spectral_biclustering,
+    SVDMethod,
+    SpectralBiclusteringMethod,
+    spectral_coclustering
 )
 from joblib import Memory
 
@@ -421,3 +439,191 @@ class TestKMeans(unittest.TestCase):
     # def test_kmeans_invalid_init(self):
     #     with self.assertRaises(ValueError):
     #         kmeans(init='invalid')
+
+
+class TestBisectingKMeans(unittest.TestCase):
+    def test_bisectingkmeans_default(self):
+        model = bisecting_kmeans()
+        self.assertIsInstance(model, BisectingKMeans)
+        self.assertEqual(model.n_clusters, 8)
+        self.assertEqual(model.init, "k-means++")
+        self.assertEqual(model.n_init, 1)
+        self.assertIsNone(model.random_state)
+        self.assertEqual(model.max_iter, 300)
+        self.assertEqual(model.verbose, 0)
+        self.assertEqual(model.tol, 1e-4)
+        self.assertTrue(model.copy_x)
+        self.assertEqual(
+            model.algorithm, KMeansAlgorithm.default()
+        )  # assuming KMeansAlgorithm.default() returns "lloyd"
+        self.assertEqual(
+            model.bisecting_strategy, BisectingStrategy.default()
+        )  # assuming BisectingStrategy.default() returns "biggest_inertia"
+
+    def test_bisectingkmeans_custom(self):
+        result = bisecting_kmeans(
+            n_clusters=5,
+            init="random",
+            n_init=3,
+            max_iter=150,
+            tol=1e-3,
+            verbose=1,
+            random_state=42,
+            copy_x=False,
+            algorithm=KMeansAlgorithm.ELKAN.value,
+        )
+        self.assertIsInstance(result, BisectingKMeans)
+        self.assertEqual(result.n_clusters, 5)
+        self.assertEqual(result.n_init, 3)
+        self.assertEqual(result.max_iter, 150)
+        self.assertEqual(result.tol, 1e-3)
+        self.assertEqual(result.verbose, 1)
+        self.assertEqual(result.random_state, 42)
+        self.assertFalse(result.copy_x)
+        self.assertEqual(result.algorithm, KMeansAlgorithm.ELKAN.value)
+
+    # @patch("your_module.BisectingKMeans")
+    # def test_custom_parameters(self, mock_BisectingKMeans):
+    #     # Mock BisectingKMeans class and its fit method
+    #     mock_instance = MagicMock()
+    #     mock_BisectingKMeans.return_value = mock_instance
+    #     mock_instance.fit.return_value = None
+
+    #     bisecting_kmeans(n_clusters=5, init="random", n_init=3, random_state=42, max_iter=200, verbose=1, tol=1e-3, copy_x=False, algorithm="elkan", bisecting_strategy="largest_cluster")
+
+    #     mock_BisectingKMeans.assert_called_once_with(
+    #         n_clusters=5,
+    #         init="random",
+    #         n_init=3,
+    #         random_state=42,
+    #         max_iter=200,
+    #         verbose=1,
+    #         tol=1e-3,
+    #         copy_x=False,
+    #         algorithm="elkan",
+    #         bisecting_strategy="largest_cluster"
+    #     )
+    #     mock_instance.fit.assert_called_once()
+
+    # def test_invalid_init(self):
+    #     with self.assertRaises(ValueError):
+    #         bisecting_kmeans(init="invalid")
+
+    class TestMiniBatchKMeans(unittest.TestCase):
+        def test_default_parameters(self):
+            # Test with default parameters
+            kmeans = mini_batch_kmeans()
+            self.assertIsInstance(kmeans, MiniBatchKMeans)
+
+        def test_custom_parameters(self):
+            # Test with custom parameters
+            kmeans = mini_batch_kmeans(n_clusters=5, batch_size=512, max_iter=50)
+            self.assertIsInstance(kmeans, MiniBatchKMeans)
+            self.assertEqual(kmeans.n_clusters, 5)
+            self.assertEqual(kmeans.batch_size, 512)
+            self.assertEqual(kmeans.max_iter, 50)
+
+        def test_predict(self):
+            # Test prediction
+            X = np.array([[1, 2], [1, 4], [1, 0], [4, 2], [4, 0], [4, 4]])
+            kmeans = mini_batch_kmeans(
+                n_clusters=2, batch_size=3, max_iter=10, n_init=1
+            )
+            kmeans.fit(X)
+            self.assertTrue(
+                np.array_equal(kmeans.predict([[0, 0], [4, 4]]), np.array([1, 0]))
+            )
+
+
+class TestMeanShift(unittest.TestCase):
+    def setUp(self):
+        self.X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
+
+    def test_default_parameters(self):
+        clustering = mean_shift()
+        self.assertIsInstance(clustering, MeanShift)
+        clustering.fit(self.X)
+        self.assertEqual(clustering.labels_.tolist(), [4, 3, 5, 0, 2, 1])
+
+    def test_bandwidth_parameter(self):
+        bandwidth = 2
+        clustering = mean_shift(bandwidth=bandwidth)
+        self.assertIsInstance(clustering, MeanShift)
+        clustering.fit(self.X)
+        self.assertEqual(clustering.labels_.tolist(), [1, 1, 1, 0, 0, 0])
+
+    def test_seeds_parameter(self):
+        seeds = np.array([[1, 1], [2, 1]])
+        clustering = mean_shift(seeds=seeds)
+        self.assertIsInstance(clustering, MeanShift)
+        clustering.fit(self.X)
+        self.assertEqual(clustering.labels_.tolist(), [1, 0, 1, 0, 0, 0])
+
+    def test_bin_seeding_parameter(self):
+        bin_seeding = True
+        clustering = mean_shift(bin_seeding=bin_seeding)
+        self.assertIsInstance(clustering, MeanShift)
+        clustering.fit(self.X)
+        self.assertEqual(clustering.labels_.tolist(), [4, 3, 5, 0, 2, 1])
+
+
+class TestOPTICS(unittest.TestCase):
+    def setUp(self):
+        self.X = np.array([[1, 2], [2, 5], [3, 6], [8, 7], [8, 8], [7, 3]])
+
+    def test_default_parameters(self):
+        clustering = optics()
+        self.assertIsInstance(clustering, OPTICS)
+        clustering.fit(self.X)
+        self.assertEqual(clustering.labels_.tolist(), [0, 0, 0, 0, 0, 0])
+
+    def test_min_samples_parameter(self):
+        min_samples = 2
+        clustering = optics(min_samples=min_samples)
+        self.assertIsInstance(clustering, OPTICS)
+        clustering.fit(self.X)
+        self.assertEqual(clustering.labels_.tolist(), [0, 0, 0, 1, 1, 1])
+
+
+class TestSpectralClustering(unittest.TestCase):
+    def setUp(self):
+        self.X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
+
+    def test_default_parameters(self):
+        clustering = spectral_clustering().fit(self.X)
+        self.assertIsInstance(clustering, SpectralClustering)
+
+    def test_custom_parameters(self):
+        clustering = spectral_clustering(
+            n_clusters=2, assign_labels=AssignLabels.DISCRETIZE.value, random_state=0
+        ).fit(self.X)
+        self.assertIsInstance(clustering, SpectralClustering)
+        self.assertEqual(clustering.labels_.tolist(), [1, 1, 1, 0, 0, 0])
+
+
+class TestSpectralBiclustering(unittest.TestCase):
+    def setUp(self):
+        self.X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
+
+    def test_default_parameters(self):
+        clustering = spectral_biclustering().fit(self.X)
+        self.assertIsInstance(clustering, SpectralBiclustering)
+
+    def test_custom_parameters(self):
+        clustering = spectral_biclustering(n_clusters=2, random_state=0).fit(self.X)
+        self.assertIsInstance(clustering, SpectralBiclustering)
+        self.assertEqual(clustering.row_labels_.tolist(), [1, 1, 1, 0, 0, 0])
+
+class TestSpectralCoclustering(unittest.TestCase):
+    def setUp(self):
+        self.X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
+
+    def test_default_parameters(self):
+        clustering = spectral_coclustering().fit(self.X)
+        self.assertIsInstance(clustering, SpectralCoclustering)
+        
+    def test_custom_parameters(self):
+        clustering = spectral_coclustering(n_clusters=2, random_state=0).fit(self.X)
+        self.assertIsInstance(clustering, SpectralCoclustering)
+        self.assertEqual(clustering.row_labels_.tolist(), [0, 1, 1, 0, 0, 0])
+            

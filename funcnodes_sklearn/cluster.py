@@ -1,5 +1,5 @@
 from funcnodes import Shelf, NodeDecorator
-from typing import Union, Optional, Callable, Literal
+from typing import Union, Optional, Callable, Literal, Tuple
 import numpy as np
 from numpy.random import RandomState
 from sklearn.base import ClusterMixin
@@ -914,14 +914,15 @@ def feature_agglomeration(
     return create_feature_agglomeration()
 
 
-
 class KMeansAlgorithm(Enum):
     LLOYD = "lloyd"
     ELKAN = "elkan"
-    
+
     @classmethod
     def default(cls):
         return cls.LLOYD.value
+
+
 # @NodeDecorator(
 #     node_id="kmeans",
 #     name="KMeans",
@@ -1148,10 +1149,11 @@ def kmeans(
 class BisectingStrategy(Enum):
     BIGGEST_INERTIA = "biggest_inertia"
     LARGEST_CLUSTER = "largest_cluster"
-    
+
     @classmethod
     def default(cls):
         return cls.BIGGEST_INERTIA.value
+
 
 # @NodeDecorator(
 #     node_id="bisecting_kmeans",
@@ -1159,14 +1161,14 @@ class BisectingStrategy(Enum):
 # )
 def bisecting_kmeans(
     n_clusters: int = 8,
-    init: Union[str, np.ndarray, Callable] = "k-means++",
+    init: Union[str, Callable] = "k-means++",
     n_init: int = 1,
     random_state: Optional[Union[int, RandomState]] = None,
-    max_iter: int = 100,
+    max_iter: int = 300,
     verbose: int = 0,
     tol: float = 1e-4,
     copy_x: bool = True,
-    algorithm: KMeansAlgorithm = KMeansAlgorithm.default(),    
+    algorithm: KMeansAlgorithm = KMeansAlgorithm.default(),
     bisecting_strategy: BisectingStrategy = BisectingStrategy.default(),
 ) -> ClusterMixin:
     """Bisecting K-Means clustering.
@@ -1301,6 +1303,12 @@ def bisecting_kmeans(
     -------
     BisectingKMeans: An instance of the BisectingKMeans class from scikit-learn.
     """
+
+    if isinstance(init, str) and init not in ["k-means++", "random"]:
+        raise ValueError(
+            "Invalid value for 'init': It must be np.ndarray, Callable or one of 'k-means++' or 'random'"
+        )
+
     def create_bisecting_kmeans():
         return BisectingKMeans(
             n_clusters=n_clusters,
@@ -1312,555 +1320,1325 @@ def bisecting_kmeans(
             copy_x=copy_x,
             algorithm=algorithm,
             n_init=n_init,
-            bisecting_strategy=bisecting_strategy
+            bisecting_strategy=bisecting_strategy,
         )
 
     return create_bisecting_kmeans()
+
+
 # @NodeDecorator(
 #     node_id="mini_batch_kmeans",
 #     name="Mini Batch KMeans",
 # )
-# def mini_batch_kmeans(
-#     n_clusters: int = 8,
-#     init: Union[str, ndarray, 'callable'] = 'k-means++',
-#     max_iter: int = 100,
-#     batch_size: int = 100,
-#     verbose: int = 0,
-#     compute_labels: bool = True,
-#     random_state: Optional[Union[int, RandomState]] = None,
-#     tol: float = 0.0,
-#     max_no_improvement: Optional[int] = None,
-#     init_size: Optional[int] = None,
-#     n_init: int = 3,
-#     reassignment_ratio: float = 0.01,
-# ) -> ClusterMixin:
-#     """Mini Batch KMeans Clustering.
+def mini_batch_kmeans(
+    n_clusters: int = 8,
+    init: Union[str, np.ndarray, Callable] = "k-means++",
+    max_iter: int = 100,
+    batch_size: int = 1024,
+    verbose: int = 0,
+    compute_labels: bool = True,
+    random_state: Optional[Union[int, RandomState]] = None,
+    tol: float = 0.0,
+    max_no_improvement: int = 10,
+    init_size: Optional[int] = None,
+    n_init: Union[Literal["auto"], int] = "auto",
+    reassignment_ratio: float = 0.01,
+) -> ClusterMixin:
+    """
+    Mini-Batch K-Means clustering.
 
-#     Read more in the :ref:`User Guide <mini_batch_kmeans>`.
+    Read more in the :ref:`User Guide <mini_batch_kmeans>`.
 
-#     Parameters
-#     ----------
+    Parameters
+    ----------
 
-#     n_clusters : int, default=8
-#         The number of clusters to form as well as the number of centroids
-#         to generate.
+    n_clusters : int, default=8
+        The number of clusters to form as well as the number of
+        centroids to generate.
 
-#     init : {'k-means++', 'random', ndarray, callable}, default='k-means++'
-#         Method for initialization:
+    init : {'k-means++', 'random'}, callable or array-like of shape \
+            (n_clusters, n_features), default='k-means++'
+        Method for initialization:
 
-#         'k-means++' : selects initial cluster centers for k-mean clustering
-#         in a smart way to speed up convergence. See section Notes in
-#         k_init for more details.
+        'k-means++' : selects initial cluster centroids using sampling based on
+        an empirical probability distribution of the points' contribution to the
+        overall inertia. This technique speeds up convergence. The algorithm
+        implemented is "greedy k-means++". It differs from the vanilla k-means++
+        by making several trials at each sampling step and choosing the best centroid
+        among them.
 
-#         'random': choose n_clusters observations (rows) at random from data
-#         for the initial centroids.
+        'random': choose `n_clusters` observations (rows) at random from data
+        for the initial centroids.
 
-#         If an ndarray is passed, it should be of shape (n_clusters, n_features)
-#         and gives the initial centers.
+        If an array is passed, it should be of shape (n_clusters, n_features)
+        and gives the initial centers.
 
-#         If a callable is passed, it should take arguments X, n_clusters and
-#         a random state and return an initialization.
+        If a callable is passed, it should take arguments X, n_clusters and a
+        random state and return an initialization.
 
-#     max_iter : int, default=100
-#         Maximum number of iterations over the complete dataset before stopping.
+    max_iter : int, default=100
+        Maximum number of iterations over the complete dataset before
+        stopping independently of any early stopping criterion heuristics.
 
-#     batch_size : int, default=100
-#         Size of the mini batches.
+    batch_size : int, default=1024
+        Size of the mini batches.
+        For faster computations, you can set the ``batch_size`` greater than
+        256 * number of cores to enable parallelism on all cores.
 
-#     verbose : int, default=0
-#         Verbosity mode.
+        .. versionchanged:: 1.0
+           `batch_size` default changed from 100 to 1024.
 
-#     compute_labels : bool, default=True
-#         Compute label assignment and inertia for the complete dataset once the
-#         minibatch optimization has converged in fit. By default, this is
-#         activated. It may be deactivated if the user wants to manually extract
-#         the labels through the labels_ attribute after calling fit.
+    verbose : int, default=0
+        Verbosity mode.
 
-#     random_state : int, RandomState instance or None, default=None
-#         Determines random number generation for centroid initialization. Use
-#         an int to make the randomness deterministic.
-#         See :term:`Glossary <random_state>`.
+    compute_labels : bool, default=True
+        Compute label assignment and inertia for the complete dataset
+        once the minibatch optimization has converged in fit.
 
-#     tol : float, default=0.0
-#         Control early stopping based on the relative center changes as measured
-#         by the inertia metric. If the relative change is below tol, the model
-#         is considered to have converged and the optimization stops.
+    random_state : int, RandomState instance or None, default=None
+        Determines random number generation for centroid initialization and
+        random reassignment. Use an int to make the randomness deterministic.
+        See :term:`Glossary <random_state>`.
 
-#     max_no_improvement : int, default=None
-#         Control early stopping based on the consecutive number of mini batches
-#         that does not yield an improvement on the smoothed inertia. To disable
-#         convergence detection based on inertia, set max_no_improvement to None.
+    tol : float, default=0.0
+        Control early stopping based on the relative center changes as
+        measured by a smoothed, variance-normalized of the mean center
+        squared position changes. This early stopping heuristics is
+        closer to the one used for the batch variant of the algorithms
+        but induces a slight computational and memory overhead over the
+        inertia heuristic.
 
-#     init_size : int, default=None
-#         Number of samples to randomly sample for speeding up the initialization.
-#         Deactivated if set to None.
+        To disable convergence detection based on normalized center
+        change, set tol to 0.0 (default).
 
-#     n_init : int, default=3
-#         Number of random initializations that are tried.
+    max_no_improvement : int, default=10
+        Control early stopping based on the consecutive number of mini
+        batches that does not yield an improvement on the smoothed inertia.
 
-#     reassignment_ratio : float, default=0.01
-#         Control threshold for early stopping in the computation of the mini
-#         batch KMeans algorithm. When a minibatch is deemed to have converged
-#         (i.e., the maximum number of iterations, max_iter, has been reached
-#         or the no_improvement consecutive batches have been processed), it
-#         is assigned a label and center update may happen. If the fraction of
-#         the current batch that is reassigned to a different center is lower
-#         than this threshold, the algorithm does not actually reassign the
-#         centers of the centers and the reassigned ratio is instead shown in
-#         the early stopping message, followed by the number of samples being
-#         reclustered.
+        To disable convergence detection based on inertia, set
+        max_no_improvement to None.
 
-#     Returns
-#     -------
-#     MiniBatchKMeans: An instance of the MiniBatchKMeans class from scikit-learn.
-#     """
-#     def create_mini_batch_kmeans():
-#         return MiniBatchKMeans(
-#             n_clusters=n_clusters,
-#             init=init,
-#             max_iter=max_iter,
-#             batch_size=batch_size,
-#             verbose=verbose,
-#             compute_labels=compute_labels,
-#             random_state=random_state,
-#             tol=tol,
-#             max_no_improvement=max_no_improvement,
-#             init_size=init_size,
-#             n_init=n_init,
-#             reassignment_ratio=reassignment_ratio,
-#         )
+    init_size : int, default=None
+        Number of samples to randomly sample for speeding up the
+        initialization (sometimes at the expense of accuracy): the
+        only algorithm is initialized by running a batch KMeans on a
+        random subset of the data. This needs to be larger than n_clusters.
 
-#     return create_mini_batch_kmeans
+        If `None`, the heuristic is `init_size = 3 * batch_size` if
+        `3 * batch_size < n_clusters`, else `init_size = 3 * n_clusters`.
+
+    n_init : 'auto' or int, default="auto"
+        Number of random initializations that are tried.
+        In contrast to KMeans, the algorithm is only run once, using the best of
+        the `n_init` initializations as measured by inertia. Several runs are
+        recommended for sparse high-dimensional problems (see
+        :ref:`kmeans_sparse_high_dim`).
+
+        When `n_init='auto'`, the number of runs depends on the value of init:
+        3 if using `init='random'` or `init` is a callable;
+        1 if using `init='k-means++'` or `init` is an array-like.
+
+        .. versionadded:: 1.2
+           Added 'auto' option for `n_init`.
+
+        .. versionchanged:: 1.4
+           Default value for `n_init` changed to `'auto'` in version.
+
+    reassignment_ratio : float, default=0.01
+        Control the fraction of the maximum number of counts for a center to
+        be reassigned. A higher value means that low count centers are more
+        easily reassigned, which means that the model will take longer to
+        converge, but should converge in a better clustering. However, too high
+        a value may cause convergence issues, especially with a small batch
+        size.
+
+    Attributes
+    ----------
+
+    cluster_centers_ : ndarray of shape (n_clusters, n_features)
+        Coordinates of cluster centers.
+
+    labels_ : ndarray of shape (n_samples,)
+        Labels of each point (if compute_labels is set to True).
+
+    inertia_ : float
+        The value of the inertia criterion associated with the chosen
+        partition if compute_labels is set to True. If compute_labels is set to
+        False, it's an approximation of the inertia based on an exponentially
+        weighted average of the batch inertiae.
+        The inertia is defined as the sum of square distances of samples to
+        their cluster center, weighted by the sample weights if provided.
+
+    n_iter_ : int
+        Number of iterations over the full dataset.
+
+    n_steps_ : int
+        Number of minibatches processed.
+
+        .. versionadded:: 1.0
+
+    n_features_in_ : int
+        Number of features seen during :term:`fit`.
+
+        .. versionadded:: 0.24
+
+    feature_names_in_ : ndarray of shape (`n_features_in_`,)
+        Names of features seen during :term:`fit`. Defined only when `X`
+        has feature names that are all strings.
+
+        .. versionadded:: 1.0
+
+    See Also
+    --------
+    KMeans : The classic implementation of the clustering method based on the
+        Lloyd's algorithm. It consumes the whole set of input data at each
+        iteration.
+
+    Notes
+    -----
+    See https://www.eecs.tufts.edu/~dsculley/papers/fastkmeans.pdf
+
+    When there are too few points in the dataset, some centers may be
+    duplicated, which means that a proper clustering in terms of the number
+    of requesting clusters and the number of returned clusters will not
+    always match. One solution is to set `reassignment_ratio=0`, which
+    prevents reassignments of clusters that are too small.
+
+    Examples
+    --------
+    >>> from sklearn.cluster import MiniBatchKMeans
+    >>> import numpy as np
+    >>> X = np.array([[1, 2], [1, 4], [1, 0],
+    ...               [4, 2], [4, 0], [4, 4],
+    ...               [4, 5], [0, 1], [2, 2],
+    ...               [3, 2], [5, 5], [1, -1]])
+    >>> # manually fit on batches
+    >>> kmeans = MiniBatchKMeans(n_clusters=2,
+    ...                          random_state=0,
+    ...                          batch_size=6,
+    ...                          n_init="auto")
+    >>> kmeans = kmeans.partial_fit(X[0:6,:])
+    >>> kmeans = kmeans.partial_fit(X[6:12,:])
+    >>> kmeans.cluster_centers_
+    array([[3.375, 3.  ],
+           [0.75 , 0.5 ]])
+    >>> kmeans.predict([[0, 0], [4, 4]])
+    array([1, 0], dtype=int32)
+    >>> # fit on the whole data
+    >>> kmeans = MiniBatchKMeans(n_clusters=2,
+    ...                          random_state=0,
+    ...                          batch_size=6,
+    ...                          max_iter=10,
+    ...                          n_init="auto").fit(X)
+    >>> kmeans.cluster_centers_
+    array([[3.55102041, 2.48979592],
+           [1.06896552, 1.        ]])
+    >>> kmeans.predict([[0, 0], [4, 4]])
+    array([1, 0], dtype=int32)
+    
+    Returns
+    -------
+    MiniBatchKMeans: An instance of the MiniBatchKMeans class from scikit-learn.
+    """
+
+    def create_mini_batch_kmeans():
+        return MiniBatchKMeans(
+            n_clusters=n_clusters,
+            init=init,
+            max_iter=max_iter,
+            batch_size=batch_size,
+            verbose=verbose,
+            compute_labels=compute_labels,
+            random_state=random_state,
+            tol=tol,
+            max_no_improvement=max_no_improvement,
+            init_size=init_size,
+            n_init=n_init,
+            reassignment_ratio=reassignment_ratio,
+        )
+
+    return create_mini_batch_kmeans()
+
+
 # @NodeDecorator(
 #     node_id="mean_shift",
 #     name="Mean Shift",
 # )
-# def mean_shift(
-#     bandwidth: Optional[float] = None,
-#     seeds: Optional[array_like] = None,
-#     bin_seeding: bool = False,
-#     min_bin_freq: int = 1,
-#     cluster_all: bool = True,
-#     n_jobs: Optional[int] = None,
-#     max_iter: int = 300,
-#     verbose: int = 0,
-# ) -> ClusterMixin:
-#     """Mean Shift Clustering.
+def mean_shift(
+    bandwidth: Optional[float] = None,
+    seeds: Optional[np.ndarray] = None,
+    bin_seeding: bool = False,
+    min_bin_freq: int = 1,
+    cluster_all: bool = True,
+    n_jobs: Optional[int] = None,
+    max_iter: int = 300,
+) -> ClusterMixin:
+    """Mean shift clustering using a flat kernel.
 
-#     Read more in the :ref:`User Guide <mean_shift>`.
+    Mean shift clustering aims to discover "blobs" in a smooth density of
+    samples. It is a centroid-based algorithm, which works by updating
+    candidates for centroids to be the mean of the points within a given
+    region. These candidates are then filtered in a post-processing stage to
+    eliminate near-duplicates to form the final set of centroids.
 
-#     Parameters
-#     ----------
+    Seeding is performed using a binning technique for scalability.
 
-#     bandwidth : float, optional
-#         Bandwidth used in the RBF kernel. If not given, the bandwidth is
-#         estimated using sklearn.cluster.estimate_bandwidth.
+    Read more in the :ref:`User Guide <mean_shift>`.
 
-#     seeds : array-like of shape (n_samples, n_features), default=None
-#         Seeds used to initialize kernels. If None and bin_seeding=False,
-#         seeds are calculated by clustering.get_bin_seeds with min_bin_freq.
+    Parameters
+    ----------
+    bandwidth : float, default=None
+        Bandwidth used in the flat kernel.
 
-#     bin_seeding : bool, default=False
-#         If true, initial kernel locations are not locations of all
-#         points, but rather the location of the discretized version of
-#         points, where points are binned onto a grid whose coarseness
-#         corresponds to the bandwidth.
+        If not given, the bandwidth is estimated using
+        sklearn.cluster.estimate_bandwidth; see the documentation for that
+        function for hints on scalability (see also the Notes, below).
 
-#     min_bin_freq : int, default=1
-#         To speed up the algorithm, accept only those bins with
-#         at least min_bin_freq points as seeds.
+    seeds : array-like of shape (n_samples, n_features), default=None
+        Seeds used to initialize kernels. If not set,
+        the seeds are calculated by clustering.get_bin_seeds
+        with bandwidth as the grid size and default values for
+        other parameters.
 
-#     cluster_all : bool, default=True
-#         If true, then all points are clustered, even those orphans
-#         with no nearby seeds. Orphans are assigned to the nearest
-#         kernel. If False, then all orphans are left unclustered.
+    bin_seeding : bool, default=False
+        If true, initial kernel locations are not locations of all
+        points, but rather the location of the discretized version of
+        points, where points are binned onto a grid whose coarseness
+        corresponds to the bandwidth. Setting this option to True will speed
+        up the algorithm because fewer seeds will be initialized.
+        The default value is False.
+        Ignored if seeds argument is not None.
 
-#     n_jobs : int or None, default=None
-#         The number of jobs to use for the computation. This works by
-#         computing each of the n_init runs in parallel.
+    min_bin_freq : int, default=1
+       To speed up the algorithm, accept only those bins with at least
+       min_bin_freq points as seeds.
 
-#     max_iter : int, default=300
-#         Maximum number of iterations of the mean shift algorithm for a
-#         single run.
+    cluster_all : bool, default=True
+        If true, then all points are clustered, even those orphans that are
+        not within any kernel. Orphans are assigned to the nearest kernel.
+        If false, then orphans are given cluster label -1.
 
-#     verbose : int, default=0
-#         Verbosity mode.
+    n_jobs : int, default=None
+        The number of jobs to use for the computation. The following tasks benefit
+        from the parallelization:
 
-#     Returns
-#     -------
-#     MeanShift: An instance of the MeanShift class from scikit-learn.
-#     """
-#     def create_mean_shift():
-#         return MeanShift(
-#             bandwidth=bandwidth,
-#             seeds=seeds,
-#             bin_seeding=bin_seeding,
-#             min_bin_freq=min_bin_freq,
-#             cluster_all=cluster_all,
-#             n_jobs=n_jobs,
-#             max_iter=max_iter,
-#             verbose=verbose,
-#         )
+        - The search of nearest neighbors for bandwidth estimation and label
+          assignments. See the details in the docstring of the
+          ``NearestNeighbors`` class.
+        - Hill-climbing optimization for all seeds.
 
-#     return create_mean_shift
+        See :term:`Glossary <n_jobs>` for more details.
+
+        ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
+        ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
+        for more details.
+
+    max_iter : int, default=300
+        Maximum number of iterations, per seed point before the clustering
+        operation terminates (for that seed point), if has not converged yet.
+
+        .. versionadded:: 0.22
+
+    Attributes
+    ----------
+    cluster_centers_ : ndarray of shape (n_clusters, n_features)
+        Coordinates of cluster centers.
+
+    labels_ : ndarray of shape (n_samples,)
+        Labels of each point.
+
+    n_iter_ : int
+        Maximum number of iterations performed on each seed.
+
+        .. versionadded:: 0.22
+
+    n_features_in_ : int
+        Number of features seen during :term:`fit`.
+
+        .. versionadded:: 0.24
+
+    feature_names_in_ : ndarray of shape (`n_features_in_`,)
+        Names of features seen during :term:`fit`. Defined only when `X`
+        has feature names that are all strings.
+
+        .. versionadded:: 1.0
+
+    See Also
+    --------
+    KMeans : K-Means clustering.
+
+    Notes
+    -----
+
+    Scalability:
+
+    Because this implementation uses a flat kernel and
+    a Ball Tree to look up members of each kernel, the complexity will tend
+    towards O(T*n*log(n)) in lower dimensions, with n the number of samples
+    and T the number of points. In higher dimensions the complexity will
+    tend towards O(T*n^2).
+
+    Scalability can be boosted by using fewer seeds, for example by using
+    a higher value of min_bin_freq in the get_bin_seeds function.
+
+    Note that the estimate_bandwidth function is much less scalable than the
+    mean shift algorithm and will be the bottleneck if it is used.
+
+    References
+    ----------
+
+    Dorin Comaniciu and Peter Meer, "Mean Shift: A robust approach toward
+    feature space analysis". IEEE Transactions on Pattern Analysis and
+    Machine Intelligence. 2002. pp. 603-619.
+
+    Examples
+    --------
+    >>> from sklearn.cluster import MeanShift
+    >>> import numpy as np
+    >>> X = np.array([[1, 1], [2, 1], [1, 0],
+    ...               [4, 7], [3, 5], [3, 6]])
+    >>> clustering = MeanShift(bandwidth=2).fit(X)
+    >>> clustering.labels_
+    array([1, 1, 1, 0, 0, 0])
+    >>> clustering.predict([[0, 0], [5, 5]])
+    array([1, 0])
+    >>> clustering
+    MeanShift(bandwidth=2)
+
+    Returns
+    -------
+    MeanShift: An instance of the MeanShift class from scikit-learn.
+    """
+
+    def create_mean_shift():
+        return MeanShift(
+            bandwidth=bandwidth,
+            seeds=seeds,
+            bin_seeding=bin_seeding,
+            min_bin_freq=min_bin_freq,
+            cluster_all=cluster_all,
+            n_jobs=n_jobs,
+            max_iter=max_iter,
+        )
+
+    return create_mean_shift()
+
+
 # @NodeDecorator(
 #     node_id="optics",
 #     name="OPTICS",
 # )
-# def optics(
-#     min_samples: int = 5,
-#     max_eps: float = np.inf,
-#     metric: str = 'minkowski',
-#     p: int = 2,
-#     metric_params: Optional[dict] = None,
-#     cluster_method: str = 'xi',
-#     eps: Optional[float] = None,
-#     xi: float = 0.05,
-#     predecessor_correction: bool = True,
-#     min_cluster_size: Optional[int] = None,
-#     algorithm: str = 'auto',
-#     leaf_size: int = 30,
-#     n_jobs: Optional[int] = None,
-# ) -> ClusterMixin:
-#     """OPTICS Clustering.
+def optics(
+    min_samples: Union[int, float] = 5,
+    max_eps: float = np.inf,
+    metric: Union[Metric, Callable] = "minkowski",
+    p: float = 2.0,
+    metric_params: Optional[dict] = None,
+    cluster_method: str = "xi",
+    eps: Optional[float] = None,
+    xi: float = 0.05,
+    predecessor_correction: bool = True,
+    min_cluster_size: Optional[int] = None,
+    algorithm: Algorithm = Algorithm.default(),
+    leaf_size: int = 30,
+    n_jobs: Optional[int] = None,
+    memory: Union[str, Memory] = None,
+) -> ClusterMixin:
+    """Estimate clustering structure from vector array.
 
-#     Read more in the :ref:`User Guide <optics>`.
+    OPTICS (Ordering Points To Identify the Clustering Structure), closely
+    related to DBSCAN, finds core sample of high density and expands clusters
+    from them [1]_. Unlike DBSCAN, keeps cluster hierarchy for a variable
+    neighborhood radius. Better suited for usage on large datasets than the
+    current sklearn implementation of DBSCAN.
 
-#     Parameters
-#     ----------
+    Clusters are then extracted using a DBSCAN-like method
+    (cluster_method = 'dbscan') or an automatic
+    technique proposed in [1]_ (cluster_method = 'xi').
 
-#     min_samples : int, default=5
-#         The number of samples in a neighborhood for a point to be considered
-#         as a core point. This includes the point itself.
+    This implementation deviates from the original OPTICS by first performing
+    k-nearest-neighborhood searches on all points to identify core sizes, then
+    computing only the distances to unprocessed points when constructing the
+    cluster order. Note that we do not employ a heap to manage the expansion
+    candidates, so the time complexity will be O(n^2).
 
-#     max_eps : float, default=np.inf
-#         The maximum distance between two samples for one to be considered
-#         as in the neighborhood of the other. This is used when constructing
-#         the reachability matrix, which can be thought of as the minimum
-#         spanning tree of the core samples.
+    Read more in the :ref:`User Guide <optics>`.
 
-#     metric : str or callable, default='minkowski'
-#         The metric to use when calculating distance between instances in a
-#         feature array. If metric is a string or callable, it must be one of
-#         the options allowed by metrics.pairwise.calculate_distance for its
-#         metric parameter. If metric is "precomputed", X is assumed to be a
-#         distance matrix and must be square during fit. X may be also provided
-#         as a sparse matrix. If metric is a callable function, it is called on
-#         each pair of instances (rows) and the resulting value recorded. The
-#         callable should take two arrays from X as input and return a value
-#         indicating the distance between them. This works for Scipy's metrics,
-#         but is less efficient than passing the metric name as a string.
+    Parameters
+    ----------
+    min_samples : int > 1 or float between 0 and 1, default=5
+        The number of samples in a neighborhood for a point to be considered as
+        a core point. Also, up and down steep regions can't have more than
+        ``min_samples`` consecutive non-steep points. Expressed as an absolute
+        number or a fraction of the number of samples (rounded to be at least
+        2).
 
-#     p : int, default=2
-#         The power of the Minkowski metric to be used to calculate distance
-#         between points.
+    max_eps : float, default=np.inf
+        The maximum distance between two samples for one to be considered as
+        in the neighborhood of the other. Default value of ``np.inf`` will
+        identify clusters across all scales; reducing ``max_eps`` will result
+        in shorter run times.
 
-#     metric_params : dict, default=None
-#         Additional keyword arguments for the metric function.
+    metric : str or callable, default='minkowski'
+        Metric to use for distance computation. Any metric from scikit-learn
+        or scipy.spatial.distance can be used.
 
-#     cluster_method : {'xi', 'dbscan'}, default='xi'
-#         The extraction method used to extract clusters. 'xi' uses the
-#         Xi method of cluster extraction, while 'dbscan' uses the DBSCAN
-#         algorithm to extract clusters.
+        If metric is a callable function, it is called on each
+        pair of instances (rows) and the resulting value recorded. The callable
+        should take two arrays as input and return one value indicating the
+        distance between them. This works for Scipy's metrics, but is less
+        efficient than passing the metric name as a string. If metric is
+        "precomputed", `X` is assumed to be a distance matrix and must be
+        square.
 
-#     eps : float, default=None
-#         The maximum distance between two samples for one to be considered
-#         as in the neighborhood of the other. This is used when constructing
-#         the reachability matrix, which can be thought of as the minimum
-#         spanning tree of the core samples. Ignored if cluster_method='dbscan'.
+        Valid values for metric are:
 
-#     xi : float, default=0.05
-#         Determines the minimum steepness of the reachability plot for a point
-#         to be considered a local maximum. Only used if cluster_method='xi'.
+        - from scikit-learn: ['cityblock', 'cosine', 'euclidean', 'l1', 'l2',
+          'manhattan']
 
-#     predecessor_correction : bool, default=True
-#         Perform predecessor correction to make sure cluster order is maintained
-#         in hierarchical clustering. This can also improve clustering performance
-#         for large datasets.
+        - from scipy.spatial.distance: ['braycurtis', 'canberra', 'chebyshev',
+          'correlation', 'dice', 'hamming', 'jaccard', 'kulsinski',
+          'mahalanobis', 'minkowski', 'rogerstanimoto', 'russellrao',
+          'seuclidean', 'sokalmichener', 'sokalsneath', 'sqeuclidean',
+          'yule']
 
-#     min_cluster_size : int or None, default=None
-#         Minimum number of samples in an OPTICS cluster, expressed as an absolute
-#         number or a fraction of the number of samples (performs better with
-#         larger value). If None, use min_samples.
+        Sparse matrices are only supported by scikit-learn metrics.
+        See the documentation for scipy.spatial.distance for details on these
+        metrics.
 
-#     algorithm : {'auto', 'ball_tree', 'kd_tree', 'brute'}, default='auto'
-#         Algorithm to use for nearest neighbors search. 'auto' will attempt
-#         to decide the most appropriate algorithm based on the values passed
-#         to fit method.
+        .. note::
+           `'kulsinski'` is deprecated from SciPy 1.9 and will removed in SciPy 1.11.
 
-#     leaf_size : int, default=30
-#         Leaf size passed to BallTree or KDTree. This can affect the speed
-#         of the construction and query, as well as the memory required to
-#         store the tree. The optimal value depends on the nature of the
-#         problem.
+    p : float, default=2
+        Parameter for the Minkowski metric from
+        :class:`~sklearn.metrics.pairwise_distances`. When p = 1, this is
+        equivalent to using manhattan_distance (l1), and euclidean_distance
+        (l2) for p = 2. For arbitrary p, minkowski_distance (l_p) is used.
 
-#     n_jobs : int or None, default=None
-#         The number of jobs to use for the computation. This works by computing
-#         each of the n_init runs in parallel.
+    metric_params : dict, default=None
+        Additional keyword arguments for the metric function.
 
-#     Returns
-#     -------
-#     OPTICS: An instance of the OPTICS class from scikit-learn.
-#     """
-#     def create_optics():
-#         return OPTICS(
-#             min_samples=min_samples,
-#             max_eps=max_eps,
-#             metric=metric,
-#             p=p,
-#             metric_params=metric_params,
-#             cluster_method=cluster_method,
-#             eps=eps,
-#             xi=xi,
-#             predecessor_correction=predecessor_correction,
-#             min_cluster_size=min_cluster_size,
-#             algorithm=algorithm,
-#             leaf_size=leaf_size,
-#             n_jobs=n_jobs,
-#         )
+    cluster_method : str, default='xi'
+        The extraction method used to extract clusters using the calculated
+        reachability and ordering. Possible values are "xi" and "dbscan".
 
-#     return create_optics
+    eps : float, default=None
+        The maximum distance between two samples for one to be considered as
+        in the neighborhood of the other. By default it assumes the same value
+        as ``max_eps``.
+        Used only when ``cluster_method='dbscan'``.
+
+    xi : float between 0 and 1, default=0.05
+        Determines the minimum steepness on the reachability plot that
+        constitutes a cluster boundary. For example, an upwards point in the
+        reachability plot is defined by the ratio from one point to its
+        successor being at most 1-xi.
+        Used only when ``cluster_method='xi'``.
+
+    predecessor_correction : bool, default=True
+        Correct clusters according to the predecessors calculated by OPTICS
+        [2]_. This parameter has minimal effect on most datasets.
+        Used only when ``cluster_method='xi'``.
+
+    min_cluster_size : int > 1 or float between 0 and 1, default=None
+        Minimum number of samples in an OPTICS cluster, expressed as an
+        absolute number or a fraction of the number of samples (rounded to be
+        at least 2). If ``None``, the value of ``min_samples`` is used instead.
+        Used only when ``cluster_method='xi'``.
+
+    algorithm : {'auto', 'ball_tree', 'kd_tree', 'brute'}, default='auto'
+        Algorithm used to compute the nearest neighbors:
+
+        - 'ball_tree' will use :class:`~sklearn.neighbors.BallTree`.
+        - 'kd_tree' will use :class:`~sklearn.neighbors.KDTree`.
+        - 'brute' will use a brute-force search.
+        - 'auto' (default) will attempt to decide the most appropriate
+          algorithm based on the values passed to :meth:`fit` method.
+
+        Note: fitting on sparse input will override the setting of
+        this parameter, using brute force.
+
+    leaf_size : int, default=30
+        Leaf size passed to :class:`~sklearn.neighbors.BallTree` or
+        :class:`~sklearn.neighbors.KDTree`. This can affect the speed of the
+        construction and query, as well as the memory required to store the
+        tree. The optimal value depends on the nature of the problem.
+
+    memory : str or object with the joblib.Memory interface, default=None
+        Used to cache the output of the computation of the tree.
+        By default, no caching is done. If a string is given, it is the
+        path to the caching directory.
+
+    n_jobs : int, default=None
+        The number of parallel jobs to run for neighbors search.
+        ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
+        ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
+        for more details.
+
+    Attributes
+    ----------
+    labels_ : ndarray of shape (n_samples,)
+        Cluster labels for each point in the dataset given to fit().
+        Noisy samples and points which are not included in a leaf cluster
+        of ``cluster_hierarchy_`` are labeled as -1.
+
+    reachability_ : ndarray of shape (n_samples,)
+        Reachability distances per sample, indexed by object order. Use
+        ``clust.reachability_[clust.ordering_]`` to access in cluster order.
+
+    ordering_ : ndarray of shape (n_samples,)
+        The cluster ordered list of sample indices.
+
+    core_distances_ : ndarray of shape (n_samples,)
+        Distance at which each sample becomes a core point, indexed by object
+        order. Points which will never be core have a distance of inf. Use
+        ``clust.core_distances_[clust.ordering_]`` to access in cluster order.
+
+    predecessor_ : ndarray of shape (n_samples,)
+        Point that a sample was reached from, indexed by object order.
+        Seed points have a predecessor of -1.
+
+    cluster_hierarchy_ : ndarray of shape (n_clusters, 2)
+        The list of clusters in the form of ``[start, end]`` in each row, with
+        all indices inclusive. The clusters are ordered according to
+        ``(end, -start)`` (ascending) so that larger clusters encompassing
+        smaller clusters come after those smaller ones. Since ``labels_`` does
+        not reflect the hierarchy, usually
+        ``len(cluster_hierarchy_) > np.unique(optics.labels_)``. Please also
+        note that these indices are of the ``ordering_``, i.e.
+        ``X[ordering_][start:end + 1]`` form a cluster.
+        Only available when ``cluster_method='xi'``.
+
+    n_features_in_ : int
+        Number of features seen during :term:`fit`.
+
+        .. versionadded:: 0.24
+
+    feature_names_in_ : ndarray of shape (`n_features_in_`,)
+        Names of features seen during :term:`fit`. Defined only when `X`
+        has feature names that are all strings.
+
+        .. versionadded:: 1.0
+
+    See Also
+    --------
+    DBSCAN : A similar clustering for a specified neighborhood radius (eps).
+        Our implementation is optimized for runtime.
+
+    References
+    ----------
+    .. [1] Ankerst, Mihael, Markus M. Breunig, Hans-Peter Kriegel,
+       and Jörg Sander. "OPTICS: ordering points to identify the clustering
+       structure." ACM SIGMOD Record 28, no. 2 (1999): 49-60.
+
+    .. [2] Schubert, Erich, Michael Gertz.
+       "Improving the Cluster Structure Extracted from OPTICS Plots." Proc. of
+       the Conference "Lernen, Wissen, Daten, Analysen" (LWDA) (2018): 318-329.
+
+    Examples
+    --------
+    >>> from sklearn.cluster import OPTICS
+    >>> import numpy as np
+    >>> X = np.array([[1, 2], [2, 5], [3, 6],
+    ...               [8, 7], [8, 8], [7, 3]])
+    >>> clustering = OPTICS(min_samples=2).fit(X)
+    >>> clustering.labels_
+    array([0, 0, 0, 1, 1, 1])
+
+    For a more detailed example see
+    :ref:`sphx_glr_auto_examples_cluster_plot_optics.py`.
+
+    Returns
+    -------
+    OPTICS: An instance of the OPTICS class from scikit-learn.
+    """
+
+    if isinstance(min_samples, int) and min_samples < 1:
+        raise ValueError(
+            "min_samples must be an integer greater than 1 or a float in the range (0, 1)."
+        )
+    elif isinstance(min_samples, float) and not (0 < min_samples < 1):
+        raise ValueError(
+            "min_samples must be an integer greater than 1 or a float in the range (0, 1)."
+        )
+
+    if isinstance(xi, float) and not (0 < xi < 1):
+        raise ValueError("xi must be in the range (0, 1).")
+
+    if isinstance(min_cluster_size, int) and min_cluster_size < 1:
+        raise ValueError(
+            "min_cluster_size must be an integer greater than 1 or a float in the range (0, 1)."
+        )
+    elif isinstance(min_cluster_size, float) and not (0 < min_cluster_size < 1):
+        raise ValueError(
+            "min_cluster_size must be an integer greater than 1 or a float in the range (0, 1)."
+        )
+
+    def create_optics():
+        return OPTICS(
+            min_samples=min_samples,
+            max_eps=max_eps,
+            metric=metric,
+            p=p,
+            metric_params=metric_params,
+            cluster_method=cluster_method,
+            eps=eps,
+            xi=xi,
+            predecessor_correction=predecessor_correction,
+            min_cluster_size=min_cluster_size,
+            algorithm=algorithm,
+            leaf_size=leaf_size,
+            n_jobs=n_jobs,
+            memory=memory,
+        )
+
+    return create_optics()
+
+
+class EigenSolvers(Enum):
+    ARPACK = "arpack"
+    LOBPCG = "lobpcg"
+    AMG = "amg"
+    NONE = None
+
+    @classmethod
+    def default(cls):
+        return cls.NONE.value
+
+
+class SpectralClustringAffinity(Enum):
+    RBF = "rbf"
+    PRECOMPUTED = "precomputed"
+    NEAREST_NEIGHBORS = "nearest_neighbors"
+    PRECOMPUTED_NEAREST_NEIGHBORS = "precomputed_nearest_neighbors"
+
+    @classmethod
+    def default(cls):
+        return cls.RBF.value
+
+
+class AssignLabels(Enum):
+    KMEANS = "kmeans"
+    DISCRETIZE = "discretize"
+    CLUSTER_QR = "cluster_qr"
+
+    @classmethod
+    def default(cls):
+        return cls.KMEANS.value
+
+
 # @NodeDecorator(
 #     node_id="spectral_clustering",
 #     name="Spectral Clustering",
 # )
-# def spectral_clustering(
-#     n_clusters: int = 8,
-#     eigen_solver: Optional[str] = None,
-#     random_state: Optional[Union[int, RandomState]] = None,
-#     n_init: int = 10,
-#     gamma: float = 1.0,
-#     affinity: Union[str, Callable] = 'rbf',
-#     n_neighbors: int = 10,
-#     eigen_tol: float = 0.0,
-#     assign_labels: str = 'kmeans',
-#     degree: int = 3,
-#     coef0: float = 1,
-#     kernel_params: Optional[dict] = None,
-#     n_jobs: Optional[int] = None,
-# ) -> ClusterMixin:
-#     """Spectral Clustering.
+def spectral_clustering(
+    n_clusters: int = 6,
+    eigen_solver: EigenSolvers = EigenSolvers.default(),
+    n_components: Optional[int] = None,
+    random_state: Optional[Union[int, RandomState]] = None,
+    n_init: int = 10,
+    gamma: float = 1.0,
+    affinity: Union[
+        SpectralClustringAffinity, Callable
+    ] = SpectralClustringAffinity.default(),
+    n_neighbors: int = 10,
+    eigen_tol: Union[Literal["auto"], float] = "auto",
+    assign_labels: AssignLabels = AssignLabels.default(),
+    degree: float = 3.0,
+    coef0: float = 1.0,
+    kernel_params: Optional[dict] = None,
+    n_jobs: Optional[int] = None,
+    verbose: bool = False,
+) -> ClusterMixin:
+    """Apply clustering to a projection of the normalized Laplacian.
 
-#     Read more in the :ref:`User Guide <spectral_clustering>`.
+    In practice Spectral Clustering is very useful when the structure of
+    the individual clusters is highly non-convex, or more generally when
+    a measure of the center and spread of the cluster is not a suitable
+    description of the complete cluster, such as when clusters are
+    nested circles on the 2D plane.
 
-#     Parameters
-#     ----------
+    If the affinity matrix is the adjacency matrix of a graph, this method
+    can be used to find normalized graph cuts [1]_, [2]_.
 
-#     n_clusters : int, default=8
-#         The number of clusters to form as well as the number of centroids
-#         to generate.
+    When calling ``fit``, an affinity matrix is constructed using either
+    a kernel function such the Gaussian (aka RBF) kernel with Euclidean
+    distance ``d(X, X)``::
 
-#     eigen_solver : {'arpack', 'lobpcg', None}, default=None
-#         The eigenvalue decomposition strategy to use. AMG requires pyamg
-#         to be installed. It can be faster on very large, sparse problems,
-#         but may also lead to instabilities. Lobpcg can be used if arpack
-#         crashes.
+            np.exp(-gamma * d(X,X) ** 2)
 
-#     random_state : int, RandomState instance or None, default=None
-#         Determines random number generation for eigenvectors decomposition.
-#         Use an int to make the randomness deterministic.
-#         See :term:`Glossary <random_state>`.
+    or a k-nearest neighbors connectivity matrix.
 
-#     n_init : int, default=10
-#         Number of time the k-means algorithm will be run with different
-#         centroid seeds. The final results will be the best output of
-#         n_init consecutive runs in terms of inertia.
+    Alternatively, a user-provided affinity matrix can be specified by
+    setting ``affinity='precomputed'``.
 
-#     gamma : float, default=1.0
-#         Kernel coefficient for rbf, poly, sigmoid, laplacian and chi2 kernels.
-#         Ignored for affinity='nearest_neighbors' and affinity='precomputed'.
+    Read more in the :ref:`User Guide <spectral_clustering>`.
 
-#     affinity : str or callable, default='rbf'
-#         How to construct the affinity matrix.
+    Parameters
+    ----------
+    n_clusters : int, default=8
+        The dimension of the projection subspace.
 
-#         - 'nearest_neighbors' : construct the affinity matrix by computing
-#           a graph of nearest neighbors.
-#         - 'rbf' : construct the affinity matrix using a radial basis function
-#           (RBF) kernel.
-#         - 'precomputed' : interpret X as a precomputed affinity matrix.
-#         - callable : use passed in function as affinity.
+    eigen_solver : {'arpack', 'lobpcg', 'amg'}, default=None
+        The eigenvalue decomposition strategy to use. AMG requires pyamg
+        to be installed. It can be faster on very large, sparse problems,
+        but may also lead to instabilities. If None, then ``'arpack'`` is
+        used. See [4]_ for more details regarding `'lobpcg'`.
 
-#     n_neighbors : int, default=10
-#         Number of neighbors to use when constructing the affinity matrix
-#         using the nearest neighbors method. Ignored for affinity='rbf'.
+    n_components : int, default=None
+        Number of eigenvectors to use for the spectral embedding. If None,
+        defaults to `n_clusters`.
 
-#     eigen_tol : float, default=0.0
-#         Stopping criterion for eigendecomposition of the Laplacian matrix
-#         when using arpack eigen_solver.
+    random_state : int, RandomState instance, default=None
+        A pseudo random number generator used for the initialization
+        of the lobpcg eigenvectors decomposition when `eigen_solver ==
+        'amg'`, and for the K-Means initialization. Use an int to make
+        the results deterministic across calls (See
+        :term:`Glossary <random_state>`).
 
-#     assign_labels : {'kmeans', 'discretize'}, default='kmeans'
-#         The strategy to use to assign labels in the embedding space.
-#         There are two ways to assign labels after the laplacian embedding.
-#         k-means can be applied and is a popular choice. But it can also be
-#         sensitive to initialization. Discretization is another approach which
-#         is less sensitive to random initialization.
+        .. note::
+            When using `eigen_solver == 'amg'`,
+            it is necessary to also fix the global numpy seed with
+            `np.random.seed(int)` to get deterministic results. See
+            https://github.com/pyamg/pyamg/issues/139 for further
+            information.
 
-#     degree : int, default=3
-#         Degree of the polynomial kernel. Ignored by other kernels.
+    n_init : int, default=10
+        Number of time the k-means algorithm will be run with different
+        centroid seeds. The final results will be the best output of n_init
+        consecutive runs in terms of inertia. Only used if
+        ``assign_labels='kmeans'``.
 
-#     coef0 : float, default=1
-#         Zero coefficient for polynomial and sigmoid kernels.
-#         Ignored by other kernels.
+    gamma : float, default=1.0
+        Kernel coefficient for rbf, poly, sigmoid, laplacian and chi2 kernels.
+        Ignored for ``affinity='nearest_neighbors'``.
 
-#     kernel_params : dict of str to any, default=None
-#         Parameters (keyword arguments) and values for kernel passed as
-#         callable object. Ignored by other kernels.
+    affinity : str or callable, default='rbf'
+        How to construct the affinity matrix.
+         - 'nearest_neighbors': construct the affinity matrix by computing a
+           graph of nearest neighbors.
+         - 'rbf': construct the affinity matrix using a radial basis function
+           (RBF) kernel.
+         - 'precomputed': interpret ``X`` as a precomputed affinity matrix,
+           where larger values indicate greater similarity between instances.
+         - 'precomputed_nearest_neighbors': interpret ``X`` as a sparse graph
+           of precomputed distances, and construct a binary affinity matrix
+           from the ``n_neighbors`` nearest neighbors of each instance.
+         - one of the kernels supported by
+           :func:`~sklearn.metrics.pairwise.pairwise_kernels`.
 
-#     n_jobs : int or None, default=None
-#         The number of parallel jobs to run for neighbor search and eigendecomposition.
-#         ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
-#         ``-1`` means using all processors.
+        Only kernels that produce similarity scores (non-negative values that
+        increase with similarity) should be used. This property is not checked
+        by the clustering algorithm.
 
-#     Returns
-#     -------
-#     SpectralClustering: An instance of the SpectralClustering class from scikit-learn.
-#     """
-#     def create_spectral_clustering():
-#         return SpectralClustering(
-#             n_clusters=n_clusters,
-#             eigen_solver=eigen_solver,
-#             random_state=random_state,
-#             n_init=n_init,
-#             gamma=gamma,
-#             affinity=affinity,
-#             n_neighbors=n_neighbors,
-#             eigen_tol=eigen_tol,
-#             assign_labels=assign_labels,
-#             degree=degree,
-#             coef0=coef0,
-#             kernel_params=kernel_params,
-#             n_jobs=n_jobs,
-#         )
+    n_neighbors : int, default=10
+        Number of neighbors to use when constructing the affinity matrix using
+        the nearest neighbors method. Ignored for ``affinity='rbf'``.
 
-#     return create_spectral_clustering
+    eigen_tol : float, default="auto"
+        Stopping criterion for eigen decomposition of the Laplacian matrix.
+        If `eigen_tol="auto"` then the passed tolerance will depend on the
+        `eigen_solver`:
+
+        - If `eigen_solver="arpack"`, then `eigen_tol=0.0`;
+        - If `eigen_solver="lobpcg"` or `eigen_solver="amg"`, then
+          `eigen_tol=None` which configures the underlying `lobpcg` solver to
+          automatically resolve the value according to their heuristics. See,
+          :func:`scipy.sparse.linalg.lobpcg` for details.
+
+        Note that when using `eigen_solver="lobpcg"` or `eigen_solver="amg"`
+        values of `tol<1e-5` may lead to convergence issues and should be
+        avoided.
+
+        .. versionadded:: 1.2
+           Added 'auto' option.
+
+    assign_labels : {'kmeans', 'discretize', 'cluster_qr'}, default='kmeans'
+        The strategy for assigning labels in the embedding space. There are two
+        ways to assign labels after the Laplacian embedding. k-means is a
+        popular choice, but it can be sensitive to initialization.
+        Discretization is another approach which is less sensitive to random
+        initialization [3]_.
+        The cluster_qr method [5]_ directly extract clusters from eigenvectors
+        in spectral clustering. In contrast to k-means and discretization, cluster_qr
+        has no tuning parameters and runs no iterations, yet may outperform
+        k-means and discretization in terms of both quality and speed.
+
+        .. versionchanged:: 1.1
+           Added new labeling method 'cluster_qr'.
+
+    degree : float, default=3
+        Degree of the polynomial kernel. Ignored by other kernels.
+
+    coef0 : float, default=1
+        Zero coefficient for polynomial and sigmoid kernels.
+        Ignored by other kernels.
+
+    kernel_params : dict of str to any, default=None
+        Parameters (keyword arguments) and values for kernel passed as
+        callable object. Ignored by other kernels.
+
+    n_jobs : int, default=None
+        The number of parallel jobs to run when `affinity='nearest_neighbors'`
+        or `affinity='precomputed_nearest_neighbors'`. The neighbors search
+        will be done in parallel.
+        ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
+        ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
+        for more details.
+
+    verbose : bool, default=False
+        Verbosity mode.
+
+        .. versionadded:: 0.24
+
+    Attributes
+    ----------
+    affinity_matrix_ : array-like of shape (n_samples, n_samples)
+        Affinity matrix used for clustering. Available only after calling
+        ``fit``.
+
+    labels_ : ndarray of shape (n_samples,)
+        Labels of each point
+
+    n_features_in_ : int
+        Number of features seen during :term:`fit`.
+
+        .. versionadded:: 0.24
+
+    feature_names_in_ : ndarray of shape (`n_features_in_`,)
+        Names of features seen during :term:`fit`. Defined only when `X`
+        has feature names that are all strings.
+
+        .. versionadded:: 1.0
+
+    See Also
+    --------
+    sklearn.cluster.KMeans : K-Means clustering.
+    sklearn.cluster.DBSCAN : Density-Based Spatial Clustering of
+        Applications with Noise.
+
+    Notes
+    -----
+    A distance matrix for which 0 indicates identical elements and high values
+    indicate very dissimilar elements can be transformed into an affinity /
+    similarity matrix that is well-suited for the algorithm by
+    applying the Gaussian (aka RBF, heat) kernel::
+
+        np.exp(- dist_matrix ** 2 / (2. * delta ** 2))
+
+    where ``delta`` is a free parameter representing the width of the Gaussian
+    kernel.
+
+    An alternative is to take a symmetric version of the k-nearest neighbors
+    connectivity matrix of the points.
+
+    If the pyamg package is installed, it is used: this greatly
+    speeds up computation.
+
+    References
+    ----------
+    .. [1] :doi:`Normalized cuts and image segmentation, 2000
+           Jianbo Shi, Jitendra Malik
+           <10.1109/34.868688>`
+
+    .. [2] :doi:`A Tutorial on Spectral Clustering, 2007
+           Ulrike von Luxburg
+           <10.1007/s11222-007-9033-z>`
+
+    .. [3] `Multiclass spectral clustering, 2003
+           Stella X. Yu, Jianbo Shi
+           <https://people.eecs.berkeley.edu/~jordan/courses/281B-spring04/readings/yu-shi.pdf>`_
+
+    .. [4] :doi:`Toward the Optimal Preconditioned Eigensolver:
+           Locally Optimal Block Preconditioned Conjugate Gradient Method, 2001
+           A. V. Knyazev
+           SIAM Journal on Scientific Computing 23, no. 2, pp. 517-541.
+           <10.1137/S1064827500366124>`
+
+    .. [5] :doi:`Simple, direct, and efficient multi-way spectral clustering, 2019
+           Anil Damle, Victor Minden, Lexing Ying
+           <10.1093/imaiai/iay008>`
+
+    Examples
+    --------
+    >>> from sklearn.cluster import SpectralClustering
+    >>> import numpy as np
+    >>> X = np.array([[1, 1], [2, 1], [1, 0],
+    ...               [4, 7], [3, 5], [3, 6]])
+    >>> clustering = SpectralClustering(n_clusters=2,
+    ...         assign_labels='discretize',
+    ...         random_state=0).fit(X)
+    >>> clustering.labels_
+    array([1, 1, 1, 0, 0, 0])
+    >>> clustering
+    SpectralClustering(assign_labels='discretize', n_clusters=2,
+        random_state=0)
+
+    Returns
+    -------
+    SpectralClustering: An instance of the SpectralClustering class from scikit-learn.
+    """
+
+    def create_spectral_clustering():
+        return SpectralClustering(
+            n_clusters=n_clusters,
+            eigen_solver=eigen_solver,
+            random_state=random_state,
+            n_components=n_components,
+            n_init=n_init,
+            gamma=gamma,
+            affinity=affinity,
+            n_neighbors=n_neighbors,
+            eigen_tol=eigen_tol,
+            assign_labels=assign_labels,
+            degree=degree,
+            coef0=coef0,
+            kernel_params=kernel_params,
+            n_jobs=n_jobs,
+            verbose=verbose,
+        )
+
+    return create_spectral_clustering()
+
+
+class SpectralBiclusteringMethod(Enum):
+    BISTOCHASTIC = "bistochastic"
+    SCLAE = "scale"
+    LOG = "log"
+
+    @classmethod
+    def default(cls):
+        return cls.BISTOCHASTIC.value
+
+
+class SVDMethod(Enum):
+    RANDOMIZED = "randomized"
+    ARPACK = "arpack"
+
+    @classmethod
+    def default(cls):
+        return cls.RANDOMIZED.value
+
+
 # @NodeDecorator(
 #     node_id="spectral_biclustering",
 #     name="Spectral Biclustering",
 # )
-# def spectral_biclustering(
-#     n_clusters: int = 3,
-#     method: str = 'bistochastic',
-#     n_components: Optional[int] = None,
-#     random_state: Optional[Union[int, RandomState]] = None,
-#     n_init: int = 10,
-#     svd_method: str = 'randomized',
-#     mini_batch: bool = False,
-#     n_jobs: Optional[int] = None,
-# ) -> ClusterMixin:
-#     """Spectral Biclustering.
+def spectral_biclustering(
+    n_clusters: Union[int, Tuple[int, int]] = 2,
+    method: SpectralBiclusteringMethod = SpectralBiclusteringMethod.default(),
+    n_components: int = 6,
+    n_best: int = 3,
+    svd_method: SVDMethod = SVDMethod.default(),
+    n_svd_vecs: Optional[int] = None,
+    mini_batch: bool = False,
+    init: Union[str, np.ndarray] = "k-means++",
+    random_state: Optional[Union[int, RandomState]] = None,
+) -> ClusterMixin:
+    """Spectral biclustering (Kluger, 2003).
 
-#     Read more in the :ref:`User Guide <spectral_biclustering>`.
+    Partitions rows and columns under the assumption that the data has
+    an underlying checkerboard structure. For instance, if there are
+    two row partitions and three column partitions, each row will
+    belong to three biclusters, and each column will belong to two
+    biclusters. The outer product of the corresponding row and column
+    label vectors gives this checkerboard structure.
 
-#     Parameters
-#     ----------
+    Read more in the :ref:`User Guide <spectral_biclustering>`.
 
-#     n_clusters : int, default=3
-#         The number of biclusters to find.
+    Parameters
+    ----------
+    n_clusters : int or tuple (n_row_clusters, n_column_clusters), default=3
+        The number of row and column clusters in the checkerboard
+        structure.
 
-#     method : {'scale', 'bistochastic'}, default='bistochastic'
-#         Method for the initialization of the spectral decomposition. Currently,
-#         'scale' and 'bistochastic' are supported. 'scale' is the standard scaling
-#         approach that ensures row-stochastic matrices. 'bistochastic' ensures
-#         doubly-stochastic matrices.
+    method : {'bistochastic', 'scale', 'log'}, default='bistochastic'
+        Method of normalizing and converting singular vectors into
+        biclusters. May be one of 'scale', 'bistochastic', or 'log'.
+        The authors recommend using 'log'. If the data is sparse,
+        however, log normalization will not work, which is why the
+        default is 'bistochastic'.
 
-#     n_components : int or None, default=None
-#         Number of singular vectors to use for the spectral initialization. If None,
-#         it is automatically chosen to be n_clusters.
+        .. warning::
+           if `method='log'`, the data must not be sparse.
 
-#     random_state : int, RandomState instance or None, default=None
-#         Determines random number generation for initialization. Use an int to make
-#         the randomness deterministic.
-#         See :term:`Glossary <random_state>`.
+    n_components : int, default=6
+        Number of singular vectors to check.
 
-#     n_init : int, default=10
-#         Number of times the algorithm will be run with different initializations.
-#         The final results will be the best output of n_init consecutive runs in
-#         terms of inertia.
+    n_best : int, default=3
+        Number of best singular vectors to which to project the data
+        for clustering.
 
-#     svd_method : str, default='randomized'
-#         SVD solver to use. If 'randomized', use a randomized algorithm. If 'arpack',
-#         use the ARPACK wrapper in SciPy. For most problems, 'randomized' will
-#         be faster.
+    svd_method : {'randomized', 'arpack'}, default='randomized'
+        Selects the algorithm for finding singular vectors. May be
+        'randomized' or 'arpack'. If 'randomized', uses
+        :func:`~sklearn.utils.extmath.randomized_svd`, which may be faster
+        for large matrices. If 'arpack', uses
+        `scipy.sparse.linalg.svds`, which is more accurate, but
+        possibly slower in some cases.
 
-#     mini_batch : bool, default=False
-#         Whether to use a minibatch version of the SVD solver. The minibatch
-#         SVD is computed on smaller, random subsets of the input data, which
-#         can result in faster computation at the cost of accuracy.
+    n_svd_vecs : int, default=None
+        Number of vectors to use in calculating the SVD. Corresponds
+        to `ncv` when `svd_method=arpack` and `n_oversamples` when
+        `svd_method` is 'randomized`.
 
-#     n_jobs : int or None, default=None
-#         The number of parallel jobs to run for SVD computation. ``None`` means
-#         1 unless in a :obj:`joblib.parallel_backend` context. ``-1`` means using
-#         all processors.
+    mini_batch : bool, default=False
+        Whether to use mini-batch k-means, which is faster but may get
+        different results.
 
-#     Returns
-#     -------
-#     SpectralBiclustering: An instance of the SpectralBiclustering class from scikit-learn.
-#     """
-#     def create_spectral_biclustering():
-#         return SpectralBiclustering(
-#             n_clusters=n_clusters,
-#             method=method,
-#             n_components=n_components,
-#             random_state=random_state,
-#             n_init=n_init,
-#             svd_method=svd_method,
-#             mini_batch=mini_batch,
-#             n_jobs=n_jobs,
-#         )
+    init : {'k-means++', 'random'} or ndarray of shape (n_clusters, n_features), \
+            default='k-means++'
+        Method for initialization of k-means algorithm; defaults to
+        'k-means++'.
 
-#     return create_spectral_biclustering
+    n_init : int, default=10
+        Number of random initializations that are tried with the
+        k-means algorithm.
+
+        If mini-batch k-means is used, the best initialization is
+        chosen and the algorithm runs once. Otherwise, the algorithm
+        is run for each initialization and the best solution chosen.
+
+    random_state : int, RandomState instance, default=None
+        Used for randomizing the singular value decomposition and the k-means
+        initialization. Use an int to make the randomness deterministic.
+        See :term:`Glossary <random_state>`.
+
+    Attributes
+    ----------
+    rows_ : array-like of shape (n_row_clusters, n_rows)
+        Results of the clustering. `rows[i, r]` is True if
+        cluster `i` contains row `r`. Available only after calling ``fit``.
+
+    columns_ : array-like of shape (n_column_clusters, n_columns)
+        Results of the clustering, like `rows`.
+
+    row_labels_ : array-like of shape (n_rows,)
+        Row partition labels.
+
+    column_labels_ : array-like of shape (n_cols,)
+        Column partition labels.
+
+    biclusters_ : tuple of two ndarrays
+        The tuple contains the `rows_` and `columns_` arrays.
+
+    n_features_in_ : int
+        Number of features seen during :term:`fit`.
+
+        .. versionadded:: 0.24
+
+    feature_names_in_ : ndarray of shape (`n_features_in_`,)
+        Names of features seen during :term:`fit`. Defined only when `X`
+        has feature names that are all strings.
+
+        .. versionadded:: 1.0
+
+    See Also
+    --------
+    SpectralCoclustering : Spectral Co-Clustering algorithm (Dhillon, 2001).
+
+    References
+    ----------
+
+    * :doi:`Kluger, Yuval, et. al., 2003. Spectral biclustering of microarray
+      data: coclustering genes and conditions.
+      <10.1101/gr.648603>`
+
+    Examples
+    --------
+    >>> from sklearn.cluster import SpectralBiclustering
+    >>> import numpy as np
+    >>> X = np.array([[1, 1], [2, 1], [1, 0],
+    ...               [4, 7], [3, 5], [3, 6]])
+    >>> clustering = SpectralBiclustering(n_clusters=2, random_state=0).fit(X)
+    >>> clustering.row_labels_
+    array([1, 1, 1, 0, 0, 0], dtype=int32)
+    >>> clustering.column_labels_
+    array([1, 0], dtype=int32)
+    >>> clustering
+    SpectralBiclustering(n_clusters=2, random_state=0)
+
+    Returns
+    -------
+    SpectralBiclustering: An instance of the SpectralBiclustering class from scikit-learn.
+    """
+    if isinstance(init, str) and init not in ["k-means++", "random"]:
+        raise ValueError(
+            "Invalid value for 'init': It must be np.ndarray, Callable or one of 'k-means++' or 'random'"
+        )
+
+    def create_spectral_biclustering():
+        return SpectralBiclustering(
+            n_clusters=n_clusters,
+            method=method,
+            n_best=n_best,
+            n_components=n_components,
+            random_state=random_state,
+            svd_method=svd_method,
+            n_svd_vecs=n_svd_vecs,
+            mini_batch=mini_batch,
+        )
+
+    return create_spectral_biclustering()
+
+
 # @NodeDecorator(
 #     node_id="spectral_coclustering",
 #     name="Spectral Co-clustering",
 # )
-# def spectral_coclustering(
-#     n_clusters: int = 3,
-#     svd_method: str = 'randomized',
-#     n_init: int = 10,
-#     random_state: Optional[Union[int, RandomState]] = None,
-#     n_jobs: Optional[int] = None,
-# ) -> ClusterMixin:
-#     """Spectral Co-clustering.
+def spectral_coclustering(
+    n_clusters: int = 2,
+    svd_method: SVDMethod = SVDMethod.default(),
+    n_svd_vecs: Optional[int] = None,
+    mini_batch: bool = False,
+    init: Union[Callable, np.ndarray] = "k-means++",
+    n_init: int = 10,
+    random_state: Optional[Union[int, RandomState]] = None,
+) -> ClusterMixin:
+    """Spectral Co-Clustering algorithm (Dhillon, 2001).
 
-#     Read more in the :ref:`User Guide <spectral_coclustering>`.
+    Clusters rows and columns of an array `X` to solve the relaxed
+    normalized cut of the bipartite graph created from `X` as follows:
+    the edge between row vertex `i` and column vertex `j` has weight
+    `X[i, j]`.
 
-#     Parameters
-#     ----------
+    The resulting bicluster structure is block-diagonal, since each
+    row and each column belongs to exactly one bicluster.
 
-#     n_clusters : int, default=3
-#         The number of co-clusters to find.
+    Supports sparse matrices, as long as they are nonnegative.
 
-#     svd_method : str, default='randomized'
-#         SVD solver to use. If 'randomized', use a randomized algorithm.
-#         If 'arpack', use the ARPACK wrapper in SciPy. For most problems,
-#         'randomized' will be faster.
+    Read more in the :ref:`User Guide <spectral_coclustering>`.
 
-#     n_init : int, default=10
-#         Number of times the algorithm will be run with different initializations.
-#         The final results will be the best output of n_init consecutive runs
-#         in terms of inertia.
+    Parameters
+    ----------
+    n_clusters : int, default=3
+        The number of biclusters to find.
 
-#     random_state : int, RandomState instance or None, default=None
-#         Determines random number generation for initialization. Use an int to
-#         make the randomness deterministic.
-#         See :term:`Glossary <random_state>`.
+    svd_method : {'randomized', 'arpack'}, default='randomized'
+        Selects the algorithm for finding singular vectors. May be
+        'randomized' or 'arpack'. If 'randomized', use
+        :func:`sklearn.utils.extmath.randomized_svd`, which may be faster
+        for large matrices. If 'arpack', use
+        :func:`scipy.sparse.linalg.svds`, which is more accurate, but
+        possibly slower in some cases.
 
-#     n_jobs : int or None, default=None
-#         The number of parallel jobs to run for SVD computation. ``None`` means
-#         1 unless in a :obj:`joblib.parallel_backend` context. ``-1`` means using
-#         all processors.
+    n_svd_vecs : int, default=None
+        Number of vectors to use in calculating the SVD. Corresponds
+        to `ncv` when `svd_method=arpack` and `n_oversamples` when
+        `svd_method` is 'randomized`.
 
-#     Returns
-#     -------
-#     SpectralCoclustering: An instance of the SpectralCoclustering class from scikit-learn.
-#     """
-#     def create_spectral_coclustering():
-#         return SpectralCoclustering(
-#             n_clusters=n_clusters,
-#             svd_method=svd_method,
-#             n_init=n_init,
-#             random_state=random_state,
-#             n_jobs=n_jobs,
-#         )
+    mini_batch : bool, default=False
+        Whether to use mini-batch k-means, which is faster but may get
+        different results.
 
-#     return create_spectral_coclustering
+    init : {'k-means++', 'random'}, or ndarray of shape \
+            (n_clusters, n_features), default='k-means++'
+        Method for initialization of k-means algorithm; defaults to
+        'k-means++'.
+
+    n_init : int, default=10
+        Number of random initializations that are tried with the
+        k-means algorithm.
+
+        If mini-batch k-means is used, the best initialization is
+        chosen and the algorithm runs once. Otherwise, the algorithm
+        is run for each initialization and the best solution chosen.
+
+    random_state : int, RandomState instance, default=None
+        Used for randomizing the singular value decomposition and the k-means
+        initialization. Use an int to make the randomness deterministic.
+        See :term:`Glossary <random_state>`.
+
+    Attributes
+    ----------
+    rows_ : array-like of shape (n_row_clusters, n_rows)
+        Results of the clustering. `rows[i, r]` is True if
+        cluster `i` contains row `r`. Available only after calling ``fit``.
+
+    columns_ : array-like of shape (n_column_clusters, n_columns)
+        Results of the clustering, like `rows`.
+
+    row_labels_ : array-like of shape (n_rows,)
+        The bicluster label of each row.
+
+    column_labels_ : array-like of shape (n_cols,)
+        The bicluster label of each column.
+
+    biclusters_ : tuple of two ndarrays
+        The tuple contains the `rows_` and `columns_` arrays.
+
+    n_features_in_ : int
+        Number of features seen during :term:`fit`.
+
+        .. versionadded:: 0.24
+
+    feature_names_in_ : ndarray of shape (`n_features_in_`,)
+        Names of features seen during :term:`fit`. Defined only when `X`
+        has feature names that are all strings.
+
+        .. versionadded:: 1.0
+
+    See Also
+    --------
+    SpectralBiclustering : Partitions rows and columns under the assumption
+        that the data has an underlying checkerboard structure.
+
+    References
+    ----------
+    * :doi:`Dhillon, Inderjit S, 2001. Co-clustering documents and words using
+      bipartite spectral graph partitioning.
+      <10.1145/502512.502550>`
+
+    Examples
+    --------
+    >>> from sklearn.cluster import SpectralCoclustering
+    >>> import numpy as np
+    >>> X = np.array([[1, 1], [2, 1], [1, 0],
+    ...               [4, 7], [3, 5], [3, 6]])
+    >>> clustering = SpectralCoclustering(n_clusters=2, random_state=0).fit(X)
+    >>> clustering.row_labels_ #doctest: +SKIP
+    array([0, 1, 1, 0, 0, 0], dtype=int32)
+    >>> clustering.column_labels_ #doctest: +SKIP
+    array([0, 0], dtype=int32)
+    >>> clustering
+    SpectralCoclustering(n_clusters=2, random_state=0)
+    
+    Returns
+    -------
+    SpectralCoclustering: An instance of the SpectralCoclustering class from scikit-learn.
+    """
+
+    def create_spectral_coclustering():
+        return SpectralCoclustering(
+            n_clusters=n_clusters,
+            svd_method=svd_method,
+            n_init=n_init,
+            random_state=random_state,
+            n_svd_vecs=n_svd_vecs,
+            mini_batch=mini_batch,
+            init=init,
+        )
+
+    return create_spectral_coclustering()
+
+
+CLUSTER_NODE_SHELFE = Shelf(
+    nodes=[
+        affinity_propagation,
+        agglomerative_clustering,
+        birch,
+        dbscan,
+        feature_agglomeration,
+        kmeans,
+        bisecting_kmeans,
+        mini_batch_kmeans,
+        mean_shift,
+        optics,
+        spectral_clustering,
+        spectral_biclustering,
+        spectral_coclustering,
+    ],
+    subshelves=[],
+    name="Clustering",
+    description="The sklearn.cluster module gathers popular unsupervised clustering algorithms",
+)
