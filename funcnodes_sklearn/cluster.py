@@ -2622,23 +2622,23 @@ def spectral_coclustering(
     return create_spectral_coclustering()
 
 
-CLUSTER_NODE_SHELFE = Shelf(
-    nodes=[
-        affinity_propagation,
-        agglomerative_clustering,
-        birch,
-        dbscan,
-        feature_agglomeration,
-        kmeans,
-        bisecting_kmeans,
-        mini_batch_kmeans,
-        mean_shift,
-        optics,
-        spectral_clustering,
-        spectral_biclustering,
-        spectral_coclustering,
-    ],
-    subshelves=[],
-    name="Clustering",
-    description="The sklearn.cluster module gathers popular unsupervised clustering algorithms",
-)
+# CLUSTER_NODE_SHELFE = Shelf(
+#     nodes=[
+#         affinity_propagation,
+#         agglomerative_clustering,
+#         birch,
+#         dbscan,
+#         feature_agglomeration,
+#         kmeans,
+#         bisecting_kmeans,
+#         mini_batch_kmeans,
+#         mean_shift,
+#         optics,
+#         spectral_clustering,
+#         spectral_biclustering,
+#         spectral_coclustering,
+#     ],
+#     subshelves=[],
+#     name="Clustering",
+#     description="The sklearn.cluster module gathers popular unsupervised clustering algorithms",
+# )
