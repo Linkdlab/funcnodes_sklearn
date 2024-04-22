@@ -1,12 +1,16 @@
 from typing import Iterator, Tuple
 import numpy as np
 import unittest
-from unittest.mock import patch, Mock, MagicMock
+# from unittest.mock import patch, Mock, MagicMock
 from sklearn.covariance import (
     EmpiricalCovariance,
     EllipticEnvelope,
     GraphicalLasso,
     GraphicalLassoCV,
+    LedoitWolf,
+    MinCovDet,
+    OAS,
+    ShrunkCovariance,
 )
 from funcnodes_sklearn.covariance import (
     empirical_covariance,
@@ -15,12 +19,14 @@ from funcnodes_sklearn.covariance import (
     Covariance,
     Mode,
     graphical_lasso_cv,
+    ledoit_wolf,
+    min_cov_det,
+    oas,
+    shrunk_covariance,
 )
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
 
-from joblib import Memory
 
 
 class TestEmpiricalCovariance(unittest.TestCase):
@@ -184,3 +190,96 @@ class TestGraphicalLassoCV(unittest.TestCase):
         #         [0.2992187179323442, 1.2481585144371685],
         #     ],
         # )
+
+
+class TestLedoitWolf(unittest.TestCase):
+    def setUp(self):
+        self.X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
+        self.real_cov = np.array([[0.4, 0.2], [0.2, 0.8]])
+        self.rng = np.random.RandomState(0)
+        self.rng.multivariate_normal(mean=[0, 0], cov=self.real_cov, size=50)
+
+    def test_default_parameters(self):
+        cov = ledoit_wolf().fit(self.X)
+        self.assertIsInstance(cov, LedoitWolf)
+        self.assertEqual(
+            np.around(cov.covariance_, decimals=2).tolist(),
+            [[1.53, 2.61], [2.61, 7.25]],
+        )
+        # self.assertEqual(np.around(cov.location_, decimals=2).tolist(), [2.33, 3.33])
+
+    def test_custom_parameters(self):
+        cov = ledoit_wolf(
+            store_precision=False, assume_centered=True, block_size=1
+        ).fit(self.X)
+        self.assertIsInstance(cov, LedoitWolf)
+        self.assertEqual(
+            np.around(cov.covariance_, decimals=2).tolist(),
+            [[8.73, 6.99], [6.99, 16.6]],
+        )
+        # self.assertEqual(np.around(cov.location_, decimals=2).tolist(), [2.33, 3.33])
+
+
+class TestMinCovDet(unittest.TestCase):
+    def setUp(self):
+        self.X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
+        self.real_cov = np.array([[0.8, 0.3], [0.3, 0.4]])
+        self.rng = np.random.RandomState(0)
+        self.rng.multivariate_normal(mean=[0, 0], cov=self.real_cov, size=500)
+
+    def test_default_parameters(self):
+        cov = min_cov_det(random_state=0).fit(self.X)
+        self.assertIsInstance(cov, MinCovDet)
+        self.assertEqual(
+            np.around(cov.covariance_, decimals=2).tolist(),
+            [[1.22, 2.89], [2.89, 7.56]],
+        )
+        # self.assertEqual(np.around(cov.location_, decimals=2).tolist(), [2.33, 3.33])
+
+
+class TestOAS(unittest.TestCase):
+    def setUp(self):
+        self.X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
+        self.real_cov = np.array([[0.8, 0.3], [0.3, 0.4]])
+        self.rng = np.random.RandomState(0)
+        self.rng.multivariate_normal(mean=[0, 0], cov=self.real_cov, size=500)
+
+    def test_default_parameters(self):
+        cov = oas().fit(self.X)
+        self.assertIsInstance(cov, OAS)
+        self.assertEqual(
+            np.around(cov.covariance_, decimals=2).tolist(),
+            [[3.1, 1.18], [1.18, 5.68]],
+        )
+
+
+class TestShrunkCovariance(unittest.TestCase):
+    def setUp(self):
+        self.X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
+        self.real_cov = np.array([[0.8, 0.3], [0.3, 0.4]])
+        self.rng = np.random.RandomState(0)
+        self.rng.multivariate_normal(mean=[0, 0], cov=self.real_cov, size=500)
+
+    def test_default_parameters(self):
+        cov = shrunk_covariance().fit(self.X)
+        self.assertIsInstance(cov, ShrunkCovariance)
+        self.assertEqual(
+            np.around(cov.covariance_, decimals=2).tolist(),
+            [[1.54, 2.6], [2.6, 7.24]],
+        )
+        self.assertEqual(
+            np.around(cov.location_, decimals=2).tolist(),
+            [2.33, 3.33],
+        )
+        
+    def test_shrinkage(self):
+        cov = shrunk_covariance(shrinkage=0.5).fit(self.X)
+        self.assertIsInstance(cov, ShrunkCovariance)
+        self.assertEqual(
+            np.around(cov.covariance_, decimals=2).tolist(),
+            [[2.81, 1.44], [1.44, 5.97]],
+        )
+        self.assertEqual(
+            np.around(cov.location_, decimals=2).tolist(),
+            [2.33, 3.33],
+        )
