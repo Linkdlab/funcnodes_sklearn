@@ -8,11 +8,16 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.31.0"
+scikit-learn = "^1.4.2"
 
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
 black = "^24.4.0"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.1.1"
 
 [build-system]
 requires = ["poetry-core"]
