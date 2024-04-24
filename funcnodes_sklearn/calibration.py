@@ -6,6 +6,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.calibration import CalibratedClassifierCV, calibration_curve
 from sklearn.svm import LinearSVC
+from sklearn.naive_bayes import GaussianNB
 
 
 class Method(Enum):
@@ -17,12 +18,12 @@ class Method(Enum):
         return cls.ISOTONIC.value
 
 
-# @NodeDecorator(
-#     node_id="calibrated_classifier_cv",
-#     name="CalibratedClassifierCV",
-# )
+@NodeDecorator(
+    node_id="calibrated_classifier_cv",
+    name="CalibratedClassifierCV",
+)
 def calibrated_classifier_cv(
-    estimator: BaseEstimator = LinearSVC(),
+    estimator: Optional[BaseEstimator] = None,
     method: Method = Method.default(),
     cv: Optional[
         Union[int, Iterator[Tuple[np.ndarray[int], np.ndarray[int]]], str]
@@ -240,10 +241,16 @@ class Strategy(Enum):
         return cls.UNIFORM.value
 
 
-# @NodeDecorator(
-#     node_id="calibration_curve",
-#     name="calibration_curve",
-# )
+@NodeDecorator(
+    node_id="calibration_curve",
+    name="calibration_curve",
+    outputs=[
+        {
+            "name": "prob_true",
+        },
+        {"name": "prob_pred"},
+    ],
+)
 def calibrationcurve(
     y_true: np.ndarray,
     y_prob: np.ndarray,

@@ -17,10 +17,10 @@ from sklearn.covariance import (
 )
 
 
-# @NodeDecorator(
-#     node_id = "empirical_covariance",
-#     name="EmpiricalCovariance",
-# )
+@NodeDecorator(
+    node_id = "empirical_covariance",
+    name="EmpiricalCovariance",
+)
 def empirical_covariance(
     store_precision: bool = True, assume_centered: bool = False
 ) -> BaseEstimator:
@@ -105,10 +105,10 @@ def empirical_covariance(
     return create_empirical_covariance()
 
 
-# @NodeDecorator(
-#     node_id = "elliptical_envelpoe",
-#     name="EllipticEnvelope",
-# )
+@NodeDecorator(
+    node_id = "elliptical_envelpoe",
+    name="EllipticEnvelope",
+)
 def elliptical_envelpoe(
     store_precision: bool = True,
     assume_centered: bool = False,
@@ -277,10 +277,10 @@ class Covariance(Enum):
         return cls.NONE.value
 
 
-# @NodeDecorator(
-#     node_id = "graphical_lasso",
-#     name="GraphicalLasso",
-# )
+@NodeDecorator(
+    node_id = "graphical_lasso",
+    name="GraphicalLasso",
+)
 def graphical_lasso(
     alpha: float = 0.01,
     mode: Mode = Mode.defalt(),
@@ -427,10 +427,10 @@ def graphical_lasso(
     return create_graphical_lasso()
 
 
-# @NodeDecorator(
-#     node_id = "graphical_lasso_cv",
-#     name="GraphicalLassoCV",
-# )
+@NodeDecorator(
+    node_id = "graphical_lasso_cv",
+    name="GraphicalLassoCV",
+)
 def graphical_lasso_cv(
     alphas: Union[int, np.ndarray] = 4,
     n_refinements: int = 4,
@@ -650,10 +650,10 @@ def graphical_lasso_cv(
     return create_graphical_lasso_cv()
 
 
-# @NodeDecorator(
-#     node_id = "ledoit_wolf",
-#     name="LedoitWolf",
-# )
+@NodeDecorator(
+    node_id = "ledoit_wolf",
+    name="LedoitWolf",
+)
 def ledoit_wolf(
     store_precision: bool = True,
     assume_centered: bool = False,
@@ -773,10 +773,10 @@ def ledoit_wolf(
     return create_ledoit_wolf()
 
 
-# @NodeDecorator(
-#     node_id = "min_cov_det",
-#     name="MinCovDet",
-# )
+@NodeDecorator(
+    node_id = "min_cov_det",
+    name="MinCovDet",
+)
 def min_cov_det(
     store_precision: bool = True,
     assume_centered: bool = False,
@@ -922,10 +922,10 @@ def min_cov_det(
     return create_min_cov_det()
 
 
-# @NodeDecorator(
-#     node_id = "oas",
-#     name="OAS",
-# )
+@NodeDecorator(
+    node_id = "oas",
+    name="OAS",
+)
 def oas(
     store_precision: bool = True,
     assume_centered: bool = False,
@@ -1043,10 +1043,10 @@ def oas(
     return create_oas()
 
 
-# @NodeDecorator(
-#     node_id = "shrunk_covariance",
-#     name="ShrunkCovariance",
-# )
+@NodeDecorator(
+    node_id = "shrunk_covariance",
+    name="ShrunkCovariance",
+)
 def shrunk_covariance(
     store_precision: bool = True,
     assume_centered: bool = False,

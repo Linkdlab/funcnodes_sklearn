@@ -1,10 +1,6 @@
 from funcnodes import Shelf, NodeDecorator
-from typing import Union, Optional, Tuple, Iterator
-import numpy as np
-from numpy.random import RandomState
 from sklearn.base import RegressorMixin
 from enum import Enum
-
 from sklearn.cross_decomposition import (
     CCA,
     PLSCanonical,
@@ -13,10 +9,10 @@ from sklearn.cross_decomposition import (
 )
 
 
-# @NodeDecorator(
-#     node_id = "cca",
-#     name="CCA",
-# )
+@NodeDecorator(
+    node_id = "cca",
+    name="CCA",
+)
 def cca(
     n_components: int = 2,
     scale: bool = True,
@@ -139,10 +135,10 @@ class Algorithm(Enum):
         return cls.NIPALS.value
 
 
-# @NodeDecorator(
-#     node_id = "pls_canonical",
-#     name="PLSCanonical",
-# )
+@NodeDecorator(
+    node_id = "pls_canonical",
+    name="PLSCanonical",
+)
 def pls_canonical(
     n_components: int = 2,
     scale: bool = True,
@@ -266,10 +262,10 @@ def pls_canonical(
     return create_pls_canonical()
 
 
-# @NodeDecorator(
-#     node_id = "pls_regression",
-#     name="PLSRegression",
-# )
+@NodeDecorator(
+    node_id = "pls_regression",
+    name="PLSRegression",
+)
 def pls_regression(
     n_components: int = 2,
     scale: bool = True,
@@ -397,10 +393,10 @@ def pls_regression(
     return create_pls_regression()
 
 
-# @NodeDecorator(
-#     node_id = "pls_svd",
-#     name="PLSSVD",
-# )
+@NodeDecorator(
+    node_id = "pls_svd",
+    name="PLSSVD",
+)
 def pls_svd(
     n_components: int = 2,
     scale: bool = True,
@@ -487,7 +483,7 @@ def pls_svd(
     return create_pls_svd()
 
 
-CROSDECOMPOSITION_NODE_SHELFE = Shelf(
+CROSS_DECOMPOSITION_NODE_SHELFE = Shelf(
     nodes=[
         cca,
         pls_canonical,
