@@ -2,9 +2,10 @@ import unittest
 import numpy as np
 from pandas.core.frame import DataFrame
 from pandas import Series
-from scipy.sparse.base import spmatrix
+from scipy.sparse import spmatrix
 
 import funcnodes as fn
+
 # from typing import Tuple,
 from funcnodes_sklearn.datasets import (
     _20newsgroups,
@@ -16,12 +17,12 @@ from funcnodes_sklearn.datasets import (
     _covtype_as_frame,
     _kddcup99,
     _kddcup99_as_frame,
-    # _lfw_pairs,
-    # _lfw_people,
-    # _olivetti_faces,
+    _lfw_pairs,
+    _lfw_people,
+    _olivetti_faces,
     # _openml,
-    # _rcv1,
-    # _species_distributions,
+    _rcv1,
+    _species_distributions,
     # _breast_cancer,
     # _diabetes,
     # _digits,
@@ -125,7 +126,6 @@ class TestCaliforniaHousingAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target_names, list)
 
 
-
 class TestCovtype(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _covtype()
@@ -142,8 +142,8 @@ class TestCovtype(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(DESCR, str)
         self.assertIsInstance(target_names, list)
         self.assertIsInstance(feature_names, list)
-        
-        
+
+
 class TestCovtypeAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _covtype_as_frame()
@@ -162,7 +162,6 @@ class TestCovtypeAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(feature_names, list)
 
 
-
 class TestKddcup99(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _kddcup99()
@@ -179,8 +178,8 @@ class TestKddcup99(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(DESCR, str)
         self.assertIsInstance(target_names, list)
         self.assertIsInstance(feature_names, list)
-        
-        
+
+
 class TestKddcup99AsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _kddcup99_as_frame()
@@ -199,50 +198,57 @@ class TestKddcup99AsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(feature_names, list)
 
 
-
-# class TestKddcup99(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _kddcup99()
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(
-#             list(dataset.keys()),
-#             ["data", "target", "frame", "target_names", "feature_names", "DESCR"],
-#         )
-
-
-# class TestLfwPairs(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _lfw_pairs()
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(
-#             list(dataset.keys()),
-#             ["data", "pairs", "target", "target_names", "DESCR"],
-#         )
-#     def test_slice(self):
-#         dataset = _lfw_pairs(slice_=(slice(0, 10), slice(0, 10)))
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(
-#             list(dataset.keys()),
-#             ["data", "pairs", "target", "target_names", "DESCR"],
-#         )
+class TestLfwPairs(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _lfw_pairs()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        pairs = model.outputs["pairs"].value
+        target = model.outputs["target"].value
+        target_names = model.outputs["target_names"].value
+        DESCR = model.outputs["DESCR"].value
+        self.assertIsInstance(data, np.ndarray)
+        self.assertIsInstance(pairs, np.ndarray)
+        self.assertIsInstance(target, np.ndarray)
+        self.assertIsInstance(DESCR, str)
+        self.assertIsInstance(target_names, np.ndarray)
 
 
-# class TestLfwPeople(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _lfw_people(resize=0.5)
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(
-#             list(dataset.keys()),
-#             ["data", "images", "target", "target_names", "DESCR"],
-#         )
-# class TestOlivettiFaces(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _olivetti_faces()
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(
-#             list(dataset.keys()),
-#             ["data", "images", "target", "DESCR"],
-#         )
+class TestLfwPeople(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _lfw_people()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        images = model.outputs["images"].value
+        target = model.outputs["target"].value
+        target_names = model.outputs["target_names"].value
+        DESCR = model.outputs["DESCR"].value
+        self.assertIsInstance(data, np.ndarray)
+        self.assertIsInstance(images, np.ndarray)
+        self.assertIsInstance(target, np.ndarray)
+        self.assertIsInstance(DESCR, str)
+        self.assertIsInstance(target_names, np.ndarray)
+
+
+class TestOlivettiFaces(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _olivetti_faces()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        images = model.outputs["images"].value
+        target = model.outputs["target"].value
+        DESCR = model.outputs["DESCR"].value
+        self.assertIsInstance(data, np.ndarray)
+        self.assertIsInstance(images, np.ndarray)
+        self.assertIsInstance(target, np.ndarray)
+        self.assertIsInstance(DESCR, str)
+
 
 # class TestOpenml(unittest.IsolatedAsyncioTestCase):
 #     def test_default_parameters(self):
@@ -252,15 +258,46 @@ class TestKddcup99AsFrame(unittest.IsolatedAsyncioTestCase):
 #         #     list(dataset.keys()),
 #         #     ["data", "target", "frame", "target_names", "feature_names", "DESCR"],
 #         # )
+class TestRcv1(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _rcv1()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        sample_id = model.outputs["sample_id"].value
+        target = model.outputs["target"].value
+        target_names = model.outputs["target_names"].value
+        DESCR = model.outputs["DESCR"].value
+        self.assertIsInstance(data, spmatrix)
+        self.assertIsInstance(target, spmatrix)
+        self.assertIsInstance(sample_id, np.ndarray)
+        self.assertIsInstance(target_names, np.ndarray)
+        self.assertIsInstance(DESCR, str)
 
-# class TestRcv1(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _rcv1()
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(
-#             list(dataset.keys()),
-#             ["data", "target", "sample_id", "target_names", "DESCR"],
-#         )
+class TestSpeciesDistributions(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _species_distributions()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        coverages = model.outputs["coverages"].value
+        train = model.outputs["train"].value
+        test = model.outputs["test"].value
+        Nx = model.outputs["Nx"].value
+        Ny = model.outputs["Ny"].value
+        x_left_lower_corner = model.outputs["x_left_lower_corner"].value
+        y_left_lower_corner = model.outputs["y_left_lower_corner"].value
+        grid_size = model.outputs["grid_size"].value
+        self.assertIsInstance(coverages, np.ndarray)
+        self.assertIsInstance(train, np.ndarray)
+        self.assertIsInstance(test, np.ndarray)
+        self.assertIsInstance(Nx, int)
+        self.assertIsInstance(Ny, int)
+        self.assertIsInstance(x_left_lower_corner, float)
+        self.assertIsInstance(y_left_lower_corner, float)
+        self.assertIsInstance(grid_size, float)
+
 
 # class TestSpeciesDistributions(unittest.IsolatedAsyncioTestCase):
 #     def test_default_parameters(self):

@@ -3,7 +3,7 @@ from funcnodes import Shelf, NodeDecorator
 from funcnodes.io import NoValue
 from pandas.core.frame import DataFrame
 from pandas import Series
-from scipy.sparse.base import spmatrix
+from scipy.sparse import spmatrix
 import numpy as np
 from funcnodes_sklearn._utils import DataSet
 import os
@@ -57,13 +57,13 @@ from sklearn.datasets import (
 
 
 class Subset(Enum):
-    TRAIN = "train"
-    TEST = "test"
-    ALL = "all"
+    train = "train"
+    test = "test"
+    all = "all"
 
     @classmethod
     def default(cls):
-        return cls.TRAIN.value
+        return cls.train.value
 
 
 @NodeDecorator(
@@ -814,8 +814,8 @@ def _covtype_as_frame(
 class KDDSubset(Enum):
     SA = "SA"
     SF = "SF"
-    HTTP = "http"
-    SMTP = "smtp"
+    http = "http"
+    smtp = "smtp"
     NONE = None
 
     @classmethod
@@ -1023,332 +1023,337 @@ def _kddcup99_as_frame(
     return data, target, DESCR, feature_names, target_names
 
 
-# class LFWSubet(Enum):
-#     TRAIN = "train"
-#     TEST = "test"
-#     FOLD10 = "10fold"
+class LFWSubet(Enum):
+    train = "train"
+    test = "test"
+    _10fold = "10fold"
 
-#     @classmethod
-#     def default(cls):
-#         return cls.TRAIN.value
-
-
-# @NodeDecorator(
-#     node_id = "_lfw_pairs",
-#     name="fetch_lfw_pairs",
-# )
-# def _lfw_pairs(
-#     data_home: Optional[str] = None,
-#     subset: LFWSubet = LFWSubet.default(),
-#     funneled: bool = True,
-#     resize: float = 0.5,
-#     color: bool = True,
-#     slice_: Tuple[slice, slice] = (slice(70, 195), slice(78, 172)),
-#     download_if_missing: bool = True,
-# ) -> dict:
-#     """Load the Labeled Faces in the Wild (LFW) pairs dataset (classification).
-
-#     Download it if necessary.
-
-#     =================   =======================
-#     Classes                                   2
-#     Samples total                         13233
-#     Dimensionality                         5828
-#     Features            real, between 0 and 255
-#     =================   =======================
-
-#     In the official `README.txt`_ this task is described as the
-#     "Restricted" task.  As I am not sure as to implement the
-#     "Unrestricted" variant correctly, I left it as unsupported for now.
-
-#       .. _`README.txt`: http://vis-www.cs.umass.edu/lfw/README.txt
-
-#     The original images are 250 x 250 pixels, but the default slice and resize
-#     arguments reduce them to 62 x 47.
-
-#     Read more in the :ref:`User Guide <labeled_faces_in_the_wild_dataset>`.
-
-#     Parameters
-#     ----------
-#     subset : {'train', 'test', '10_folds'}, default='train'
-#         Select the dataset to load: 'train' for the development training
-#         set, 'test' for the development test set, and '10_folds' for the
-#         official evaluation set that is meant to be used with a 10-folds
-#         cross validation.
-
-#     data_home : str or path-like, default=None
-#         Specify another download and cache folder for the datasets. By
-#         default all scikit-learn data is stored in '~/scikit_learn_data'
-#         subfolders.
-
-#     funneled : bool, default=True
-#         Download and use the funneled variant of the dataset.
-
-#     resize : float, default=0.5
-#         Ratio used to resize the each face picture.
-
-#     color : bool, default=False
-#         Keep the 3 RGB channels instead of averaging them to a single
-#         gray level channel. If color is True the shape of the data has
-#         one more dimension than the shape with color = False.
-
-#     slice_ : tuple of slice, default=(slice(70, 195), slice(78, 172))
-#         Provide a custom 2D slice (height, width) to extract the
-#         'interesting' part of the jpeg files and avoid use statistical
-#         correlation from the background.
-
-#     download_if_missing : bool, default=True
-#         If False, raise an OSError if the data is not locally available
-#         instead of trying to download the data from the source site.
-
-#     Returns
-#     -------
-#     data : :class:`~sklearn.utils.Bunch`
-#         Dictionary-like object, with the following attributes.
-
-#         data : ndarray of shape (2200, 5828). Shape depends on ``subset``.
-#             Each row corresponds to 2 ravel'd face images
-#             of original size 62 x 47 pixels.
-#             Changing the ``slice_``, ``resize`` or ``subset`` parameters
-#             will change the shape of the output.
-#         pairs : ndarray of shape (2200, 2, 62, 47). Shape depends on ``subset``
-#             Each row has 2 face images corresponding
-#             to same or different person from the dataset
-#             containing 5749 people. Changing the ``slice_``,
-#             ``resize`` or ``subset`` parameters will change the shape of the
-#             output.
-#         target : numpy array of shape (2200,). Shape depends on ``subset``.
-#             Labels associated to each pair of images.
-#             The two label values being different persons or the same person.
-#         target_names : numpy array of shape (2,)
-#             Explains the target values of the target array.
-#             0 corresponds to "Different person", 1 corresponds to "same person".
-#         DESCR : str
-#             Description of the Labeled Faces in the Wild (LFW) dataset.
-#     """
-
-#     def create_lfw_pairs():
-#         return fetch_lfw_pairs(
-#             data_home=data_home,
-#             subset=subset,
-#             funneled=funneled,
-#             resize=resize,
-#             color=color,
-#             slice_=slice_,
-#             download_if_missing=download_if_missing,
-#         )
-
-#     return create_lfw_pairs()
+    @classmethod
+    def default(cls):
+        return cls.train.value
 
 
-# @NodeDecorator(
-#     node_id = "_lfw_people",
-#     name="fetch_lfw_people",
-# )
-# def _lfw_people(
-#     data_home: Optional[str] = None,
-#     funneled: bool = True,
-#     resize: Optional[float] = None,
-#     min_faces_per_person: int = 0,
-#     color: bool = True,
-#     slice_: Tuple[slice, slice] = (slice(70, 195), slice(78, 172)),
-#     download_if_missing: bool = True,
-#     return_X_y: bool = False,
-# ) -> dict:
-#     """Load the Labeled Faces in the Wild (LFW) people dataset \
-# (classification).
+@NodeDecorator(
+    node_id="_lfw_pairs",
+    name="fetch_lfw_pairs",
+    outputs=[
+        {"name": "data"},
+        {"name": "pairs"},
+        {"name": "target"},
+        {"name": "target_names"},
+        {"name": "DESCR"},
+    ],
+)
+def _lfw_pairs(
+    data_home: Optional[str] = None,
+    subset: LFWSubet = LFWSubet.default(),
+    funneled: bool = True,
+    resize: float = 0.5,
+    color: bool = True,
+    # slice_1: slice = slice(70, 195), #TODO
+    # slice_2: slice = slice(78, 172),
+    download_if_missing: bool = True,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, str]:
+    """Load the Labeled Faces in the Wild (LFW) pairs dataset (classification).
 
-#     Download it if necessary.
+    Download it if necessary.
 
-#     =================   =======================
-#     Classes                                5749
-#     Samples total                         13233
-#     Dimensionality                         5828
-#     Features            real, between 0 and 255
-#     =================   =======================
+    =================   =======================
+    Classes                                   2
+    Samples total                         13233
+    Dimensionality                         5828
+    Features            real, between 0 and 255
+    =================   =======================
 
-#     Read more in the :ref:`User Guide <labeled_faces_in_the_wild_dataset>`.
+    In the official `README.txt`_ this task is described as the
+    "Restricted" task.  As I am not sure as to implement the
+    "Unrestricted" variant correctly, I left it as unsupported for now.
 
-#     Parameters
-#     ----------
-#     data_home : str or path-like, default=None
-#         Specify another download and cache folder for the datasets. By default
-#         all scikit-learn data is stored in '~/scikit_learn_data' subfolders.
+      .. _`README.txt`: http://vis-www.cs.umass.edu/lfw/README.txt
 
-#     funneled : bool, default=True
-#         Download and use the funneled variant of the dataset.
+    The original images are 250 x 250 pixels, but the default slice and resize
+    arguments reduce them to 62 x 47.
 
-#     resize : float or None, default=0.5
-#         Ratio used to resize the each face picture. If `None`, no resizing is
-#         performed.
+    Read more in the :ref:`User Guide <labeled_faces_in_the_wild_dataset>`.
 
-#     min_faces_per_person : int, default=None # TODO: issue from sklearn comparing int with None in the function
-#         The extracted dataset will only retain pictures of people that have at
-#         least `min_faces_per_person` different pictures.
+    Parameters
+    ----------
+    subset : {'train', 'test', '10_folds'}, default='train'
+        Select the dataset to load: 'train' for the development training
+        set, 'test' for the development test set, and '10_folds' for the
+        official evaluation set that is meant to be used with a 10-folds
+        cross validation.
 
-#     color : bool, default=False
-#         Keep the 3 RGB channels instead of averaging them to a single
-#         gray level channel. If color is True the shape of the data has
-#         one more dimension than the shape with color = False.
+    data_home : str or path-like, default=None
+        Specify another download and cache folder for the datasets. By
+        default all scikit-learn data is stored in '~/scikit_learn_data'
+        subfolders.
 
-#     slice_ : tuple of slice, default=(slice(70, 195), slice(78, 172))
-#         Provide a custom 2D slice (height, width) to extract the
-#         'interesting' part of the jpeg files and avoid use statistical
-#         correlation from the background.
+    funneled : bool, default=True
+        Download and use the funneled variant of the dataset.
 
-#     download_if_missing : bool, default=True
-#         If False, raise an OSError if the data is not locally available
-#         instead of trying to download the data from the source site.
+    resize : float, default=0.5
+        Ratio used to resize the each face picture.
 
-#     return_X_y : bool, default=False
-#         If True, returns ``(dataset.data, dataset.target)`` instead of a Bunch
-#         object. See below for more information about the `dataset.data` and
-#         `dataset.target` object.
+    color : bool, default=False
+        Keep the 3 RGB channels instead of averaging them to a single
+        gray level channel. If color is True the shape of the data has
+        one more dimension than the shape with color = False.
 
-#         .. versionadded:: 0.20
+    slice_ : tuple of slice, default=(slice(70, 195), slice(78, 172))
+        Provide a custom 2D slice (height, width) to extract the
+        'interesting' part of the jpeg files and avoid use statistical
+        correlation from the background.
 
-#     Returns
-#     -------
-#     dataset : :class:`~sklearn.utils.Bunch`
-#         Dictionary-like object, with the following attributes.
+    download_if_missing : bool, default=True
+        If False, raise an OSError if the data is not locally available
+        instead of trying to download the data from the source site.
 
-#         data : numpy array of shape (13233, 2914)
-#             Each row corresponds to a ravelled face image
-#             of original size 62 x 47 pixels.
-#             Changing the ``slice_`` or resize parameters will change the
-#             shape of the output.
-#         images : numpy array of shape (13233, 62, 47)
-#             Each row is a face image corresponding to one of the 5749 people in
-#             the dataset. Changing the ``slice_``
-#             or resize parameters will change the shape of the output.
-#         target : numpy array of shape (13233,)
-#             Labels associated to each face image.
-#             Those labels range from 0-5748 and correspond to the person IDs.
-#         target_names : numpy array of shape (5749,)
-#             Names of all persons in the dataset.
-#             Position in array corresponds to the person ID in the target array.
-#         DESCR : str
-#             Description of the Labeled Faces in the Wild (LFW) dataset.
+    Returns
+    -------
 
-#     (data, target) : tuple if ``return_X_y`` is True
-#         A tuple of two ndarray. The first containing a 2D array of
-#         shape (n_samples, n_features) with each row representing one
-#         sample and each column representing the features. The second
-#         ndarray of shape (n_samples,) containing the target samples.
+    data : ndarray of shape (2200, 5828). Shape depends on ``subset``.
+        Each row corresponds to 2 ravel'd face images
+        of original size 62 x 47 pixels.
+        Changing the ``slice_``, ``resize`` or ``subset`` parameters
+        will change the shape of the output.
+    pairs : ndarray of shape (2200, 2, 62, 47). Shape depends on ``subset``
+        Each row has 2 face images corresponding
+        to same or different person from the dataset
+        containing 5749 people. Changing the ``slice_``,
+        ``resize`` or ``subset`` parameters will change the shape of the
+        output.
+    target : numpy array of shape (2200,). Shape depends on ``subset``.
+        Labels associated to each pair of images.
+        The two label values being different persons or the same person.
+    target_names : numpy array of shape (2,)
+        Explains the target values of the target array.
+        0 corresponds to "Different person", 1 corresponds to "same person".
+    DESCR : str
+        Description of the Labeled Faces in the Wild (LFW) dataset.
+    """
+    slice_ = (slice(70, 195), slice(78, 172))
 
-#         .. versionadded:: 0.20
+    out = fetch_lfw_pairs(
+        data_home=data_home,
+        subset=subset,
+        funneled=funneled,
+        resize=resize,
+        color=color,
+        slice_=slice_,
+        download_if_missing=download_if_missing,
+    )
+    data = out["data"]
+    pairs = out["pairs"]
+    target = out["target"]
+    target_names = out["target_names"]
+    DESCR = out["DESCR"]
 
-#     """
-
-#     def create_lfw_people():
-#         return fetch_lfw_people(
-#             data_home=data_home,
-#             funneled=funneled,
-#             resize=resize,
-#             color=color,
-#             slice_=slice_,
-#             download_if_missing=download_if_missing,
-#             return_X_y=return_X_y,
-#             min_faces_per_person=min_faces_per_person,
-#         )
-
-#     return create_lfw_people()
+    return data, pairs, target, target_names, DESCR
 
 
-# @NodeDecorator(
-#     node_id = "_olivetti_faces",
-#     name="fetch_olivetti_faces",
-# )
-# def _olivetti_faces(
-#     data_home: Optional[str] = None,
-#     shuffle: bool = False,
-#     random_state: Union[int, RandomState, None] = 0,
-#     download_if_missing: bool = True,
-#     return_X_y: bool = False,
-# ) -> dict:
-#     """Load the Olivetti faces data-set from AT&T (classification).
+@NodeDecorator(
+    node_id="_lfw_people",
+    name="fetch_lfw_people",
+    outputs=[
+        {"name": "data"},
+        {"name": "images"},
+        {"name": "target"},
+        {"name": "target_names"},
+        {"name": "DESCR"},
+    ],
+)
+def _lfw_people(
+    data_home: Optional[str] = None,
+    funneled: bool = True,
+    resize: Optional[float] = None,
+    min_faces_per_person: int = 0,
+    color: bool = True,
+    # slice_1: slice = slice(70, 195),
+    # slice_2: slice = slice(78, 172), # TODO
+    download_if_missing: bool = True,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, str]:
+    """Load the Labeled Faces in the Wild (LFW) people dataset \
+(classification).
 
-#     Download it if necessary.
+    Download it if necessary.
 
-#     =================   =====================
-#     Classes                                40
-#     Samples total                         400
-#     Dimensionality                       4096
-#     Features            real, between 0 and 1
-#     =================   =====================
+    =================   =======================
+    Classes                                5749
+    Samples total                         13233
+    Dimensionality                         5828
+    Features            real, between 0 and 255
+    =================   =======================
 
-#     Read more in the :ref:`User Guide <olivetti_faces_dataset>`.
+    Read more in the :ref:`User Guide <labeled_faces_in_the_wild_dataset>`.
 
-#     Parameters
-#     ----------
-#     data_home : str or path-like, default=None
-#         Specify another download and cache folder for the datasets. By default
-#         all scikit-learn data is stored in '~/scikit_learn_data' subfolders.
+    Parameters
+    ----------
+    data_home : str or path-like, default=None
+        Specify another download and cache folder for the datasets. By default
+        all scikit-learn data is stored in '~/scikit_learn_data' subfolders.
 
-#     shuffle : bool, default=False
-#         If True the order of the dataset is shuffled to avoid having
-#         images of the same person grouped.
+    funneled : bool, default=True
+        Download and use the funneled variant of the dataset.
 
-#     random_state : int, RandomState instance or None, default=0
-#         Determines random number generation for dataset shuffling. Pass an int
-#         for reproducible output across multiple function calls.
-#         See :term:`Glossary <random_state>`.
+    resize : float or None, default=0.5
+        Ratio used to resize the each face picture. If `None`, no resizing is
+        performed.
 
-#     download_if_missing : bool, default=True
-#         If False, raise an OSError if the data is not locally available
-#         instead of trying to download the data from the source site.
+    min_faces_per_person : int, default=None # TODO: issue from sklearn comparing int with None in the function
+        The extracted dataset will only retain pictures of people that have at
+        least `min_faces_per_person` different pictures.
 
-#     return_X_y : bool, default=False
-#         If True, returns `(data, target)` instead of a `Bunch` object. See
-#         below for more information about the `data` and `target` object.
+    color : bool, default=False
+        Keep the 3 RGB channels instead of averaging them to a single
+        gray level channel. If color is True the shape of the data has
+        one more dimension than the shape with color = False.
 
-#         .. versionadded:: 0.22
+    slice_ : tuple of slice, default=(slice(70, 195), slice(78, 172))
+        Provide a custom 2D slice (height, width) to extract the
+        'interesting' part of the jpeg files and avoid use statistical
+        correlation from the background.
 
-#     Returns
-#     -------
-#     data : :class:`~sklearn.utils.Bunch`
-#         Dictionary-like object, with the following attributes.
+    download_if_missing : bool, default=True
+        If False, raise an OSError if the data is not locally available
+        instead of trying to download the data from the source site.
 
-#         data: ndarray, shape (400, 4096)
-#             Each row corresponds to a ravelled
-#             face image of original size 64 x 64 pixels.
-#         images : ndarray, shape (400, 64, 64)
-#             Each row is a face image
-#             corresponding to one of the 40 subjects of the dataset.
-#         target : ndarray, shape (400,)
-#             Labels associated to each face image.
-#             Those labels are ranging from 0-39 and correspond to the
-#             Subject IDs.
-#         DESCR : str
-#             Description of the modified Olivetti Faces Dataset.
 
-#     (data, target) : tuple if `return_X_y=True`
-#         Tuple with the `data` and `target` objects described above.
 
-#         .. versionadded:: 0.22
+    Returns
+    -------
 
-#     """
+    data : numpy array of shape (13233, 2914)
+        Each row corresponds to a ravelled face image
+        of original size 62 x 47 pixels.
+        Changing the ``slice_`` or resize parameters will change the
+        shape of the output.
+    images : numpy array of shape (13233, 62, 47)
+        Each row is a face image corresponding to one of the 5749 people in
+        the dataset. Changing the ``slice_``
+        or resize parameters will change the shape of the output.
+    target : numpy array of shape (13233,)
+        Labels associated to each face image.
+        Those labels range from 0-5748 and correspond to the person IDs.
+    target_names : numpy array of shape (5749,)
+        Names of all persons in the dataset.
+        Position in array corresponds to the person ID in the target array.
+    DESCR : str
+        Description of the Labeled Faces in the Wild (LFW) dataset.
 
-#     def create_olivetti_faces():
-#         return fetch_olivetti_faces(
-#             data_home=data_home,
-#             shuffle=shuffle,
-#             random_state=random_state,
-#             download_if_missing=download_if_missing,
-#             return_X_y=return_X_y,
-#         )
 
-#     return create_olivetti_faces()
+    """
+    slice_ = (slice(70, 195), slice(78, 172))
+
+    out = fetch_lfw_people(
+        data_home=data_home,
+        funneled=funneled,
+        resize=resize,
+        color=color,
+        slice_=slice_,
+        download_if_missing=download_if_missing,
+        min_faces_per_person=min_faces_per_person,
+    )
+
+    data = out["data"]
+    images = out["images"]
+    target = out["target"]
+    target_names = out["target_names"]
+    DESCR = out["DESCR"]
+
+    return data, images, target, target_names, DESCR
+
+
+@NodeDecorator(
+    node_id="_olivetti_faces",
+    name="fetch_olivetti_faces",
+    outputs=[
+        {"name": "data"},
+        {"name": "images"},
+        {"name": "target"},
+        {"name": "DESCR"},
+    ],
+)
+def _olivetti_faces(
+    data_home: Optional[str] = None,
+    shuffle: bool = False,
+    random_state: Union[int, RandomState, None] = 0,
+    download_if_missing: bool = True,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, str]:
+    """Load the Olivetti faces data-set from AT&T (classification).
+
+    Download it if necessary.
+
+    =================   =====================
+    Classes                                40
+    Samples total                         400
+    Dimensionality                       4096
+    Features            real, between 0 and 1
+    =================   =====================
+
+    Read more in the :ref:`User Guide <olivetti_faces_dataset>`.
+
+    Parameters
+    ----------
+    data_home : str or path-like, default=None
+        Specify another download and cache folder for the datasets. By default
+        all scikit-learn data is stored in '~/scikit_learn_data' subfolders.
+
+    shuffle : bool, default=False
+        If True the order of the dataset is shuffled to avoid having
+        images of the same person grouped.
+
+    random_state : int, RandomState instance or None, default=0
+        Determines random number generation for dataset shuffling. Pass an int
+        for reproducible output across multiple function calls.
+        See :term:`Glossary <random_state>`.
+
+    download_if_missing : bool, default=True
+        If False, raise an OSError if the data is not locally available
+        instead of trying to download the data from the source site.
+
+
+
+    Returns
+    -------
+    data: ndarray, shape (400, 4096)
+        Each row corresponds to a ravelled
+        face image of original size 64 x 64 pixels.
+    images : ndarray, shape (400, 64, 64)
+        Each row is a face image
+        corresponding to one of the 40 subjects of the dataset.
+    target : ndarray, shape (400,)
+        Labels associated to each face image.
+        Those labels are ranging from 0-39 and correspond to the
+        Subject IDs.
+    DESCR : str
+        Description of the modified Olivetti Faces Dataset.
+
+
+    """
+    out = fetch_olivetti_faces(
+        data_home=data_home,
+        shuffle=shuffle,
+        random_state=random_state,
+        download_if_missing=download_if_missing,
+    )
+
+    data = out["data"]
+    images = out["images"]
+    target = out["target"]
+    DESCR = out["DESCR"]
+
+    return data, images, target, DESCR
 
 
 # class Parser(Enum):
-#     AUTO = "auto"
-#     PANDAS = "pandas"
-#     LIAC_ARFF = "liac-arff"
+#     auto = "auto"
+#     pandas = "pandas"
+#     liac_arff = "liac-arff"
 
 #     @classmethod
 #     def default(cls):
-#         return cls.PANDAS.value
+#         return cls.pandas.value
 
 
 # @NodeDecorator(
@@ -1594,113 +1599,116 @@ def _kddcup99_as_frame(
 #     return create_openml()
 
 
-# @NodeDecorator(
-#     node_id = "_rcv1",
-#     name="fetch_rcv1",
-# )
-# def _rcv1(
-#     data_home: Optional[str] = None,
-#     subset: Subset = Subset.default(),
-#     shuffle: bool = False,
-#     random_state: Union[int, RandomState, None] = 0,
-#     download_if_missing: bool = True,
-#     return_X_y: bool = False,
-# ) -> dict:
-#     """Load the RCV1 multilabel dataset (classification).
+@NodeDecorator(
+    node_id="_rcv1",
+    name="fetch_rcv1",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "sample_id"},
+        {"name": "target_names"},
+        {"name": "DESCR"},
+    ],
+)
+def _rcv1(
+    data_home: Optional[str] = None,
+    subset: Subset = Subset.default(),
+    shuffle: bool = False,
+    random_state: Union[int, RandomState, None] = 0,
+    download_if_missing: bool = True,
+) -> Tuple[spmatrix, spmatrix, np.ndarray, np.ndarray, str]:
+    """Load the RCV1 multilabel dataset (classification).
 
-#     Download it if necessary.
+    Download it if necessary.
 
-#     Version: RCV1-v2, vectors, full sets, topics multilabels.
+    Version: RCV1-v2, vectors, full sets, topics multilabels.
 
-#     =================   =====================
-#     Classes                               103
-#     Samples total                      804414
-#     Dimensionality                      47236
-#     Features            real, between 0 and 1
-#     =================   =====================
+    =================   =====================
+    Classes                               103
+    Samples total                      804414
+    Dimensionality                      47236
+    Features            real, between 0 and 1
+    =================   =====================
 
-#     Read more in the :ref:`User Guide <rcv1_dataset>`.
+    Read more in the :ref:`User Guide <rcv1_dataset>`.
 
-#     .. versionadded:: 0.17
+    .. versionadded:: 0.17
 
-#     Parameters
-#     ----------
-#     data_home : str or path-like, default=None
-#         Specify another download and cache folder for the datasets. By default
-#         all scikit-learn data is stored in '~/scikit_learn_data' subfolders.
+    Parameters
+    ----------
+    data_home : str or path-like, default=None
+        Specify another download and cache folder for the datasets. By default
+        all scikit-learn data is stored in '~/scikit_learn_data' subfolders.
 
-#     subset : {'train', 'test', 'all'}, default='all'
-#         Select the dataset to load: 'train' for the training set
-#         (23149 samples), 'test' for the test set (781265 samples),
-#         'all' for both, with the training samples first if shuffle is False.
-#         This follows the official LYRL2004 chronological split.
+    subset : {'train', 'test', 'all'}, default='all'
+        Select the dataset to load: 'train' for the training set
+        (23149 samples), 'test' for the test set (781265 samples),
+        'all' for both, with the training samples first if shuffle is False.
+        This follows the official LYRL2004 chronological split.
 
-#     download_if_missing : bool, default=True
-#         If False, raise an OSError if the data is not locally available
-#         instead of trying to download the data from the source site.
+    download_if_missing : bool, default=True
+        If False, raise an OSError if the data is not locally available
+        instead of trying to download the data from the source site.
 
-#     random_state : int, RandomState instance or None, default=None
-#         Determines random number generation for dataset shuffling. Pass an int
-#         for reproducible output across multiple function calls.
-#         See :term:`Glossary <random_state>`.
+    random_state : int, RandomState instance or None, default=None
+        Determines random number generation for dataset shuffling. Pass an int
+        for reproducible output across multiple function calls.
+        See :term:`Glossary <random_state>`.
 
-#     shuffle : bool, default=False
-#         Whether to shuffle dataset.
+    shuffle : bool, default=False
+        Whether to shuffle dataset.
 
-#     return_X_y : bool, default=False
-#         If True, returns ``(dataset.data, dataset.target)`` instead of a Bunch
-#         object. See below for more information about the `dataset.data` and
-#         `dataset.target` object.
 
-#         .. versionadded:: 0.20
+    Returns
+    -------
+    - data : sparse matrix of shape (804414, 47236), dtype=np.float64
+        The array has 0.16% of non zero values. Will be of CSR format.
+    - target : sparse matrix of shape (804414, 103), dtype=np.uint8
+        Each sample has a value of 1 in its categories, and 0 in others.
+        The array has 3.15% of non zero values. Will be of CSR format.
+    - sample_id : ndarray of shape (804414,), dtype=np.uint32,
+        Identification number of each sample, as ordered in dataset.data.
+    - target_names : ndarray of shape (103,), dtype=object
+        Names of each target (RCV1 topics), as ordered in dataset.target.
+    - DESCR : str
+        Description of the RCV1 dataset.
 
-#     Returns
-#     -------
-#     dataset : :class:`~sklearn.utils.Bunch`
-#         Dictionary-like object. Returned only if `return_X_y` is False.
-#         `dataset` has the following attributes:
+    """
+    out = fetch_rcv1(
+        data_home=data_home,
+        subset=subset,
+        shuffle=shuffle,
+        random_state=random_state,
+        download_if_missing=download_if_missing,
+    )
 
-#         - data : sparse matrix of shape (804414, 47236), dtype=np.float64
-#             The array has 0.16% of non zero values. Will be of CSR format.
-#         - target : sparse matrix of shape (804414, 103), dtype=np.uint8
-#             Each sample has a value of 1 in its categories, and 0 in others.
-#             The array has 3.15% of non zero values. Will be of CSR format.
-#         - sample_id : ndarray of shape (804414,), dtype=np.uint32,
-#             Identification number of each sample, as ordered in dataset.data.
-#         - target_names : ndarray of shape (103,), dtype=object
-#             Names of each target (RCV1 topics), as ordered in dataset.target.
-#         - DESCR : str
-#             Description of the RCV1 dataset.
+    data = out["data"]
+    target = out["target"]
+    sample_id = out["sample_id"]
+    target_names = out["target_names"]
+    DESCR = out["DESCR"]
 
-#     (data, target) : tuple
-#         A tuple consisting of `dataset.data` and `dataset.target`, as
-#         described above. Returned only if `return_X_y` is True.
-
-#         .. versionadded:: 0.20
-
-#     """
-
-#     def create_rcv1():
-#         return fetch_rcv1(
-#             data_home=data_home,
-#             subset=subset,
-#             shuffle=shuffle,
-#             random_state=random_state,
-#             download_if_missing=download_if_missing,
-#             return_X_y=return_X_y,
-#         )
-
-#     return create_rcv1()
+    return data, target, sample_id, target_names, DESCR
 
 
 # @NodeDecorator(
-#     node_id = "_species_distributions",
+#     node_id="_species_distributions",
 #     name="fetch_species_distributions",
+#     outputs=[
+#         {"name": "coverages"},
+#         {"name": "train"},
+#         {"name": "test"},
+#         {"name": "Nx"},
+#         {"name": "Ny"},
+#         {"name": "x_left_lower_corner"},
+#         {"name": "y_left_lower_corner"},
+#         {"name": "grid_size"},
+#     ],
 # )
 # def _species_distributions(
 #     data_home: Optional[str] = None,
 #     download_if_missing: bool = True,
-# ) -> dict:
+# ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, int, int, float, float, float]:
 #     """Loader for species distribution dataset from Phillips et. al. (2006).
 
 #     Read more in the :ref:`User Guide <species_distribution_dataset>`.
@@ -1717,28 +1725,26 @@ def _kddcup99_as_frame(
 
 #     Returns
 #     -------
-#     data : :class:`~sklearn.utils.Bunch`
-#         Dictionary-like object, with the following attributes.
 
-#         coverages : array, shape = [14, 1592, 1212]
-#             These represent the 14 features measured
-#             at each point of the map grid.
-#             The latitude/longitude values for the grid are discussed below.
-#             Missing data is represented by the value -9999.
-#         train : record array, shape = (1624,)
-#             The training points for the data.  Each point has three fields:
+#     coverages : array, shape = [14, 1592, 1212]
+#         These represent the 14 features measured
+#         at each point of the map grid.
+#         The latitude/longitude values for the grid are discussed below.
+#         Missing data is represented by the value -9999.
+#     train : record array, shape = (1624,)
+#         The training points for the data.  Each point has three fields:
 
-#             - train['species'] is the species name
-#             - train['dd long'] is the longitude, in degrees
-#             - train['dd lat'] is the latitude, in degrees
-#         test : record array, shape = (620,)
-#             The test points for the data.  Same format as the training data.
-#         Nx, Ny : integers
-#             The number of longitudes (x) and latitudes (y) in the grid
-#         x_left_lower_corner, y_left_lower_corner : floats
-#             The (x,y) position of the lower-left corner, in degrees
-#         grid_size : float
-#             The spacing between points of the grid, in degrees
+#         - train['species'] is the species name
+#         - train['dd long'] is the longitude, in degrees
+#         - train['dd lat'] is the latitude, in degrees
+#     test : record array, shape = (620,)
+#         The test points for the data.  Same format as the training data.
+#     Nx, Ny : integers
+#         The number of longitudes (x) and latitudes (y) in the grid
+#     x_left_lower_corner, y_left_lower_corner : floats
+#         The (x,y) position of the lower-left corner, in degrees
+#     grid_size : float
+#         The spacing between points of the grid, in degrees
 
 #     Notes
 #     -----
@@ -1783,13 +1789,19 @@ def _kddcup99_as_frame(
 
 #     """
 
-#     def create_species_distributions():
-#         return fetch_species_distributions(
-#             data_home=data_home,
-#             download_if_missing=download_if_missing,
-#         )
-
-#     return create_species_distributions()
+#     out = fetch_species_distributions(
+#         data_home=data_home,
+#         download_if_missing=download_if_missing,
+#     )
+#     coverages = out["coverages"]
+#     train = out["train"], #TODO
+#     test = out["test"], #TODO
+#     Nx = out["Nx"],
+#     Ny = out["Ny"],
+#     x_left_lower_corner = out["x_left_lower_corner"],
+#     y_left_lower_corner = out["y_left_lower_corner"],
+#     grid_size = out["grid_size"],
+#     return coverages, train, test, Nx, Ny, x_left_lower_corner, y_left_lower_corner, grid_size
 
 
 # @NodeDecorator(
