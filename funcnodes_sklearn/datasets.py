@@ -1794,328 +1794,513 @@ def _rcv1(
 #         download_if_missing=download_if_missing,
 #     )
 #     coverages = out["coverages"]
-#     train = out["train"], #TODO
-#     test = out["test"], #TODO
-#     Nx = out["Nx"],
-#     Ny = out["Ny"],
-#     x_left_lower_corner = out["x_left_lower_corner"],
-#     y_left_lower_corner = out["y_left_lower_corner"],
-#     grid_size = out["grid_size"],
-#     return coverages, train, test, Nx, Ny, x_left_lower_corner, y_left_lower_corner, grid_size
+#     train = (out["train"],)  # TODO
+#     test = (out["test"],)  # TODO
+#     Nx = (out["Nx"],)
+#     Ny = (out["Ny"],)
+#     x_left_lower_corner = (out["x_left_lower_corner"],)
+#     y_left_lower_corner = (out["y_left_lower_corner"],)
+#     grid_size = (out["grid_size"],)
+#     return (
+#         coverages,
+#         train,
+#         test,
+#         Nx,
+#         Ny,
+#         x_left_lower_corner,
+#         y_left_lower_corner,
+#         grid_size,
+#     )
 
 
-# @NodeDecorator(
-#     node_id = "_breast_cancer",
-#     name="load_breast_cancer",
-# )
-# def _breast_cancer(
-#     return_X_y: bool = False,
-#     as_frame: bool = False,
-# ) -> dict:
-#     """Load and return the breast cancer wisconsin dataset (classification).
+@NodeDecorator(
+    node_id="_breast_cancer",
+    name="load_breast_cancer",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "target_names"},
+        {"name": "DESCR"},
+        {"name": "filename"},
+    ],
+)
+def _breast_cancer() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, str, str]:
+    """Load and return the breast cancer wisconsin dataset (classification).
 
-#     The breast cancer dataset is a classic and very easy binary classification
-#     dataset.
+    The breast cancer dataset is a classic and very easy binary classification
+    dataset.
 
-#     =================   ==============
-#     Classes                          2
-#     Samples per class    212(M),357(B)
-#     Samples total                  569
-#     Dimensionality                  30
-#     Features            real, positive
-#     =================   ==============
+    =================   ==============
+    Classes                          2
+    Samples per class    212(M),357(B)
+    Samples total                  569
+    Dimensionality                  30
+    Features            real, positive
+    =================   ==============
 
-#     The copy of UCI ML Breast Cancer Wisconsin (Diagnostic) dataset is
-#     downloaded from:
-#     https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic
+    The copy of UCI ML Breast Cancer Wisconsin (Diagnostic) dataset is
+    downloaded from:
+    https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic
 
-#     Read more in the :ref:`User Guide <breast_cancer_dataset>`.
-
-#     Parameters
-#     ----------
-#     return_X_y : bool, default=False
-#         If True, returns ``(data, target)`` instead of a Bunch object.
-#         See below for more information about the `data` and `target` object.
-
-#         .. versionadded:: 0.18
-
-#     as_frame : bool, default=False
-#         If True, the data is a pandas DataFrame including columns with
-#         appropriate dtypes (numeric). The target is
-#         a pandas DataFrame or Series depending on the number of target columns.
-#         If `return_X_y` is True, then (`data`, `target`) will be pandas
-#         DataFrames or Series as described below.
-
-#         .. versionadded:: 0.23
-
-#     Returns
-#     -------
-#     data : :class:`~sklearn.utils.Bunch`
-#         Dictionary-like object, with the following attributes.
-
-#         data : {ndarray, dataframe} of shape (569, 30)
-#             The data matrix. If `as_frame=True`, `data` will be a pandas
-#             DataFrame.
-#         target : {ndarray, Series} of shape (569,)
-#             The classification target. If `as_frame=True`, `target` will be
-#             a pandas Series.
-#         feature_names : ndarray of shape (30,)
-#             The names of the dataset columns.
-#         target_names : ndarray of shape (2,)
-#             The names of target classes.
-#         frame : DataFrame of shape (569, 31)
-#             Only present when `as_frame=True`. DataFrame with `data` and
-#             `target`.
-
-#             .. versionadded:: 0.23
-#         DESCR : str
-#             The full description of the dataset.
-#         filename : str
-#             The path to the location of the data.
-
-#             .. versionadded:: 0.20
-
-#     (data, target) : tuple if ``return_X_y`` is True
-#         A tuple of two ndarrays by default. The first contains a 2D ndarray of
-#         shape (569, 30) with each row representing one sample and each column
-#         representing the features. The second ndarray of shape (569,) contains
-#         the target samples.  If `as_frame=True`, both arrays are pandas objects,
-#         i.e. `X` a dataframe and `y` a series.
-
-#         .. versionadded:: 0.18
-
-#     Examples
-#     --------
-#     Let's say you are interested in the samples 10, 50, and 85, and want to
-#     know their class name.
-
-#     >>> from sklearn.datasets import load_breast_cancer
-#     >>> data = load_breast_cancer()
-#     >>> data.target[[10, 50, 85]]
-#     array([0, 1, 0])
-#     >>> list(data.target_names)
-#     ['malignant', 'benign']
-#     """
-
-#     def create_breast_cancer():
-#         return load_breast_cancer(
-#             return_X_y=return_X_y,
-#             as_frame=as_frame,
-#         )
-
-#     return create_breast_cancer()
+    Read more in the :ref:`User Guide <breast_cancer_dataset>`.
 
 
-# @NodeDecorator(
-#     node_id = "_diabetes",
-#     name="load_diabetes",
-# )
-# def _diabetes(
-#     return_X_y: bool = False,
-#     as_frame: bool = False,
-#     scaled: bool = True,
-# ) -> dict:
-#     """Load and return the diabetes dataset (regression).
+    Returns
+    -------
+    data : {ndarray, dataframe} of shape (569, 30)
+        The data matrix. If `as_frame=True`, `data` will be a pandas
+        DataFrame.
+    target : {ndarray, Series} of shape (569,)
+        The classification target. If `as_frame=True`, `target` will be
+        a pandas Series.
+    feature_names : ndarray of shape (30,)
+        The names of the dataset columns.
+    target_names : ndarray of shape (2,)
+        The names of target classes.
+    DESCR : str
+        The full description of the dataset.
+    filename : str
+        The path to the location of the data.
 
-#     ==============   ==================
-#     Samples total    442
-#     Dimensionality   10
-#     Features         real, -.2 < x < .2
-#     Targets          integer 25 - 346
-#     ==============   ==================
+    Examples
+    --------
+    Let's say you are interested in the samples 10, 50, and 85, and want to
+    know their class name.
 
-#     .. note::
-#        The meaning of each feature (i.e. `feature_names`) might be unclear
-#        (especially for `ltg`) as the documentation of the original dataset is
-#        not explicit. We provide information that seems correct in regard with
-#        the scientific literature in this field of research.
+    >>> from sklearn.datasets import load_breast_cancer
+    >>> data = load_breast_cancer()
+    >>> data.target[[10, 50, 85]]
+    array([0, 1, 0])
+    >>> list(data.target_names)
+    ['malignant', 'benign']
+    """
 
-#     Read more in the :ref:`User Guide <diabetes_dataset>`.
+    out = load_breast_cancer(
+        return_X_y=False,
+    )
 
-#     Parameters
-#     ----------
-#     return_X_y : bool, default=False
-#         If True, returns ``(data, target)`` instead of a Bunch object.
-#         See below for more information about the `data` and `target` object.
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    target_names = out["target_names"]
+    DESCR = out["DESCR"]
+    filename = out["filename"]
 
-#         .. versionadded:: 0.18
-
-#     as_frame : bool, default=False
-#         If True, the data is a pandas DataFrame including columns with
-#         appropriate dtypes (numeric). The target is
-#         a pandas DataFrame or Series depending on the number of target columns.
-#         If `return_X_y` is True, then (`data`, `target`) will be pandas
-#         DataFrames or Series as described below.
-
-#         .. versionadded:: 0.23
-
-#     scaled : bool, default=True
-#         If True, the feature variables are mean centered and scaled by the
-#         standard deviation times the square root of `n_samples`.
-#         If False, raw data is returned for the feature variables.
-
-#         .. versionadded:: 1.1
-
-#     Returns
-#     -------
-#     data : :class:`~sklearn.utils.Bunch`
-#         Dictionary-like object, with the following attributes.
-
-#         data : {ndarray, dataframe} of shape (442, 10)
-#             The data matrix. If `as_frame=True`, `data` will be a pandas
-#             DataFrame.
-#         target: {ndarray, Series} of shape (442,)
-#             The regression target. If `as_frame=True`, `target` will be
-#             a pandas Series.
-#         feature_names: list
-#             The names of the dataset columns.
-#         frame: DataFrame of shape (442, 11)
-#             Only present when `as_frame=True`. DataFrame with `data` and
-#             `target`.
-
-#             .. versionadded:: 0.23
-#         DESCR: str
-#             The full description of the dataset.
-#         data_filename: str
-#             The path to the location of the data.
-#         target_filename: str
-#             The path to the location of the target.
-
-#     (data, target) : tuple if ``return_X_y`` is True
-#         Returns a tuple of two ndarray of shape (n_samples, n_features)
-#         A 2D array with each row representing one sample and each column
-#         representing the features and/or target of a given sample.
-
-#         .. versionadded:: 0.18
-
-#     Examples
-#     --------
-#     >>> from sklearn.datasets import load_diabetes
-#     >>> diabetes = load_diabetes()
-#     >>> diabetes.target[:3]
-#     array([151.,  75., 141.])
-#     >>> diabetes.data.shape
-#     (442, 10)
-
-#     """
-
-#     def create_diabetes():
-#         return load_diabetes(
-#             return_X_y=return_X_y,
-#             as_frame=as_frame,
-#             scaled=scaled,
-#         )
-
-#     return create_diabetes()
+    return data, target, feature_names, target_names, DESCR, filename
 
 
-# @NodeDecorator(
-#     node_id = "_digits",
-#     name="load_digits",
-# )
-# def _digits(
-#     n_class: int = 10,
-#     return_X_y: bool = False,
-#     as_frame: bool = False,
-# ) -> dict:
-#     """Load and return the digits dataset (classification).
+@NodeDecorator(
+    node_id="_breast_cancer_as_frame",
+    name="load_breast_cancer_as_frame",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "target_names"},
+        {"name": "DESCR"},
+        {"name": "filename"},
+    ],
+)
+def _breast_cancer_as_frame() -> (
+    Tuple[DataFrame, Series, np.ndarray, np.ndarray, str, str]
+):
+    """Load and return the breast cancer wisconsin dataset (classification).
 
-#     Each datapoint is a 8x8 image of a digit.
+    The breast cancer dataset is a classic and very easy binary classification
+    dataset.
 
-#     =================   ==============
-#     Classes                         10
-#     Samples per class             ~180
-#     Samples total                 1797
-#     Dimensionality                  64
-#     Features             integers 0-16
-#     =================   ==============
+    =================   ==============
+    Classes                          2
+    Samples per class    212(M),357(B)
+    Samples total                  569
+    Dimensionality                  30
+    Features            real, positive
+    =================   ==============
 
-#     This is a copy of the test set of the UCI ML hand-written digits datasets
-#     https://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits
+    The copy of UCI ML Breast Cancer Wisconsin (Diagnostic) dataset is
+    downloaded from:
+    https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic
 
-#     Read more in the :ref:`User Guide <digits_dataset>`.
+    Read more in the :ref:`User Guide <breast_cancer_dataset>`.
 
-#     Parameters
-#     ----------
-#     n_class : int, default=10
-#         The number of classes to return. Between 0 and 10.
 
-#     return_X_y : bool, default=False
-#         If True, returns ``(data, target)`` instead of a Bunch object.
-#         See below for more information about the `data` and `target` object.
+    Returns
+    -------
+    data :  dataframe of shape (569, 30)
+        The data matrix. If `as_frame=True`, `data` will be a pandas
+        DataFrame.
+    target : Series of shape (569,)
+        The classification target. If `as_frame=True`, `target` will be
+        a pandas Series.
+    feature_names : ndarray of shape (30,)
+        The names of the dataset columns.
+    target_names : ndarray of shape (2,)
+        The names of target classes.
+    DESCR : str
+        The full description of the dataset.
+    filename : str
+        The path to the location of the data.
 
-#         .. versionadded:: 0.18
+    Examples
+    --------
+    Let's say you are interested in the samples 10, 50, and 85, and want to
+    know their class name.
 
-#     as_frame : bool, default=False
-#         If True, the data is a pandas DataFrame including columns with
-#         appropriate dtypes (numeric). The target is
-#         a pandas DataFrame or Series depending on the number of target columns.
-#         If `return_X_y` is True, then (`data`, `target`) will be pandas
-#         DataFrames or Series as described below.
+    >>> from sklearn.datasets import load_breast_cancer
+    >>> data = load_breast_cancer()
+    >>> data.target[[10, 50, 85]]
+    array([0, 1, 0])
+    >>> list(data.target_names)
+    ['malignant', 'benign']
+    """
 
-#         .. versionadded:: 0.23
+    out = load_breast_cancer(return_X_y=False, as_frame=True)
 
-#     Returns
-#     -------
-#     data : :class:`~sklearn.utils.Bunch`
-#         Dictionary-like object, with the following attributes.
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    target_names = out["target_names"]
+    DESCR = out["DESCR"]
+    filename = out["filename"]
 
-#         data : {ndarray, dataframe} of shape (1797, 64)
-#             The flattened data matrix. If `as_frame=True`, `data` will be
-#             a pandas DataFrame.
-#         target: {ndarray, Series} of shape (1797,)
-#             The classification target. If `as_frame=True`, `target` will be
-#             a pandas Series.
-#         feature_names: list
-#             The names of the dataset columns.
-#         target_names: list
-#             The names of target classes.
+    return data, target, feature_names, target_names, DESCR, filename
 
-#             .. versionadded:: 0.20
 
-#         frame: DataFrame of shape (1797, 65)
-#             Only present when `as_frame=True`. DataFrame with `data` and
-#             `target`.
+@NodeDecorator(
+    node_id="_diabetes",
+    name="load_diabetes",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "DESCR"},
+        {"name": "data_filename"},
+        {"name": "target_filename"},
+    ],
+)
+def _diabetes(
+    scaled: bool = True,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, str, str]:
+    """Load and return the diabetes dataset (regression).
 
-#             .. versionadded:: 0.23
-#         images: {ndarray} of shape (1797, 8, 8)
-#             The raw image data.
-#         DESCR: str
-#             The full description of the dataset.
+    ==============   ==================
+    Samples total    442
+    Dimensionality   10
+    Features         real, -.2 < x < .2
+    Targets          integer 25 - 346
+    ==============   ==================
 
-#     (data, target) : tuple if ``return_X_y`` is True
-#         A tuple of two ndarrays by default. The first contains a 2D ndarray of
-#         shape (1797, 64) with each row representing one sample and each column
-#         representing the features. The second ndarray of shape (1797) contains
-#         the target samples.  If `as_frame=True`, both arrays are pandas objects,
-#         i.e. `X` a dataframe and `y` a series.
+    .. note::
+       The meaning of each feature (i.e. `feature_names`) might be unclear
+       (especially for `ltg`) as the documentation of the original dataset is
+       not explicit. We provide information that seems correct in regard with
+       the scientific literature in this field of research.
 
-#         .. versionadded:: 0.18
+    Read more in the :ref:`User Guide <diabetes_dataset>`.
 
-#     Examples
-#     --------
-#     To load the data and visualize the images::
+    Parameters
+    ----------
+    scaled : bool, default=True
+        If True, the feature variables are mean centered and scaled by the
+        standard deviation times the square root of `n_samples`.
+        If False, raw data is returned for the feature variables.
 
-#         >>> from sklearn.datasets import load_digits
-#         >>> digits = load_digits()
-#         >>> print(digits.data.shape)
-#         (1797, 64)
-#         >>> import matplotlib.pyplot as plt
-#         >>> plt.gray()
-#         >>> plt.matshow(digits.images[0])
-#         <...>
-#         >>> plt.show()
+        .. versionadded:: 1.1
 
-#     """
+    Returns
+    -------
+        data : ndarray of shape (442, 10)
+            The data matrix. If `as_frame=True`, `data` will be a pandas
+            DataFrame.
+        target: ndarray of shape (442,)
+            The regression target. If `as_frame=True`, `target` will be
+            a pandas Series.
+        feature_names: list
+            The names of the dataset columns.
+        DESCR: str
+            The full description of the dataset.
+        data_filename: str
+            The path to the location of the data.
+        target_filename: str
+            The path to the location of the target.
 
-#     def create_digits():
-#         return load_digits(
-#             n_class=n_class,
-#             return_X_y=return_X_y,
-#             as_frame=as_frame,
-#         )
+    Examples
+    --------
+    >>> from sklearn.datasets import load_diabetes
+    >>> diabetes = load_diabetes()
+    >>> diabetes.target[:3]
+    array([151.,  75., 141.])
+    >>> diabetes.data.shape
+    (442, 10)
 
-#     return create_digits()
+    """
+
+    out = load_diabetes(
+        scaled=scaled,
+    )
+
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    DESCR = out["DESCR"]
+    data_filename = out["data_filename"]
+    target_filename = out["target_filename"]
+
+    return data, target, feature_names, DESCR, data_filename, target_filename
+
+
+@NodeDecorator(
+    node_id="_diabetes_as_frame",
+    name="load_diabetes_as_frame",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "DESCR"},
+        {"name": "data_filename"},
+        {"name": "target_filename"},
+    ],
+)
+def _diabetes_as_frame(
+    scaled: bool = True,
+) -> Tuple[DataFrame, Series, np.ndarray, np.ndarray, str, str]:
+    """Load and return the diabetes dataset (regression).
+
+    ==============   ==================
+    Samples total    442
+    Dimensionality   10
+    Features         real, -.2 < x < .2
+    Targets          integer 25 - 346
+    ==============   ==================
+
+    .. note::
+       The meaning of each feature (i.e. `feature_names`) might be unclear
+       (especially for `ltg`) as the documentation of the original dataset is
+       not explicit. We provide information that seems correct in regard with
+       the scientific literature in this field of research.
+
+    Read more in the :ref:`User Guide <diabetes_dataset>`.
+
+    Parameters
+    ----------
+    scaled : bool, default=True
+        If True, the feature variables are mean centered and scaled by the
+        standard deviation times the square root of `n_samples`.
+        If False, raw data is returned for the feature variables.
+
+        .. versionadded:: 1.1
+
+    Returns
+    -------
+        data : DataFrame of shape (442, 10)
+            The data matrix. If `as_frame=True`, `data` will be a pandas
+            DataFrame.
+        target: Series of shape (442,)
+            The regression target. If `as_frame=True`, `target` will be
+            a pandas Series.
+        feature_names: list
+            The names of the dataset columns.
+        DESCR: str
+            The full description of the dataset.
+        data_filename: str
+            The path to the location of the data.
+        target_filename: str
+            The path to the location of the target.
+
+    Examples
+    --------
+    >>> from sklearn.datasets import load_diabetes
+    >>> diabetes = load_diabetes()
+    >>> diabetes.target[:3]
+    array([151.,  75., 141.])
+    >>> diabetes.data.shape
+    (442, 10)
+
+    """
+
+    out = load_diabetes(scaled=scaled, as_frame=True)
+
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    DESCR = out["DESCR"]
+    data_filename = out["data_filename"]
+    target_filename = out["target_filename"]
+
+    return data, target, feature_names, DESCR, data_filename, target_filename
+
+
+@NodeDecorator(
+    node_id="_digits",
+    name="load_digits",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "target_names"},
+        {"name": "images"},
+        {"name": "DESCR"},
+    ],
+)
+def _digits(
+    n_class: int = 10,
+) -> Tuple[np.ndarray, np.ndarray, List[str], List[str], np.ndarray, str]:
+    """Load and return the digits dataset (classification).
+
+    Each datapoint is a 8x8 image of a digit.
+
+    =================   ==============
+    Classes                         10
+    Samples per class             ~180
+    Samples total                 1797
+    Dimensionality                  64
+    Features             integers 0-16
+    =================   ==============
+
+    This is a copy of the test set of the UCI ML hand-written digits datasets
+    https://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits
+
+    Read more in the :ref:`User Guide <digits_dataset>`.
+
+    Parameters
+    ----------
+    n_class : int, default=10
+        The number of classes to return. Between 0 and 10.
+
+
+    Returns
+    -------
+    data : ndarray of shape (1797, 64)
+        The flattened data matrix. If `as_frame=True`, `data` will be
+        a pandas DataFrame.
+    target: ndarray of shape (1797,)
+        The classification target. If `as_frame=True`, `target` will be
+        a pandas Series.
+    feature_names: list
+        The names of the dataset columns.
+    target_names: list
+        The names of target classes.
+    images: {ndarray} of shape (1797, 8, 8)
+        The raw image data.
+    DESCR: str
+        The full description of the dataset.
+
+
+    Examples
+    --------
+    To load the data and visualize the images::
+
+        >>> from sklearn.datasets import load_digits
+        >>> digits = load_digits()
+        >>> print(digits.data.shape)
+        (1797, 64)
+        >>> import matplotlib.pyplot as plt
+        >>> plt.gray()
+        >>> plt.matshow(digits.images[0])
+        <...>
+        >>> plt.show()
+
+    """
+
+    out = load_digits(
+        n_class=n_class,
+    )
+
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    target_names = out["target_names"]
+    images = out["images"]
+    DESCR = out["DESCR"]
+
+    return data, target, feature_names, target_names, DESCR, images
+
+
+@NodeDecorator(
+    node_id="_digits_as_frame",
+    name="load_digits_as_frame",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "target_names"},
+        {"name": "images"},
+        {"name": "DESCR"},
+    ],
+)
+def _digits_as_frame(
+    n_class: int = 10,
+) -> Tuple[DataFrame, Series, List[str], List[str], np.ndarray, str]:
+    """Load and return the digits dataset (classification).
+
+    Each datapoint is a 8x8 image of a digit.
+
+    =================   ==============
+    Classes                         10
+    Samples per class             ~180
+    Samples total                 1797
+    Dimensionality                  64
+    Features             integers 0-16
+    =================   ==============
+
+    This is a copy of the test set of the UCI ML hand-written digits datasets
+    https://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits
+
+    Read more in the :ref:`User Guide <digits_dataset>`.
+
+    Parameters
+    ----------
+    n_class : int, default=10
+        The number of classes to return. Between 0 and 10.
+
+
+    Returns
+    -------
+    data : dataframe of shape (1797, 64)
+        The flattened data matrix. If `as_frame=True`, `data` will be
+        a pandas DataFrame.
+    target: Series of shape (1797,)
+        The classification target. If `as_frame=True`, `target` will be
+        a pandas Series.
+    feature_names: list
+        The names of the dataset columns.
+    target_names: list
+        The names of target classes.
+    images: {ndarray} of shape (1797, 8, 8)
+        The raw image data.
+    DESCR: str
+        The full description of the dataset.
+
+
+    Examples
+    --------
+    To load the data and visualize the images::
+
+        >>> from sklearn.datasets import load_digits
+        >>> digits = load_digits()
+        >>> print(digits.data.shape)
+        (1797, 64)
+        >>> import matplotlib.pyplot as plt
+        >>> plt.gray()
+        >>> plt.matshow(digits.images[0])
+        <...>
+        >>> plt.show()
+
+    """
+
+    out = load_digits(
+        n_class=n_class,
+    )
+
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    target_names = out["target_names"]
+    images = out["images"]
+    DESCR = out["DESCR"]
+
+    return data, target, feature_names, target_names, DESCR, images
 
 
 # class DecodeError(Enum):
@@ -2267,112 +2452,202 @@ def _rcv1(
 #     return create_text_files()
 
 
-# @NodeDecorator(
-#     node_id = "_iris",
-#     name="load_iris",
-# )
-# def _iris(
-#     return_X_y: bool = False,
-#     as_frame: bool = False,
-# ) -> dict:
-#     """Load and return the iris dataset (classification).
+@NodeDecorator(
+    node_id="_iris",
+    name="load_iris",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "target_names"},
+        {"name": "DESCR"},
+        {"name": "filename"},
+    ],
+)
+def _iris() -> Tuple[np.ndarray, np.ndarray, List[str], List[str], str, str]:
+    """Load and return the iris dataset (classification).
 
-#     The iris dataset is a classic and very easy multi-class classification
-#     dataset.
+    The iris dataset is a classic and very easy multi-class classification
+    dataset.
 
-#     =================   ==============
-#     Classes                          3
-#     Samples per class               50
-#     Samples total                  150
-#     Dimensionality                   4
-#     Features            real, positive
-#     =================   ==============
+    =================   ==============
+    Classes                          3
+    Samples per class               50
+    Samples total                  150
+    Dimensionality                   4
+    Features            real, positive
+    =================   ==============
 
-#     Read more in the :ref:`User Guide <iris_dataset>`.
+    Read more in the :ref:`User Guide <iris_dataset>`.
 
-#     Parameters
-#     ----------
-#     return_X_y : bool, default=False
-#         If True, returns ``(data, target)`` instead of a Bunch object. See
-#         below for more information about the `data` and `target` object.
+    Parameters
+    ----------
+    return_X_y : bool, default=False
+        If True, returns ``(data, target)`` instead of a Bunch object. See
+        below for more information about the `data` and `target` object.
 
-#         .. versionadded:: 0.18
+        .. versionadded:: 0.18
 
-#     as_frame : bool, default=False
-#         If True, the data is a pandas DataFrame including columns with
-#         appropriate dtypes (numeric). The target is
-#         a pandas DataFrame or Series depending on the number of target columns.
-#         If `return_X_y` is True, then (`data`, `target`) will be pandas
-#         DataFrames or Series as described below.
+    as_frame : bool, default=False
+        If True, the data is a pandas DataFrame including columns with
+        appropriate dtypes (numeric). The target is
+        a pandas DataFrame or Series depending on the number of target columns.
+        If `return_X_y` is True, then (`data`, `target`) will be pandas
+        DataFrames or Series as described below.
 
-#         .. versionadded:: 0.23
+        .. versionadded:: 0.23
 
-#     Returns
-#     -------
-#     data : :class:`~sklearn.utils.Bunch`
-#         Dictionary-like object, with the following attributes.
+    Returns
+    -------
+    data : ndarray of shape (150, 4)
+        The data matrix. If `as_frame=True`, `data` will be a pandas
+        DataFrame.
+    target: ndarray of shape (150,)
+        The classification target. If `as_frame=True`, `target` will be
+        a pandas Series.
+    feature_names: list
+        The names of the dataset columns.
+    target_names: list
+        The names of target classes.
+    DESCR: str
+        The full description of the dataset.
+    filename: str
+            The path to the location of the data.
 
-#         data : {ndarray, dataframe} of shape (150, 4)
-#             The data matrix. If `as_frame=True`, `data` will be a pandas
-#             DataFrame.
-#         target: {ndarray, Series} of shape (150,)
-#             The classification target. If `as_frame=True`, `target` will be
-#             a pandas Series.
-#         feature_names: list
-#             The names of the dataset columns.
-#         target_names: list
-#             The names of target classes.
-#         frame: DataFrame of shape (150, 5)
-#             Only present when `as_frame=True`. DataFrame with `data` and
-#             `target`.
 
-#             .. versionadded:: 0.23
-#         DESCR: str
-#             The full description of the dataset.
-#         filename: str
-#             The path to the location of the data.
+    Notes
+    -----
+        .. versionchanged:: 0.20
+            Fixed two wrong data points according to Fisher's paper.
+            The new version is the same as in R, but not as in the UCI
+            Machine Learning Repository.
 
-#             .. versionadded:: 0.20
+    Examples
+    --------
+    Let's say you are interested in the samples 10, 25, and 50, and want to
+    know their class name.
 
-#     (data, target) : tuple if ``return_X_y`` is True
-#         A tuple of two ndarray. The first containing a 2D array of shape
-#         (n_samples, n_features) with each row representing one sample and
-#         each column representing the features. The second ndarray of shape
-#         (n_samples,) containing the target samples.
+    >>> from sklearn.datasets import load_iris
+    >>> data = load_iris()
+    >>> data.target[[10, 25, 50]]
+    array([0, 0, 1])
+    >>> list(data.target_names)
+    ['setosa', 'versicolor', 'virginica']
 
-#         .. versionadded:: 0.18
+    See :ref:`sphx_glr_auto_examples_datasets_plot_iris_dataset.py` for a more
+    detailed example of how to work with the iris dataset.
 
-#     Notes
-#     -----
-#         .. versionchanged:: 0.20
-#             Fixed two wrong data points according to Fisher's paper.
-#             The new version is the same as in R, but not as in the UCI
-#             Machine Learning Repository.
+    """
 
-#     Examples
-#     --------
-#     Let's say you are interested in the samples 10, 25, and 50, and want to
-#     know their class name.
+    out = load_iris()
 
-#     >>> from sklearn.datasets import load_iris
-#     >>> data = load_iris()
-#     >>> data.target[[10, 25, 50]]
-#     array([0, 0, 1])
-#     >>> list(data.target_names)
-#     ['setosa', 'versicolor', 'virginica']
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    target_names = out["target_names"]
+    DESCR = out["DESCR"]
+    filename = out["filename"]
 
-#     See :ref:`sphx_glr_auto_examples_datasets_plot_iris_dataset.py` for a more
-#     detailed example of how to work with the iris dataset.
+    return data, target, feature_names, target_names, DESCR, filename
 
-#     """
 
-#     def create_iris():
-#         return load_iris(
-#             return_X_y=return_X_y,
-#             as_frame=as_frame,
-#         )
+@NodeDecorator(
+    node_id="_iris_as_frame",
+    name="load_iris_as_frame",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "target_names"},
+        {"name": "DESCR"},
+        {"name": "filename"},
+    ],
+)
+def _iris_as_frame() -> Tuple[DataFrame, Series, List[str], List[str], str, str]:
+    """Load and return the iris dataset (classification).
 
-#     return create_iris()
+    The iris dataset is a classic and very easy multi-class classification
+    dataset.
+
+    =================   ==============
+    Classes                          3
+    Samples per class               50
+    Samples total                  150
+    Dimensionality                   4
+    Features            real, positive
+    =================   ==============
+
+    Read more in the :ref:`User Guide <iris_dataset>`.
+
+    Parameters
+    ----------
+    return_X_y : bool, default=False
+        If True, returns ``(data, target)`` instead of a Bunch object. See
+        below for more information about the `data` and `target` object.
+
+        .. versionadded:: 0.18
+
+    as_frame : bool, default=False
+        If True, the data is a pandas DataFrame including columns with
+        appropriate dtypes (numeric). The target is
+        a pandas DataFrame or Series depending on the number of target columns.
+        If `return_X_y` is True, then (`data`, `target`) will be pandas
+        DataFrames or Series as described below.
+
+        .. versionadded:: 0.23
+
+    Returns
+    -------
+    data : dataframe of shape (150, 4)
+        The data matrix. If `as_frame=True`, `data` will be a pandas
+        DataFrame.
+    target: Series of shape (150,)
+        The classification target. If `as_frame=True`, `target` will be
+        a pandas Series.
+    feature_names: list
+        The names of the dataset columns.
+    target_names: list
+        The names of target classes.
+    DESCR: str
+        The full description of the dataset.
+    filename: str
+            The path to the location of the data.
+
+
+    Notes
+    -----
+        .. versionchanged:: 0.20
+            Fixed two wrong data points according to Fisher's paper.
+            The new version is the same as in R, but not as in the UCI
+            Machine Learning Repository.
+
+    Examples
+    --------
+    Let's say you are interested in the samples 10, 25, and 50, and want to
+    know their class name.
+
+    >>> from sklearn.datasets import load_iris
+    >>> data = load_iris()
+    >>> data.target[[10, 25, 50]]
+    array([0, 0, 1])
+    >>> list(data.target_names)
+    ['setosa', 'versicolor', 'virginica']
+
+    See :ref:`sphx_glr_auto_examples_datasets_plot_iris_dataset.py` for a more
+    detailed example of how to work with the iris dataset.
+
+    """
+
+    out = load_iris(as_frame=True)
+
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    target_names = out["target_names"]
+    DESCR = out["DESCR"]
+    filename = out["filename"]
+
+    return data, target, feature_names, target_names, DESCR, filename
 
 
 # @NodeDecorator(

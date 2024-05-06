@@ -22,12 +22,16 @@ from funcnodes_sklearn.datasets import (
     _olivetti_faces,
     # _openml,
     _rcv1,
-    _species_distributions,
-    # _breast_cancer,
-    # _diabetes,
-    # _digits,
+    # _species_distributions,
+    _breast_cancer,
+    _breast_cancer_as_frame,
+    _diabetes,
+    _diabetes_as_frame,
+    _digits,
+    _digits_as_frame,
     # # _text_files,
-    # _iris,
+    _iris,
+    _iris_as_frame,
     # _linnerud,
     # _sample_image,
     # # _svmlight_file
@@ -275,65 +279,149 @@ class TestRcv1(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target_names, np.ndarray)
         self.assertIsInstance(DESCR, str)
 
-class TestSpeciesDistributions(unittest.IsolatedAsyncioTestCase):
+# class TestSpeciesDistributions(unittest.IsolatedAsyncioTestCase):
+#     async def test_default_parameters(self):
+#         model: fn.Node = _species_distributions()
+#         self.assertIsInstance(model, fn.Node)
+#         model.trigger()
+#         await model
+#         coverages = model.outputs["coverages"].value
+#         train = model.outputs["train"].value
+#         test = model.outputs["test"].value
+#         Nx = model.outputs["Nx"].value
+#         Ny = model.outputs["Ny"].value
+#         x_left_lower_corner = model.outputs["x_left_lower_corner"].value
+#         y_left_lower_corner = model.outputs["y_left_lower_corner"].value
+#         grid_size = model.outputs["grid_size"].value
+#         # self.assertIsInstance(coverages, np.ndarray) # TODO: check if this is a np.array
+#         # self.assertIsInstance(train, np.ndarray) # TODO: check if this is a np.array
+#         # self.assertIsInstance(test, np.ndarray) # TODO: check if this is a np.array
+#         self.assertIsInstance(Nx, int)
+#         self.assertIsInstance(Ny, int)
+#         self.assertIsInstance(x_left_lower_corner, float)
+#         self.assertIsInstance(y_left_lower_corner, float)
+#         self.assertIsInstance(grid_size, float)
+
+class TestBreastCancer(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
-        model: fn.Node = _species_distributions()
+        model: fn.Node = _breast_cancer()
         self.assertIsInstance(model, fn.Node)
         model.trigger()
         await model
-        coverages = model.outputs["coverages"].value
-        train = model.outputs["train"].value
-        test = model.outputs["test"].value
-        Nx = model.outputs["Nx"].value
-        Ny = model.outputs["Ny"].value
-        x_left_lower_corner = model.outputs["x_left_lower_corner"].value
-        y_left_lower_corner = model.outputs["y_left_lower_corner"].value
-        grid_size = model.outputs["grid_size"].value
-        self.assertIsInstance(coverages, np.ndarray)
-        self.assertIsInstance(train, np.ndarray)
-        self.assertIsInstance(test, np.ndarray)
-        self.assertIsInstance(Nx, int)
-        self.assertIsInstance(Ny, int)
-        self.assertIsInstance(x_left_lower_corner, float)
-        self.assertIsInstance(y_left_lower_corner, float)
-        self.assertIsInstance(grid_size, float)
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        feature_names = model.outputs["feature_names"].value
+        target_names = model.outputs["target_names"].value
+        DESCR = model.outputs["DESCR"].value
+        filename = model.outputs["filename"].value
+        
+        self.assertIsInstance(data, np.ndarray)
+        self.assertIsInstance(target, np.ndarray)
+        self.assertIsInstance(feature_names, np.ndarray)
+        self.assertIsInstance(target_names, np.ndarray)
+        self.assertIsInstance(DESCR, str)
+        self.assertIsInstance(filename, str)
+        
+
+class TestBreastCancerAsFrame(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _breast_cancer_as_frame()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        feature_names = model.outputs["feature_names"].value
+        target_names = model.outputs["target_names"].value
+        DESCR = model.outputs["DESCR"].value
+        filename = model.outputs["filename"].value
+        
+        self.assertIsInstance(data, DataFrame)
+        self.assertIsInstance(target, Series)
+        self.assertIsInstance(feature_names, np.ndarray)
+        self.assertIsInstance(target_names, np.ndarray)
+        self.assertIsInstance(DESCR, str)
+        self.assertIsInstance(filename, str)
+        
+
+class TestDiabetes(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _diabetes()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        
+        self.assertIsInstance(data, np.ndarray)
+        self.assertIsInstance(target, np.ndarray)
+        
+
+class TestDiabetesAsFrame(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _diabetes_as_frame()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        
+        self.assertIsInstance(data, DataFrame)
+        self.assertIsInstance(target, Series)
+
+class TestDigits(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _digits()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        self.assertIsInstance(data, np.ndarray)
+        self.assertIsInstance(target, np.ndarray)
+        
+
+class TestDigitsAsFrame(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _diabetes_as_frame()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        self.assertIsInstance(data, DataFrame)
+        self.assertIsInstance(target, Series)
 
 
-# class TestSpeciesDistributions(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _species_distributions()
-#         self.assertIsInstance(dataset, dict)
-#         # self.assertEqual(
-#         #     list(dataset.keys()),
-#         #     ["data", "target", "frame", "target_names", "DESCR"],
-#         # )
-#         self.assertEqual(dataset['coverages'].shape,(14, 1592, 1212))
-
-
-# class TestBreastCancer(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _breast_cancer()
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(list(dataset.target_names), ["malignant", "benign"])
-
-
-# class TestDiabetes(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _diabetes()
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(dataset.data.shape, (442, 10))
-
-# class TestDigits(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _digits()
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(dataset.data.shape, (1797, 64))
 
 # # class TestTextFiles(unittest.IsolatedAsyncioTestCase):
 # #     def test_default_parameters(self):
 # #         dataset = _text_files()
 # #         self.assertIsInstance(dataset, dict)
 
+class TestIris(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _iris()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        self.assertIsInstance(data, np.ndarray)
+        self.assertIsInstance(target, np.ndarray)
+        
+
+class TestIrisAsFrame(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _iris_as_frame()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        self.assertIsInstance(data, DataFrame)
+        self.assertIsInstance(target, Series)
+        
 # class TestIris(unittest.IsolatedAsyncioTestCase):
 #     def test_default_parameters(self):
 #         dataset = _iris()
