@@ -369,7 +369,7 @@ class TestKMeans(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(clustering.tol, tol)
         self.assertEqual(clustering.verbose, verbose)
         self.assertEqual(clustering.random_state, random_state)
-        self.assertTrue(clustering.copy_x, copy_x)
+        self.assertFalse(clustering.copy_x, copy_x)
         self.assertEqual(clustering.algorithm, algorithm)
 
 
@@ -433,7 +433,7 @@ class TestBisectingKMeans(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(clustering.tol, tol)
         self.assertEqual(clustering.verbose, verbose)
         self.assertEqual(clustering.random_state, random_state)
-        self.assertTrue(clustering.copy_x, copy_x)
+        self.assertFalse(clustering.copy_x, copy_x)
         self.assertEqual(clustering.algorithm, algorithm)
 
 

@@ -2,3 +2,5 @@
 .coverage
 
 test_dev.ipynb
+.venv
+dist/

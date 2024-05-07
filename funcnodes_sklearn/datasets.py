@@ -1,17 +1,18 @@
-from ctypes.wintypes import SERVICE_STATUS_HANDLE
+# from ctypes.wintypes import SERVICE_STATUS_HANDLE
 from funcnodes import Shelf, NodeDecorator
-from funcnodes.io import NoValue
+
+# from funcnodes.io import NoValue
 from pandas.core.frame import DataFrame
 from pandas import Series
 from scipy.sparse import spmatrix
 import numpy as np
-from funcnodes_sklearn._utils import DataSet
 import os
 from enum import Enum
-import warnings
+from funcnodes_images import NumpyImageFormat
+
+# import warnings
 from numpy.random import RandomState
-from typing import Type, List, Optional, Union, Tuple, Literal, Any
-from sklearn.utils import Bunch
+from typing import List, Optional, Union, Tuple
 from sklearn.datasets import (
     fetch_20newsgroups,
     fetch_20newsgroups_vectorized,
@@ -21,38 +22,38 @@ from sklearn.datasets import (
     fetch_lfw_pairs,
     fetch_lfw_people,
     fetch_olivetti_faces,
-    fetch_openml,
+    # fetch_openml,
     fetch_rcv1,
-    fetch_species_distributions,
+    # fetch_species_distributions,
     load_breast_cancer,
     load_diabetes,
     load_digits,
-    load_files,
+    # load_files,
     load_iris,
     load_linnerud,
     load_sample_image,
-    load_svmlight_file,
+    # load_svmlight_file,
     load_wine,
-    make_biclusters,
-    make_blobs,
-    make_checkerboard,
-    make_circles,
-    make_classification,
-    make_friedman1,
-    make_friedman2,
-    make_friedman3,
-    make_gaussian_quantiles,
-    make_hastie_10_2,
-    make_low_rank_matrix,
-    make_moons,
-    make_multilabel_classification,
-    make_regression,
-    make_s_curve,
-    make_sparse_coded_signal,
-    make_sparse_spd_matrix,
-    make_sparse_uncorrelated,
-    make_spd_matrix,
-    make_swiss_roll,
+    # make_biclusters,
+    # make_blobs,
+    # make_checkerboard,
+    # make_circles,
+    # make_classification,
+    # make_friedman1,
+    # make_friedman2,
+    # make_friedman3,
+    # make_gaussian_quantiles,
+    # make_hastie_10_2,
+    # make_low_rank_matrix,
+    # make_moons,
+    # make_multilabel_classification,
+    # make_regression,
+    # make_s_curve,
+    # make_sparse_coded_signal,
+    # make_sparse_spd_matrix,
+    # make_sparse_uncorrelated,
+    # make_spd_matrix,
+    # make_swiss_roll,
 )
 
 
@@ -534,7 +535,7 @@ def _california_housing(
     target_names = out["target_names"]
     DESCR = out["DESCR"]
 
-    return data, target, target_names, DESCR
+    return data, target, DESCR, target_names
 
 
 @NodeDecorator(
@@ -2650,142 +2651,203 @@ def _iris_as_frame() -> Tuple[DataFrame, Series, List[str], List[str], str, str]
     return data, target, feature_names, target_names, DESCR, filename
 
 
-# @NodeDecorator(
-#     node_id = "_linnerud",
-#     name="load_linnerud",
-# )
-# def _linnerud(
-#     return_X_y: bool = False,
-#     as_frame: bool = False,
-# ) -> dict:
-#     """Load and return the physical exercise Linnerud dataset.
+@NodeDecorator(
+    node_id="_linnerud",
+    name="load_linnerud",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "target_names"},
+        {"name": "DESCR"},
+        {"name": "data_filename"},
+        {"name": "target_filename"},
+    ],
+)
+def _linnerud() -> Tuple[np.ndarray, np.ndarray, List[str], List[str], str, str, str]:
+    """Load and return the physical exercise Linnerud dataset.
 
-#     This dataset is suitable for multi-output regression tasks.
+    This dataset is suitable for multi-output regression tasks.
 
-#     ==============   ============================
-#     Samples total    20
-#     Dimensionality   3 (for both data and target)
-#     Features         integer
-#     Targets          integer
-#     ==============   ============================
+    ==============   ============================
+    Samples total    20
+    Dimensionality   3 (for both data and target)
+    Features         integer
+    Targets          integer
+    ==============   ============================
 
-#     Read more in the :ref:`User Guide <linnerrud_dataset>`.
-
-#     Parameters
-#     ----------
-#     return_X_y : bool, default=False
-#         If True, returns ``(data, target)`` instead of a Bunch object.
-#         See below for more information about the `data` and `target` object.
-
-#         .. versionadded:: 0.18
-
-#     as_frame : bool, default=False
-#         If True, the data is a pandas DataFrame including columns with
-#         appropriate dtypes (numeric, string or categorical). The target is
-#         a pandas DataFrame or Series depending on the number of target columns.
-#         If `return_X_y` is True, then (`data`, `target`) will be pandas
-#         DataFrames or Series as described below.
-
-#         .. versionadded:: 0.23
-
-#     Returns
-#     -------
-#     data : :class:`~sklearn.utils.Bunch`
-#         Dictionary-like object, with the following attributes.
-
-#         data : {ndarray, dataframe} of shape (20, 3)
-#             The data matrix. If `as_frame=True`, `data` will be a pandas
-#             DataFrame.
-#         target: {ndarray, dataframe} of shape (20, 3)
-#             The regression targets. If `as_frame=True`, `target` will be
-#             a pandas DataFrame.
-#         feature_names: list
-#             The names of the dataset columns.
-#         target_names: list
-#             The names of the target columns.
-#         frame: DataFrame of shape (20, 6)
-#             Only present when `as_frame=True`. DataFrame with `data` and
-#             `target`.
-
-#             .. versionadded:: 0.23
-#         DESCR: str
-#             The full description of the dataset.
-#         data_filename: str
-#             The path to the location of the data.
-#         target_filename: str
-#             The path to the location of the target.
-
-#             .. versionadded:: 0.20
-
-#     (data, target) : tuple if ``return_X_y`` is True
-#         Returns a tuple of two ndarrays or dataframe of shape
-#         `(20, 3)`. Each row represents one sample and each column represents the
-#         features in `X` and a target in `y` of a given sample.
-
-#         .. versionadded:: 0.18
-#     """
-
-#     def create_linnerud():
-#         return load_linnerud(
-#             return_X_y=return_X_y,
-#             as_frame=as_frame,
-#         )
-
-#     return create_linnerud()
+    Read more in the :ref:`User Guide <linnerrud_dataset>`.
 
 
-# class SampleImage(Enum):
-#     CHINA = "china.jpg"
-#     FLOWER = "flower.jpg"
+    Returns
+    -------
 
-#     @classmethod
-#     def default(cls):
-#         return cls.FLOWER.value
+    data : ndarray of shape (20, 3)
+        The data matrix. If `as_frame=True`, `data` will be a pandas
+        DataFrame.
+    target: ndarray of shape (20, 3)
+        The regression targets. If `as_frame=True`, `target` will be
+        a pandas DataFrame.
+    feature_names: list
+        The names of the dataset columns.
+    target_names: list
+        The names of the target columns.
+    DESCR: str
+        The full description of the dataset.
+    data_filename: str
+        The path to the location of the data.
+    target_filename: str
+        The path to the location of the target.
 
 
-# @NodeDecorator(
-#     node_id = "_sample_image",
-#     name="load_sample_image",
-# )
-# def _sample_image(
-#     image_name: SampleImage = SampleImage.default(),
-# ) -> np.ndarray:
-#     """Load the numpy array of a single sample image.
+    """
 
-#     Read more in the :ref:`User Guide <sample_images>`.
+    out = load_linnerud()
 
-#     Parameters
-#     ----------
-#     image_name : {`china.jpg`, `flower.jpg`}
-#         The name of the sample image loaded.
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    target_names = out["target_names"]
+    DESCR = out["DESCR"]
+    data_filename = out["data_filename"]
+    target_filename = out["target_filename"]
 
-#     Returns
-#     -------
-#     img : 3D array
-#         The image as a numpy array: height x width x color.
+    return (
+        data,
+        target,
+        feature_names,
+        target_names,
+        DESCR,
+        data_filename,
+        target_filename,
+    )
 
-#     Examples
-#     --------
 
-#     >>> from sklearn.datasets import load_sample_image
-#     >>> china = load_sample_image('china.jpg')   # doctest: +SKIP
-#     >>> china.dtype                              # doctest: +SKIP
-#     dtype('uint8')
-#     >>> china.shape                              # doctest: +SKIP
-#     (427, 640, 3)
-#     >>> flower = load_sample_image('flower.jpg') # doctest: +SKIP
-#     >>> flower.dtype                             # doctest: +SKIP
-#     dtype('uint8')
-#     >>> flower.shape                             # doctest: +SKIP
-#     (427, 640, 3)
-#     """
+@NodeDecorator(
+    node_id="_linnerud_as_frame",
+    name="load_linnerud_as_frame",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "target_names"},
+        {"name": "DESCR"},
+        {"name": "data_filename"},
+        {"name": "target_filename"},
+    ],
+)
+def _linnerud_as_frame() -> (
+    Tuple[DataFrame, DataFrame, List[str], List[str], str, str, str]
+):
+    """Load and return the physical exercise Linnerud dataset.
 
-#     def create_sample_image():
-#         return load_sample_image(
-#             image_name=image_name,
-#         )
+    This dataset is suitable for multi-output regression tasks.
 
-#     return create_sample_image()
+    ==============   ============================
+    Samples total    20
+    Dimensionality   3 (for both data and target)
+    Features         integer
+    Targets          integer
+    ==============   ============================
+
+    Read more in the :ref:`User Guide <linnerrud_dataset>`.
+
+
+    Returns
+    -------
+
+    data : dataframe of shape (20, 3)
+        The data matrix. If `as_frame=True`, `data` will be a pandas
+        DataFrame.
+    target: series of shape (20, 3)
+        The regression targets. If `as_frame=True`, `target` will be
+        a pandas DataFrame.
+    feature_names: list
+        The names of the dataset columns.
+    target_names: list
+        The names of the target columns.
+    DESCR: str
+        The full description of the dataset.
+    data_filename: str
+        The path to the location of the data.
+    target_filename: str
+        The path to the location of the target.
+
+
+    """
+
+    out = load_linnerud(as_frame=True)
+
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    target_names = out["target_names"]
+    DESCR = out["DESCR"]
+    data_filename = out["data_filename"]
+    target_filename = out["target_filename"]
+
+    return (
+        data,
+        target,
+        feature_names,
+        target_names,
+        DESCR,
+        data_filename,
+        target_filename,
+    )
+
+
+class SampleImage(Enum):
+    CHINA = "china.jpg"
+    FLOWER = "flower.jpg"
+
+    @classmethod
+    def default(cls):
+        return cls.FLOWER.value
+
+
+@NodeDecorator(
+    node_id="_sample_image",
+    name="load_sample_image",
+)
+def _sample_image(
+    image_name: SampleImage = SampleImage.default(),
+) -> NumpyImageFormat:
+    """Load the numpy array of a single sample image.
+
+    Read more in the :ref:`User Guide <sample_images>`.
+
+    Parameters
+    ----------
+    image_name : {`china.jpg`, `flower.jpg`}
+        The name of the sample image loaded.
+
+    Returns
+    -------
+    img : 3D array
+        The image as a numpy array: height x width x color.
+
+    Examples
+    --------
+
+    >>> from sklearn.datasets import load_sample_image
+    >>> china = load_sample_image('china.jpg')   # doctest: +SKIP
+    >>> china.dtype                              # doctest: +SKIP
+    dtype('uint8')
+    >>> china.shape                              # doctest: +SKIP
+    (427, 640, 3)
+    >>> flower = load_sample_image('flower.jpg') # doctest: +SKIP
+    >>> flower.dtype                             # doctest: +SKIP
+    dtype('uint8')
+    >>> flower.shape                             # doctest: +SKIP
+    (427, 640, 3)
+    """
+
+    return NumpyImageFormat(
+        load_sample_image(
+            image_name=image_name,
+        )
+    )
 
 
 # @NodeDecorator(
@@ -2934,128 +2996,185 @@ def _iris_as_frame() -> Tuple[DataFrame, Series, List[str], List[str], str, str]
 #     return create_svmlight_file()
 
 
-# @NodeDecorator(
-#     node_id = "_wine",
-#     name="load_wine",
-# )
-# def _wine(
-#     return_X_y: bool = False,
-#     as_frame: bool = False,
-# ) -> dict:
-#     """Load and return the wine dataset (classification).
+@NodeDecorator(
+    node_id="_wine",
+    name="load_wine",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "target_names"},
+        {"name": "DESCR"},
+    ],
+)
+def _wine() -> Tuple[np.ndarray, np.ndarray, List[str], List[str], str]:
+    """Load and return the wine dataset (classification).
 
-#     .. versionadded:: 0.18
+    .. versionadded:: 0.18
 
-#     The wine dataset is a classic and very easy multi-class classification
-#     dataset.
+    The wine dataset is a classic and very easy multi-class classification
+    dataset.
 
-#     =================   ==============
-#     Classes                          3
-#     Samples per class        [59,71,48]
-#     Samples total                  178
-#     Dimensionality                  13
-#     Features            real, positive
-#     =================   ==============
+    =================   ==============
+    Classes                          3
+    Samples per class        [59,71,48]
+    Samples total                  178
+    Dimensionality                  13
+    Features            real, positive
+    =================   ==============
 
-#     The copy of UCI ML Wine Data Set dataset is downloaded and modified to fit
-#     standard format from:
-#     https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data
+    The copy of UCI ML Wine Data Set dataset is downloaded and modified to fit
+    standard format from:
+    https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data
 
-#     Read more in the :ref:`User Guide <wine_dataset>`.
+    Read more in the :ref:`User Guide <wine_dataset>`.
 
-#     Parameters
-#     ----------
-#     return_X_y : bool, default=False
-#         If True, returns ``(data, target)`` instead of a Bunch object.
-#         See below for more information about the `data` and `target` object.
+    Returns
+    -------
+        data : ndarray of shape (178, 13)
+            The data matrix. If `as_frame=True`, `data` will be a pandas
+            DataFrame.
+        target: ndarray of shape (178,)
+            The classification target. If `as_frame=True`, `target` will be
+            a pandas Series.
+        feature_names: list
+            The names of the dataset columns.
+        target_names: list
+            The names of target classes.
+        DESCR: str
+            The full description of the dataset.
 
-#     as_frame : bool, default=False
-#         If True, the data is a pandas DataFrame including columns with
-#         appropriate dtypes (numeric). The target is
-#         a pandas DataFrame or Series depending on the number of target columns.
-#         If `return_X_y` is True, then (`data`, `target`) will be pandas
-#         DataFrames or Series as described below.
+    Examples
+    --------
+    Let's say you are interested in the samples 10, 80, and 140, and want to
+    know their class name.
 
-#         .. versionadded:: 0.23
+    >>> from sklearn.datasets import load_wine
+    >>> data = load_wine()
+    >>> data.target[[10, 80, 140]]
+    array([0, 1, 2])
+    >>> list(data.target_names)
+    ['class_0', 'class_1', 'class_2']
 
-#     Returns
-#     -------
-#     data : :class:`~sklearn.utils.Bunch`
-#         Dictionary-like object, with the following attributes.
+    """
+    out = load_wine()
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    target_names = out["target_names"]
+    DESCR = out["DESCR"]
 
-#         data : {ndarray, dataframe} of shape (178, 13)
-#             The data matrix. If `as_frame=True`, `data` will be a pandas
-#             DataFrame.
-#         target: {ndarray, Series} of shape (178,)
-#             The classification target. If `as_frame=True`, `target` will be
-#             a pandas Series.
-#         feature_names: list
-#             The names of the dataset columns.
-#         target_names: list
-#             The names of target classes.
-#         frame: DataFrame of shape (178, 14)
-#             Only present when `as_frame=True`. DataFrame with `data` and
-#             `target`.
-
-#             .. versionadded:: 0.23
-#         DESCR: str
-#             The full description of the dataset.
-
-#     (data, target) : tuple if ``return_X_y`` is True
-#         A tuple of two ndarrays by default. The first contains a 2D array of shape
-#         (178, 13) with each row representing one sample and each column representing
-#         the features. The second array of shape (178,) contains the target samples.
-
-#     Examples
-#     --------
-#     Let's say you are interested in the samples 10, 80, and 140, and want to
-#     know their class name.
-
-#     >>> from sklearn.datasets import load_wine
-#     >>> data = load_wine()
-#     >>> data.target[[10, 80, 140]]
-#     array([0, 1, 2])
-#     >>> list(data.target_names)
-#     ['class_0', 'class_1', 'class_2']
-
-#     """
-
-#     def create_wine():
-#         return load_wine(
-#             return_X_y=return_X_y,
-#             as_frame=as_frame,
-#         )
-
-#     return create_wine()
+    return data, target, feature_names, target_names, DESCR
 
 
-# LOADER_NODE_SHELF = Shelf(
-#     nodes=[
-#         # _20newsgroups,
-#         # _20newsgroups_vectorized,
-#         _california_housing,
-#         _covtype,
-#         _kddcup99,
-#         _lfw_pairs,
-#         _lfw_people,
-#         _olivetti_faces,
-#         _openml,
-#         _rcv1,
-#         _species_distributions,
-#         _breast_cancer,
-#         _diabetes,
-#         _digits,
-#         _text_files,
-#         _iris,
-#         _linnerud,
-#         _sample_image,
-#         _svmlight_file,
-#         _wine,
-#     ],
-#     subshelves=[],
-#     name="Loaders",
-#     description="The sklearn.datasets package embeds some small toy datasets as introduced in the Getting Started section. This package also features helpers to fetch larger datasets commonly used by the machine learning community to benchmark algorithms on data that comes from the ‘real world’. To evaluate the impact of the scale of the dataset (n_samples and n_features) while controlling the statistical properties of the data (typically the correlation and informativeness of the features), it is also possible to generate synthetic data.",
-# )
+@NodeDecorator(
+    node_id="_wine_as_frame",
+    name="load_wine_as_frame",
+    outputs=[
+        {"name": "data"},
+        {"name": "target"},
+        {"name": "feature_names"},
+        {"name": "target_names"},
+        {"name": "DESCR"},
+    ],
+)
+def _wine_as_frame() -> Tuple[DataFrame, Series, List[str], List[str], str]:
+    """Load and return the wine dataset (classification).
+
+    .. versionadded:: 0.18
+
+    The wine dataset is a classic and very easy multi-class classification
+    dataset.
+
+    =================   ==============
+    Classes                          3
+    Samples per class        [59,71,48]
+    Samples total                  178
+    Dimensionality                  13
+    Features            real, positive
+    =================   ==============
+
+    The copy of UCI ML Wine Data Set dataset is downloaded and modified to fit
+    standard format from:
+    https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data
+
+    Read more in the :ref:`User Guide <wine_dataset>`.
+
+    Returns
+    -------
+        data : Dataframe of shape (178, 13)
+            The data matrix. If `as_frame=True`, `data` will be a pandas
+            DataFrame.
+        target: Series of shape (178,)
+            The classification target. If `as_frame=True`, `target` will be
+            a pandas Series.
+        feature_names: list
+            The names of the dataset columns.
+        target_names: list
+            The names of target classes.
+        DESCR: str
+            The full description of the dataset.
+
+    Examples
+    --------
+    Let's say you are interested in the samples 10, 80, and 140, and want to
+    know their class name.
+
+    >>> from sklearn.datasets import load_wine
+    >>> data = load_wine()
+    >>> data.target[[10, 80, 140]]
+    array([0, 1, 2])
+    >>> list(data.target_names)
+    ['class_0', 'class_1', 'class_2']
+
+    """
+    out = load_wine(as_frame=True)
+    data = out["data"]
+    target = out["target"]
+    feature_names = out["feature_names"]
+    target_names = out["target_names"]
+    DESCR = out["DESCR"]
+
+    return data, target, feature_names, target_names, DESCR
+
+
+LOADER_NODE_SHELF = Shelf(
+    nodes=[
+        _20newsgroups,
+        _20newsgroups_vectorized,
+        _20newsgroups_vectorized_as_frame,
+        _california_housing,
+        _california_housing_as_frame,
+        _covtype,
+        _covtype_as_frame,
+        _kddcup99,
+        _kddcup99_as_frame,
+        _lfw_pairs,
+        _lfw_people,
+        _olivetti_faces,
+        # _openml,
+        _rcv1,
+        # _species_distributions,
+        _breast_cancer,
+        _breast_cancer_as_frame,
+        _diabetes,
+        _diabetes_as_frame,
+        _digits,
+        _digits_as_frame,
+        # _text_files,
+        _iris,
+        _iris_as_frame,
+        _linnerud,
+        _linnerud_as_frame,
+        _sample_image,
+        # _svmlight_file,
+        _wine,
+        _wine_as_frame,
+    ],
+    subshelves=[],
+    name="Loaders",
+    description="The sklearn.datasets package embeds some small toy datasets as introduced in the Getting Started section. This package also features helpers to fetch larger datasets commonly used by the machine learning community to benchmark algorithms on data that comes from the ‘real world’. To evaluate the impact of the scale of the dataset (n_samples and n_features) while controlling the statistical properties of the data (typically the correlation and informativeness of the features), it is also possible to generate synthetic data.",
+)
 
 
 # @NodeDecorator(

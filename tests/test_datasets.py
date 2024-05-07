@@ -28,14 +28,16 @@ from funcnodes_sklearn.datasets import (
     _diabetes,
     _diabetes_as_frame,
     _digits,
-    _digits_as_frame,
+    # _digits_as_frame,
     # # _text_files,
     _iris,
     _iris_as_frame,
-    # _linnerud,
-    # _sample_image,
+    _linnerud,
+    _linnerud_as_frame,
+    _sample_image,
     # # _svmlight_file
-    # _wine,
+    _wine,
+    _wine_as_frame,
     # _biclusters,
     # _blobs,
     # _checkerboard,
@@ -188,7 +190,6 @@ class TestKddcup99AsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _kddcup99_as_frame()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -279,6 +280,7 @@ class TestRcv1(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target_names, np.ndarray)
         self.assertIsInstance(DESCR, str)
 
+
 # class TestSpeciesDistributions(unittest.IsolatedAsyncioTestCase):
 #     async def test_default_parameters(self):
 #         model: fn.Node = _species_distributions()
@@ -302,6 +304,7 @@ class TestRcv1(unittest.IsolatedAsyncioTestCase):
 #         self.assertIsInstance(y_left_lower_corner, float)
 #         self.assertIsInstance(grid_size, float)
 
+
 class TestBreastCancer(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _breast_cancer()
@@ -314,14 +317,14 @@ class TestBreastCancer(unittest.IsolatedAsyncioTestCase):
         target_names = model.outputs["target_names"].value
         DESCR = model.outputs["DESCR"].value
         filename = model.outputs["filename"].value
-        
+
         self.assertIsInstance(data, np.ndarray)
         self.assertIsInstance(target, np.ndarray)
         self.assertIsInstance(feature_names, np.ndarray)
         self.assertIsInstance(target_names, np.ndarray)
         self.assertIsInstance(DESCR, str)
         self.assertIsInstance(filename, str)
-        
+
 
 class TestBreastCancerAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
@@ -335,14 +338,14 @@ class TestBreastCancerAsFrame(unittest.IsolatedAsyncioTestCase):
         target_names = model.outputs["target_names"].value
         DESCR = model.outputs["DESCR"].value
         filename = model.outputs["filename"].value
-        
+
         self.assertIsInstance(data, DataFrame)
         self.assertIsInstance(target, Series)
         self.assertIsInstance(feature_names, np.ndarray)
         self.assertIsInstance(target_names, np.ndarray)
         self.assertIsInstance(DESCR, str)
         self.assertIsInstance(filename, str)
-        
+
 
 class TestDiabetes(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
@@ -352,10 +355,10 @@ class TestDiabetes(unittest.IsolatedAsyncioTestCase):
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
-        
+
         self.assertIsInstance(data, np.ndarray)
         self.assertIsInstance(target, np.ndarray)
-        
+
 
 class TestDiabetesAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
@@ -365,9 +368,10 @@ class TestDiabetesAsFrame(unittest.IsolatedAsyncioTestCase):
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
-        
+
         self.assertIsInstance(data, DataFrame)
         self.assertIsInstance(target, Series)
+
 
 class TestDigits(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
@@ -379,7 +383,7 @@ class TestDigits(unittest.IsolatedAsyncioTestCase):
         target = model.outputs["target"].value
         self.assertIsInstance(data, np.ndarray)
         self.assertIsInstance(target, np.ndarray)
-        
+
 
 class TestDigitsAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
@@ -393,11 +397,11 @@ class TestDigitsAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, Series)
 
 
-
 # # class TestTextFiles(unittest.IsolatedAsyncioTestCase):
 # #     def test_default_parameters(self):
 # #         dataset = _text_files()
 # #         self.assertIsInstance(dataset, dict)
+
 
 class TestIris(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
@@ -409,7 +413,7 @@ class TestIris(unittest.IsolatedAsyncioTestCase):
         target = model.outputs["target"].value
         self.assertIsInstance(data, np.ndarray)
         self.assertIsInstance(target, np.ndarray)
-        
+
 
 class TestIrisAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
@@ -421,31 +425,72 @@ class TestIrisAsFrame(unittest.IsolatedAsyncioTestCase):
         target = model.outputs["target"].value
         self.assertIsInstance(data, DataFrame)
         self.assertIsInstance(target, Series)
-        
-# class TestIris(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _iris()
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(list(dataset.target_names), ['setosa', 'versicolor', 'virginica'])
 
-# class TestLinnerud(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _linnerud()
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(
-#             list(dataset.keys()),
-#             ['data','feature_names', 'target', 'target_names', 'frame', 'DESCR', 'data_filename', 'target_filename', 'data_module']
-#         )
-# class TestSampleImage(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _sample_image()
-#         self.assertIsInstance(dataset, np.ndarray)
-#         self.assertEqual(dataset.shape, (427, 640, 3))
+
+class TestLinnerud(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _linnerud()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        self.assertIsInstance(data, np.ndarray)
+        self.assertIsInstance(target, np.ndarray)
+
+
+class TestLinnerudAsFrame(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _linnerud_as_frame()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        self.assertIsInstance(data, DataFrame)
+        self.assertIsInstance(target, DataFrame)
+
+
+class TestSampleImage(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _sample_image()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        img = model.outputs["out"].value
+        self.assertIsInstance(img.data, np.ndarray)
+        self.assertEqual(img.data.shape, (427, 640, 3))
+
 
 # # class TestSVMFile(unittest.IsolatedAsyncioTestCase):
 # #     def test_default_parameters(self):
 # #         dataset = _svmlight_file()
 # #         self.assertIsInstance(dataset, Tuple)
+
+
+class TestWine(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _wine()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        self.assertIsInstance(data, np.ndarray)
+        self.assertIsInstance(target, np.ndarray)
+
+
+class TestWineAsFrame(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        model: fn.Node = _wine_as_frame()
+        self.assertIsInstance(model, fn.Node)
+        model.trigger()
+        await model
+        data = model.outputs["data"].value
+        target = model.outputs["target"].value
+        self.assertIsInstance(data, DataFrame)
+        self.assertIsInstance(target, Series)
+
 
 # class TestWine(unittest.IsolatedAsyncioTestCase):
 #     def test_default_parameters(self):
