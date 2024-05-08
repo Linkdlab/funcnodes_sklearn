@@ -291,7 +291,7 @@ def _kernel_lpca(
 
 
 
-CROSS_DECOMPOSITION_NODE_SHELFE = Shelf(
+DECOMPOSITION_NODE_SHELFE = Shelf(
     nodes=[
         _dictionary_learning,
         _factor_analysis,

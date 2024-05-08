@@ -335,9 +335,9 @@ def calibrationcurve(
     )
 
 
-# CALIBRATION_NODE_SHELFE = Shelf(
-#     nodes=[calibrated_classifier_cv, calibrationcurve],
-#     subshelves=[],
-#     name="Calibration",
-#     description="Calibration of predicted probabilities.",
-# )
+CALIBRATION_NODE_SHELFE = Shelf(
+    nodes=[calibrated_classifier_cv, calibrationcurve],
+    subshelves=[],
+    name="Calibration",
+    description="Calibration of predicted probabilities.",
+)

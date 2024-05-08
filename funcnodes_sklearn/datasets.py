@@ -8,8 +8,6 @@ from scipy.sparse import spmatrix
 import numpy as np
 import os
 from enum import Enum
-from funcnodes_images import NumpyImageFormat
-
 # import warnings
 from numpy.random import RandomState
 from typing import List, Optional, Union, Tuple
@@ -2812,7 +2810,7 @@ class SampleImage(Enum):
 )
 def _sample_image(
     image_name: SampleImage = SampleImage.default(),
-) -> NumpyImageFormat:
+) -> np.ndarray:
     """Load the numpy array of a single sample image.
 
     Read more in the :ref:`User Guide <sample_images>`.
@@ -2843,11 +2841,7 @@ def _sample_image(
     (427, 640, 3)
     """
 
-    return NumpyImageFormat(
-        load_sample_image(
-            image_name=image_name,
-        )
-    )
+    return load_sample_image(image_name=image_name)
 
 
 # @NodeDecorator(
@@ -3138,7 +3132,7 @@ def _wine_as_frame() -> Tuple[DataFrame, Series, List[str], List[str], str]:
     return data, target, feature_names, target_names, DESCR
 
 
-LOADER_NODE_SHELF = Shelf(
+DATASET_LOADER_NODE_SHELF = Shelf(
     nodes=[
         _20newsgroups,
         _20newsgroups_vectorized,
