@@ -458,8 +458,8 @@ class TestSampleImage(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         img = model.outputs["out"].value
-        self.assertIsInstance(img.data, np.ndarray)
-        self.assertEqual(img.data.shape, (427, 640, 3))
+        self.assertIsInstance(img, np.ndarray)
+        self.assertEqual(img.shape, (427, 640, 3))
 
 
 # # class TestSVMFile(unittest.IsolatedAsyncioTestCase):

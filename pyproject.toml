@@ -1,9 +1,13 @@
 [tool.poetry]
 name = "funcnodes-sklearn"
-version = "0.1.2"
+version = "0.1.4"
 description = ""
 authors = ["Kourosh Rezaei <kouroshrezaei90@gmail.com>"]
 readme = "README.md"
+
+homepage = "https://linkdlab.de/"
+
+repository = "https://github.com/kouroshrezaei/funcnodes_sklearn"
 
 [tool.poetry.dependencies]
 python = "^3.11"

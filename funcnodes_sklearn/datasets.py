@@ -3132,7 +3132,7 @@ def _wine_as_frame() -> Tuple[DataFrame, Series, List[str], List[str], str]:
     return data, target, feature_names, target_names, DESCR
 
 
-DATASET_LOADER_NODE_SHELF = Shelf(
+LOADERS_NODE_SHELF = Shelf(
     nodes=[
         _20newsgroups,
         _20newsgroups_vectorized,
@@ -4357,3 +4357,11 @@ DATASET_LOADER_NODE_SHELF = Shelf(
 #     pwc = out[3] if return_distributions else NoValue
 
 #     return X, Y, pc, pwc
+
+
+DATASET_NODE_SHELF = Shelf(
+    nodes=[],
+    subshelves=[LOADERS_NODE_SHELF],
+    name="Datasets",
+    description="The sklearn.datasets module includes utilities to load datasets, including methods to load and fetch popular reference datasets. It also features some artificial data generators.",
+)

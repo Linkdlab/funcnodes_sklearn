@@ -5,10 +5,10 @@ from .covariance import COVARIANCE_NODE_SHELFE
 from .calibration import CALIBRATION_NODE_SHELFE
 from .cluster import CLUSTER_NODE_SHELFE
 from .cross_decomposition import CROSS_DECOMPOSITION_NODE_SHELFE
-from .datasets import DATASET_LOADER_NODE_SHELF
+from .datasets import DATASET_NODE_SHELF
 from .decomposition import DECOMPOSITION_NODE_SHELFE
 
-__version__ = "0.1.2"
+__version__ = "0.1.4"
 
 NODE_SHELF = fn.Shelf(
     name="sklearn",
@@ -19,7 +19,7 @@ NODE_SHELF = fn.Shelf(
         CLUSTER_NODE_SHELFE,
         COVARIANCE_NODE_SHELFE,
         CROSS_DECOMPOSITION_NODE_SHELFE,
-        DATASET_LOADER_NODE_SHELF,
+        DATASET_NODE_SHELF,
         DECOMPOSITION_NODE_SHELFE,
     ],
 )
