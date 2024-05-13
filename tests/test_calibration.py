@@ -33,7 +33,7 @@ class TestCalibratedClassifierCV(unittest.IsolatedAsyncioTestCase):
         calibrated_clf.trigger()
         await calibrated_clf
         out = calibrated_clf.outputs["out"]
-        model = out.value
+        model = out.value()
         X, y = make_classification(
             n_samples=100, n_features=2, n_redundant=0, random_state=42
         )
@@ -53,7 +53,7 @@ class TestCalibratedClassifierCV(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(calibrated_clf, fn.Node)
         await calibrated_clf
         out = calibrated_clf.outputs["out"]
-        model = out.value
+        model = out.value()
         X, y = make_classification(
             n_samples=100, n_features=2, n_redundant=0, random_state=42
         )
@@ -86,7 +86,7 @@ class TestCalibratedClassifierCV(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(calibrated_clf, fn.Node)
         await calibrated_clf
         out = calibrated_clf.outputs["out"]
-        model = out.value
+        model = out.value()
 
         self.assertIsInstance(out, fn.NodeOutput)
         self.assertIsInstance(model, ClassifierMixin)
@@ -99,11 +99,11 @@ class TestCalibratedClassifierCV(unittest.IsolatedAsyncioTestCase):
 
     async def test_isotonic_calibration(self):
         calibrated_clf: fn.Node = calibrated_classifier_cv()
-        calibrated_clf.inputs["method"].value = Method.ISOTONIC.value
+        calibrated_clf.inputs["method"].value = Method.isotonic.value
         self.assertIsInstance(calibrated_clf, fn.Node)
         await calibrated_clf
         out = calibrated_clf.outputs["out"]
-        model = out.value
+        model = out.value()
         X, y = make_classification(
             n_samples=100, n_features=2, n_redundant=0, random_state=42
         )
@@ -136,7 +136,7 @@ class TestCalibrationCurve(unittest.IsolatedAsyncioTestCase):
         calibrated_clf: fn.Node = calibrationcurve()
         calibrated_clf.inputs["y_true"].value = y_true
         calibrated_clf.inputs["y_prob"].value = y_prob
-        calibrated_clf.inputs["strategy"].value = Strategy.QUANTILE.value
+        calibrated_clf.inputs["strategy"].value = Strategy.quantile.value
         calibrated_clf.inputs["n_bins"].value = 3
         calibrated_clf.inputs["pos_label"].value = 1.1
         self.assertIsInstance(calibrated_clf, fn.Node)

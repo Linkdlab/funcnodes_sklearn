@@ -36,7 +36,7 @@ class TestAffinityPropagation(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.damping, 0.5)
         self.assertEqual(clustering.max_iter, 200)
@@ -68,7 +68,7 @@ class TestAffinityPropagation(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.damping, damping)
         self.assertEqual(clustering.max_iter, max_iter)
@@ -87,7 +87,7 @@ class TestAgglomerativeClustering(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.n_clusters, 2)
         self.assertEqual(clustering.metric, Metric.default())
@@ -119,7 +119,7 @@ class TestAgglomerativeClustering(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.n_clusters, n_clusters)
         self.assertEqual(clustering.metric, metric)
@@ -137,7 +137,7 @@ class TestAgglomerativeClustering(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.memory.__class__, Memory)
 
@@ -150,7 +150,7 @@ class TestAgglomerativeClustering(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.metric, custom_metric)
 
@@ -162,7 +162,7 @@ class TestBirchFunction(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertEqual(clustering.threshold, 0.5)
         self.assertEqual(clustering.branching_factor, 50)
         self.assertEqual(clustering.n_clusters, 3)
@@ -184,7 +184,7 @@ class TestBirchFunction(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.threshold, threshold)
         self.assertEqual(clustering.branching_factor, branching_factor)
@@ -204,7 +204,7 @@ class TestBirchFunction(unittest.IsolatedAsyncioTestCase):
 
         self.assertIsInstance(model, fn.Node)
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.n_clusters, model1.outputs["out"].value)
 
@@ -216,7 +216,7 @@ class TestDBSCAN(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.eps, 0.5)
         self.assertEqual(clustering.min_samples, 5)
@@ -248,7 +248,7 @@ class TestDBSCAN(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.eps, eps)
         self.assertEqual(clustering.min_samples, min_samples)
@@ -266,7 +266,7 @@ class TestFeatureAgglomeration(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.n_clusters, 2)
         self.assertEqual(clustering.metric, Metric.default())
@@ -301,7 +301,7 @@ class TestFeatureAgglomeration(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.n_clusters, n_clusters)
         self.assertEqual(clustering.metric, metric)
@@ -321,7 +321,7 @@ class TestKMeans(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.n_clusters, 8)
         self.assertEqual(clustering.init, "k-means++")
@@ -360,7 +360,7 @@ class TestKMeans(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.n_clusters, n_clusters)
         self.assertEqual(clustering.init, init)
@@ -380,7 +380,7 @@ class TestBisectingKMeans(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.n_clusters, 8)
         self.assertEqual(clustering.init, "k-means++")
@@ -424,7 +424,7 @@ class TestBisectingKMeans(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.n_clusters, n_clusters)
         self.assertEqual(clustering.init, init)
@@ -444,7 +444,7 @@ class TestMiniBatchKMeans(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
         # self.assertEqual(clustering.n_clusters, 8)
         # self.assertEqual(clustering.init, "k-means++")
@@ -478,7 +478,7 @@ class TestMiniBatchKMeans(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
 
     async def test_predict(self):
@@ -496,7 +496,7 @@ class TestMiniBatchKMeans(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertTrue(
@@ -512,7 +512,7 @@ class TestMeanShift(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.labels_.tolist(), [4, 3, 5, 0, 2, 1])
@@ -532,7 +532,7 @@ class TestMeanShift(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.seeds.tolist(), seeds.tolist())
@@ -549,7 +549,7 @@ class TestOPTICS(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.labels_.tolist(), [0, 0, 0, 0, 0, 0])
@@ -562,7 +562,7 @@ class TestOPTICS(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, ClusterMixin)
         self.assertEqual(clustering.labels_.tolist(), [0, 0, 0, 1, 1, 1])
@@ -575,7 +575,7 @@ class TestSpectralClustering(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         self.assertIsInstance(clustering, ClusterMixin)
 
     async def test_custom_parameters(
@@ -583,7 +583,7 @@ class TestSpectralClustering(unittest.IsolatedAsyncioTestCase):
     ):  # TODO: n_clusters and n_componenting conflicts in node. solve by changing the default from None to 8
         X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
         n_clusters = 2
-        assign_labels = AssignLabels.DISCRETIZE.value
+        assign_labels = AssignLabels.discretize.value
         random_state = 0
         model: fn.Node = spectral_clustering()
         model.inputs["n_clusters"].value = n_clusters
@@ -595,7 +595,7 @@ class TestSpectralClustering(unittest.IsolatedAsyncioTestCase):
         await model
         out = model.outputs["out"]
 
-        clustering = out.value
+        clustering = out.value()
         # print(model.func.ef_funcmeta)
         clustering.fit(X)
         self.assertIsInstance(clustering, ClusterMixin)
@@ -629,7 +629,7 @@ class TestSpectralBiclustering(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, BaseEstimator)
 
@@ -643,7 +643,7 @@ class TestSpectralBiclustering(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, BaseEstimator)
         self.assertEqual(clustering.n_clusters, n_clusters)
@@ -659,7 +659,7 @@ class TestSpectralCoclustering(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, BaseEstimator)
 
@@ -673,7 +673,7 @@ class TestSpectralCoclustering(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        clustering = out.value
+        clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, BaseEstimator)
         self.assertEqual(clustering.n_clusters, n_clusters)

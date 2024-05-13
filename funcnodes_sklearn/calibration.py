@@ -1,6 +1,6 @@
 from funcnodes import Shelf, NodeDecorator
 
-from typing import Union, Optional, Iterator, Tuple
+from typing import Union, Optional, Iterator, Tuple, Callable
 from enum import Enum
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
@@ -10,16 +10,16 @@ from sklearn.naive_bayes import GaussianNB
 
 
 class Method(Enum):
-    SIGMOID = "sigmoid"
-    ISOTONIC = "isotonic"
+    sigmoid = "sigmoid"
+    isotonic = "isotonic"
 
     @classmethod
     def default(cls):
-        return cls.ISOTONIC.value
+        return cls.isotonic.value
 
 
 @NodeDecorator(
-    node_id="calibrated_classifier_cv",
+    node_id="sklearn.calibration.CalibratedClassifierCV",
     name="CalibratedClassifierCV",
 )
 def calibrated_classifier_cv(
@@ -30,7 +30,7 @@ def calibrated_classifier_cv(
     ] = None,
     n_jobs: Optional[int] = None,
     ensemble: bool = True,
-) -> ClassifierMixin:
+) -> Callable[[], ClassifierMixin]:
     """Probability calibration with isotonic regression or logistic regression.
 
     This class uses cross-validation to both estimate the parameters of a
@@ -229,20 +229,20 @@ def calibrated_classifier_cv(
             estimator=estimator, method=method, cv=cv, n_jobs=n_jobs, ensemble=ensemble
         )
 
-    return calibrated_classifier_cv_classifier()
+    return calibrated_classifier_cv_classifier
 
 
 class Strategy(Enum):
-    UNIFORM = "uniform"
-    QUANTILE = "quantile"
+    uniform = "uniform"
+    quantile = "quantile"
 
     @classmethod
     def default(cls):
-        return cls.UNIFORM.value
+        return cls.uniform.value
 
 
 @NodeDecorator(
-    node_id="calibration_curve",
+    node_id="sklearn.calibration.calibration_curve",
     name="calibration_curve",
     outputs=[
         {

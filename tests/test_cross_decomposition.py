@@ -22,7 +22,7 @@ class TestCCA(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        cross_decomposition = out.value.fit(X, Y)
+        cross_decomposition = out.value().fit(X, Y)
         transform = cross_decomposition.transform(X, Y)
         self.assertIsInstance(cross_decomposition, RegressorMixin)
         self.assertIsInstance(transform, Tuple)
@@ -37,7 +37,7 @@ class TestPLSCanonical(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        cross_decomposition = out.value.fit(X, Y)
+        cross_decomposition = out.value().fit(X, Y)
         transform = cross_decomposition.transform(X, Y)
         self.assertIsInstance(cross_decomposition, RegressorMixin)
         self.assertIsInstance(transform, Tuple)
@@ -45,13 +45,13 @@ class TestPLSCanonical(unittest.IsolatedAsyncioTestCase):
     async def test_custom_parameters(self):
         X = [[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [2.0, 2.0, 2.0], [3.0, 5.0, 4.0]]
         Y = [[0.1, -0.2], [0.9, 1.1], [6.2, 5.9], [11.9, 12.3]]
-        algorithm = Algorithm.SVD.value
+        algorithm = Algorithm.svd.value
         model: fn.Node = pls_canonical()
         model.inputs["algorithm"].value = algorithm
         self.assertIsInstance(model, fn.Node)
         await model
         out = model.outputs["out"]
-        cross_decomposition = out.value.fit(X, Y)
+        cross_decomposition = out.value().fit(X, Y)
         transform = cross_decomposition.transform(X, Y)
         self.assertIsInstance(cross_decomposition, RegressorMixin)
         self.assertIsInstance(transform, Tuple)
@@ -66,7 +66,7 @@ class TestPLSRegression(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        cross_decomposition = out.value.fit(X, Y)
+        cross_decomposition = out.value().fit(X, Y)
         transform = cross_decomposition.transform(X, Y)
         self.assertIsInstance(cross_decomposition, RegressorMixin)
         self.assertIsInstance(transform, Tuple)
@@ -81,7 +81,7 @@ class TestPLSSVD(unittest.IsolatedAsyncioTestCase):
         model.trigger()
         await model
         out = model.outputs["out"]
-        cross_decomposition = out.value.fit(X, Y)
+        cross_decomposition = out.value().fit(X, Y)
         transform = cross_decomposition.transform(X, Y)
         self.assertIsInstance(cross_decomposition, TransformerMixin)
         self.assertIsInstance(transform, Tuple)

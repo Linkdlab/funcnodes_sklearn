@@ -26,16 +26,16 @@ from sklearn.cluster import (
 
 
 class Affinity(Enum):
-    EUCLIDEAN = "euclidean"
-    PRECOMPUTED = "precomputed"
+    euclidean = "euclidean"
+    precomputed = "precomputed"
 
     @classmethod
     def default(cls):
-        return cls.EUCLIDEAN.value
+        return cls.euclidean.value
 
 
 @NodeDecorator(
-    node_id="affinity_propagation",
+    node_id="sklearn.cluster.AffinityPropagation",
     name="AffinityPropagation",
 )
 def affinity_propagation(
@@ -47,7 +47,7 @@ def affinity_propagation(
     affinity: Affinity = Affinity.default(),
     verbose: bool = False,
     random_state: Optional[Union[int, RandomState]] = None,
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """Perform Affinity Propagation Clustering of data.
 
     Read more in the :ref:`User Guide <affinity_propagation>`.
@@ -197,35 +197,35 @@ def affinity_propagation(
             random_state=random_state,
         )
 
-    return create_affinity_propagation()
+    return create_affinity_propagation
 
 
 class Metric(Enum):
-    EUCLIDEAN = "euclidean"
-    PRECOMPUTED = "precomputed"
-    L1 = "l1"
-    L2 = "l2"
-    MANHATTAN = "manhattan"
-    COSINE = "cosine"
+    euclidean = "euclidean"
+    precomputed = "precomputed"
+    l1 = "l1"
+    l2 = "l2"
+    manhattan = "manhattan"
+    cosine = "cosine"
 
     @classmethod
     def default(cls):
-        return cls.EUCLIDEAN.value
+        return cls.euclidean.value
 
 
 class Linkage(Enum):
-    SINGLE = "single"
-    COMPLETE = "complete"
-    AVERAGE = "average"
-    WARD = "ward"
+    single = "single"
+    complete = "complete"
+    average = "average"
+    ward = "ward"
 
     @classmethod
     def default(cls):
-        return cls.WARD.value
+        return cls.ward.value
 
 
 @NodeDecorator(
-    node_id="agglomerative_clustering",
+    node_id="sklearn.cluster.AgglomerativeClustering",
     name="AgglomerativeClustering",
 )
 def agglomerative_clustering(
@@ -237,7 +237,7 @@ def agglomerative_clustering(
     linkage: Linkage = Linkage.default(),
     distance_threshold: Optional[float] = None,
     compute_distances: bool = False,
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """
     Agglomerative Clustering.
 
@@ -395,11 +395,11 @@ def agglomerative_clustering(
             compute_distances=compute_distances,
         )
 
-    return create_agglomerative_clustering()
+    return create_agglomerative_clustering
 
 
 @NodeDecorator(
-    node_id="birch",
+    node_id="sklearn.cluster.Birch",
     name="Birch",
 )
 def birch(
@@ -408,7 +408,7 @@ def birch(
     n_clusters: Union[int, ClusterMixin, None] = 3,
     compute_labels: bool = True,
     copy: bool = True,
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """Implements the BIRCH clustering algorithm.
 
     It is a memory-efficient, online-learning algorithm provided as an
@@ -540,22 +540,22 @@ def birch(
             copy=copy,
         )
 
-    return create_birch()
+    return create_birch
 
 
 class Algorithm(Enum):
-    AUTO = "auto"
-    BRUTE = "brute"
-    KD_TREE = "kd_tree"
-    BALL_TREE = "ball_tree"
+    auto = "auto"
+    brute = "brute"
+    kd_tree = "kd_tree"
+    ball_tree = "ball_tree"
 
     @classmethod
     def default(cls):
-        return cls.AUTO.value
+        return cls.auto.value
 
 
 @NodeDecorator(
-    node_id="dbscan",
+    node_id="sklearn.cluster.DBSCAN",
     name="DBSCAN",
 )
 def dbscan(
@@ -567,7 +567,7 @@ def dbscan(
     leaf_size: int = 30,
     p: Optional[float] = None,
     n_jobs: Optional[int] = None,
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """Perform DBSCAN clustering from vector array or distance matrix.
 
     DBSCAN - Density-Based Spatial Clustering of Applications with Noise.
@@ -727,11 +727,11 @@ def dbscan(
             n_jobs=n_jobs,
         )
 
-    return create_dbscan()
+    return create_dbscan
 
 
 @NodeDecorator(
-    node_id="feature_agglomeration",
+    node_id="sklearn.cluster.FeatureAgglomeration",
     name="FeatureAgglomeration",
 )
 def feature_agglomeration(
@@ -744,7 +744,7 @@ def feature_agglomeration(
     pooling_func: Callable = np.mean,
     distance_threshold: Optional[float] = None,
     compute_distances: bool = False,
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """Agglomerate features.
 
     Recursively merges pair of clusters of features.
@@ -907,20 +907,20 @@ def feature_agglomeration(
             compute_distances=compute_distances,
         )
 
-    return create_feature_agglomeration()
+    return create_feature_agglomeration
 
 
 class KMeansAlgorithm(Enum):
-    LLOYD = "lloyd"
-    ELKAN = "elkan"
+    lloyd = "lloyd"
+    elkan = "elkan"
 
     @classmethod
     def default(cls):
-        return cls.LLOYD.value
+        return cls.lloyd.value
 
 
 @NodeDecorator(
-    node_id="kmeans",
+    node_id="sklearn.cluster.KMeans",
     name="KMeans",
 )
 def kmeans(
@@ -933,7 +933,7 @@ def kmeans(
     random_state: Optional[Union[int, RandomState]] = None,
     copy_x: bool = True,
     algorithm: KMeansAlgorithm = KMeansAlgorithm.default(),
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """K-Means clustering.
 
     Read more in the :ref:`User Guide <k_means>`.
@@ -1139,20 +1139,20 @@ def kmeans(
             algorithm=algorithm,
         )
 
-    return create_kmeans()
+    return create_kmeans
 
 
 class BisectingStrategy(Enum):
-    BIGGEST_INERTIA = "biggest_inertia"
-    LARGEST_CLUSTER = "largest_cluster"
+    biggest_inertia = "biggest_inertia"
+    largest_cluster = "largest_cluster"
 
     @classmethod
     def default(cls):
-        return cls.BIGGEST_INERTIA.value
+        return cls.biggest_inertia.value
 
 
 @NodeDecorator(
-    node_id="bisecting_kmeans",
+    node_id="sklearn.cluster.BisectingKMeans",
     name="BisectingKMeans",
 )
 def bisecting_kmeans(
@@ -1166,7 +1166,7 @@ def bisecting_kmeans(
     copy_x: bool = True,
     algorithm: KMeansAlgorithm = KMeansAlgorithm.default(),
     bisecting_strategy: BisectingStrategy = BisectingStrategy.default(),
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """Bisecting K-Means clustering.
 
     Read more in the :ref:`User Guide <bisect_k_means>`.
@@ -1319,12 +1319,12 @@ def bisecting_kmeans(
             bisecting_strategy=bisecting_strategy,
         )
 
-    return create_bisecting_kmeans()
+    return create_bisecting_kmeans
 
 
 @NodeDecorator(
-    node_id="mini_batch_kmeans",
-    name="Mini Batch KMeans",
+    node_id="sklearn.cluster.MiniBatchKMeans",
+    name="MiniBatchKMeans",
 )
 def mini_batch_kmeans(
     n_clusters: int = 8,
@@ -1339,7 +1339,7 @@ def mini_batch_kmeans(
     init_size: Optional[int] = None,
     n_init: Union[Literal["auto"], int] = "auto",
     reassignment_ratio: float = 0.01,
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """
     Mini-Batch K-Means clustering.
 
@@ -1553,12 +1553,12 @@ def mini_batch_kmeans(
             reassignment_ratio=reassignment_ratio,
         )
 
-    return create_mini_batch_kmeans()
+    return create_mini_batch_kmeans
 
 
 @NodeDecorator(
-    node_id="mean_shift",
-    name="Mean Shift",
+    node_id="sklearn.cluster.MeanShift",
+    name="MeanShift",
 )
 def mean_shift(
     bandwidth: Optional[float] = None,
@@ -1568,7 +1568,7 @@ def mean_shift(
     cluster_all: bool = True,
     n_jobs: Optional[int] = None,
     max_iter: int = 300,
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """Mean shift clustering using a flat kernel.
 
     Mean shift clustering aims to discover "blobs" in a smooth density of
@@ -1717,11 +1717,11 @@ def mean_shift(
             max_iter=max_iter,
         )
 
-    return create_mean_shift()
+    return create_mean_shift
 
 
 @NodeDecorator(
-    node_id="optics",
+    node_id="sklearn.cluster.OPTICS",
     name="OPTICS",
 )
 def optics(
@@ -1739,7 +1739,7 @@ def optics(
     leaf_size: int = 30,
     n_jobs: Optional[int] = None,
     memory: Union[str, Memory] = None,
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """Estimate clustering structure from vector array.
 
     OPTICS (Ordering Points To Identify the Clustering Structure), closely
@@ -1988,13 +1988,13 @@ def optics(
             memory=memory,
         )
 
-    return create_optics()
+    return create_optics
 
 
 class EigenSolvers(Enum):
-    ARPACK = "arpack"
-    LOBPCG = "lobpcg"
-    AMG = "amg"
+    arpack = "arpack"
+    lobpcg = "lobpcg"
+    amg = "amg"
     NONE = None
 
     @classmethod
@@ -2003,306 +2003,31 @@ class EigenSolvers(Enum):
 
 
 class SpectralClustringAffinity(Enum):
-    RBF = "rbf"
-    PRECOMPUTED = "precomputed"
-    NEAREST_NEIGHBORS = "nearest_neighbors"
-    PRECOMPUTED_NEAREST_NEIGHBORS = "precomputed_nearest_neighbors"
+    rbf = "rbf"
+    precomputed = "precomputed"
+    nearest_neighbors = "nearest_neighbors"
+    precomputed_nearest_neighbors = "precomputed_nearest_neighbors"
 
     @classmethod
     def default(cls):
-        return cls.RBF.value
+        return cls.rbf.value
 
 
 class AssignLabels(Enum):
-    KMEANS = "kmeans"
-    DISCRETIZE = "discretize"
-    CLUSTER_QR = "cluster_qr"
+    kmeans = "kmeans"
+    discretize = "discretize"
+    cluster_qr = "cluster_qr"
 
     @classmethod
     def default(cls):
-        return cls.KMEANS.value
-
-
-# @NodeDecorator(
-#     node_id="spectral_clustering",
-#     name="Spectral Clustering",
-# )
-# def spectral_clustering(
-#     n_clusters: int = 8,
-#     eigen_solver: EigenSolvers = EigenSolvers.default(),
-#     n_components: Optional[int] = None,
-#     random_state: Optional[Union[int, RandomState]] = None,
-#     n_init: int = 10,
-#     gamma: float = 1.0,
-#     affinity: Union[
-#         SpectralClustringAffinity, Callable
-#     ] = SpectralClustringAffinity.default(),
-#     n_neighbors: int = 10,
-#     eigen_tol: Union[Literal["auto"], float] = "auto",
-#     assign_labels: AssignLabels = AssignLabels.default(),
-#     degree: float = 3.0,
-#     coef0: float = 1.0,
-#     kernel_params: Optional[dict] = None,
-#     n_jobs: Optional[int] = None,
-#     verbose: bool = False,
-# ) -> ClusterMixin:
-#     """Apply clustering to a projection of the normalized Laplacian.
-
-#     In practice Spectral Clustering is very useful when the structure of
-#     the individual clusters is highly non-convex, or more generally when
-#     a measure of the center and spread of the cluster is not a suitable
-#     description of the complete cluster, such as when clusters are
-#     nested circles on the 2D plane.
-
-#     If the affinity matrix is the adjacency matrix of a graph, this method
-#     can be used to find normalized graph cuts [1]_, [2]_.
-
-#     When calling ``fit``, an affinity matrix is constructed using either
-#     a kernel function such the Gaussian (aka RBF) kernel with Euclidean
-#     distance ``d(X, X)``::
-
-#             np.exp(-gamma * d(X,X) ** 2)
-
-#     or a k-nearest neighbors connectivity matrix.
-
-#     Alternatively, a user-provided affinity matrix can be specified by
-#     setting ``affinity='precomputed'``.
-
-#     Read more in the :ref:`User Guide <spectral_clustering>`.
-
-#     Parameters
-#     ----------
-#     n_clusters : int, default=8
-#         The dimension of the projection subspace.
-
-#     eigen_solver : {'arpack', 'lobpcg', 'amg'}, default=None
-#         The eigenvalue decomposition strategy to use. AMG requires pyamg
-#         to be installed. It can be faster on very large, sparse problems,
-#         but may also lead to instabilities. If None, then ``'arpack'`` is
-#         used. See [4]_ for more details regarding `'lobpcg'`.
-
-#     n_components : int, default=None
-#         Number of eigenvectors to use for the spectral embedding. If None,
-#         defaults to `n_clusters`.
-
-#     random_state : int, RandomState instance, default=None
-#         A pseudo random number generator used for the initialization
-#         of the lobpcg eigenvectors decomposition when `eigen_solver ==
-#         'amg'`, and for the K-Means initialization. Use an int to make
-#         the results deterministic across calls (See
-#         :term:`Glossary <random_state>`).
-
-#         .. note::
-#             When using `eigen_solver == 'amg'`,
-#             it is necessary to also fix the global numpy seed with
-#             `np.random.seed(int)` to get deterministic results. See
-#             https://github.com/pyamg/pyamg/issues/139 for further
-#             information.
-
-#     n_init : int, default=10
-#         Number of time the k-means algorithm will be run with different
-#         centroid seeds. The final results will be the best output of n_init
-#         consecutive runs in terms of inertia. Only used if
-#         ``assign_labels='kmeans'``.
-
-#     gamma : float, default=1.0
-#         Kernel coefficient for rbf, poly, sigmoid, laplacian and chi2 kernels.
-#         Ignored for ``affinity='nearest_neighbors'``.
-
-#     affinity : str or callable, default='rbf'
-#         How to construct the affinity matrix.
-#          - 'nearest_neighbors': construct the affinity matrix by computing a
-#            graph of nearest neighbors.
-#          - 'rbf': construct the affinity matrix using a radial basis function
-#            (RBF) kernel.
-#          - 'precomputed': interpret ``X`` as a precomputed affinity matrix,
-#            where larger values indicate greater similarity between instances.
-#          - 'precomputed_nearest_neighbors': interpret ``X`` as a sparse graph
-#            of precomputed distances, and construct a binary affinity matrix
-#            from the ``n_neighbors`` nearest neighbors of each instance.
-#          - one of the kernels supported by
-#            :func:`~sklearn.metrics.pairwise.pairwise_kernels`.
-
-#         Only kernels that produce similarity scores (non-negative values that
-#         increase with similarity) should be used. This property is not checked
-#         by the clustering algorithm.
-
-#     n_neighbors : int, default=10
-#         Number of neighbors to use when constructing the affinity matrix using
-#         the nearest neighbors method. Ignored for ``affinity='rbf'``.
-
-#     eigen_tol : float, default="auto"
-#         Stopping criterion for eigen decomposition of the Laplacian matrix.
-#         If `eigen_tol="auto"` then the passed tolerance will depend on the
-#         `eigen_solver`:
-
-#         - If `eigen_solver="arpack"`, then `eigen_tol=0.0`;
-#         - If `eigen_solver="lobpcg"` or `eigen_solver="amg"`, then
-#           `eigen_tol=None` which configures the underlying `lobpcg` solver to
-#           automatically resolve the value according to their heuristics. See,
-#           :func:`scipy.sparse.linalg.lobpcg` for details.
-
-#         Note that when using `eigen_solver="lobpcg"` or `eigen_solver="amg"`
-#         values of `tol<1e-5` may lead to convergence issues and should be
-#         avoided.
-
-#         .. versionadded:: 1.2
-#            Added 'auto' option.
-
-#     assign_labels : {'kmeans', 'discretize', 'cluster_qr'}, default='kmeans'
-#         The strategy for assigning labels in the embedding space. There are two
-#         ways to assign labels after the Laplacian embedding. k-means is a
-#         popular choice, but it can be sensitive to initialization.
-#         Discretization is another approach which is less sensitive to random
-#         initialization [3]_.
-#         The cluster_qr method [5]_ directly extract clusters from eigenvectors
-#         in spectral clustering. In contrast to k-means and discretization, cluster_qr
-#         has no tuning parameters and runs no iterations, yet may outperform
-#         k-means and discretization in terms of both quality and speed.
-
-#         .. versionchanged:: 1.1
-#            Added new labeling method 'cluster_qr'.
-
-#     degree : float, default=3
-#         Degree of the polynomial kernel. Ignored by other kernels.
-
-#     coef0 : float, default=1
-#         Zero coefficient for polynomial and sigmoid kernels.
-#         Ignored by other kernels.
-
-#     kernel_params : dict of str to any, default=None
-#         Parameters (keyword arguments) and values for kernel passed as
-#         callable object. Ignored by other kernels.
-
-#     n_jobs : int, default=None
-#         The number of parallel jobs to run when `affinity='nearest_neighbors'`
-#         or `affinity='precomputed_nearest_neighbors'`. The neighbors search
-#         will be done in parallel.
-#         ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
-#         ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
-#         for more details.
-
-#     verbose : bool, default=False
-#         Verbosity mode.
-
-#         .. versionadded:: 0.24
-
-#     Attributes
-#     ----------
-#     affinity_matrix_ : array-like of shape (n_samples, n_samples)
-#         Affinity matrix used for clustering. Available only after calling
-#         ``fit``.
-
-#     labels_ : ndarray of shape (n_samples,)
-#         Labels of each point
-
-#     n_features_in_ : int
-#         Number of features seen during :term:`fit`.
-
-#         .. versionadded:: 0.24
-
-#     feature_names_in_ : ndarray of shape (`n_features_in_`,)
-#         Names of features seen during :term:`fit`. Defined only when `X`
-#         has feature names that are all strings.
-
-#         .. versionadded:: 1.0
-
-#     See Also
-#     --------
-#     sklearn.cluster.KMeans : K-Means clustering.
-#     sklearn.cluster.DBSCAN : Density-Based Spatial Clustering of
-#         Applications with Noise.
-
-#     Notes
-#     -----
-#     A distance matrix for which 0 indicates identical elements and high values
-#     indicate very dissimilar elements can be transformed into an affinity /
-#     similarity matrix that is well-suited for the algorithm by
-#     applying the Gaussian (aka RBF, heat) kernel::
-
-#         np.exp(- dist_matrix ** 2 / (2. * delta ** 2))
-
-#     where ``delta`` is a free parameter representing the width of the Gaussian
-#     kernel.
-
-#     An alternative is to take a symmetric version of the k-nearest neighbors
-#     connectivity matrix of the points.
-
-#     If the pyamg package is installed, it is used: this greatly
-#     speeds up computation.
-
-#     References
-#     ----------
-#     .. [1] :doi:`Normalized cuts and image segmentation, 2000
-#            Jianbo Shi, Jitendra Malik
-#            <10.1109/34.868688>`
-
-#     .. [2] :doi:`A Tutorial on Spectral Clustering, 2007
-#            Ulrike von Luxburg
-#            <10.1007/s11222-007-9033-z>`
-
-#     .. [3] `Multiclass spectral clustering, 2003
-#            Stella X. Yu, Jianbo Shi
-#            <https://people.eecs.berkeley.edu/~jordan/courses/281B-spring04/readings/yu-shi.pdf>`_
-
-#     .. [4] :doi:`Toward the Optimal Preconditioned Eigensolver:
-#            Locally Optimal Block Preconditioned Conjugate Gradient Method, 2001
-#            A. V. Knyazev
-#            SIAM Journal on Scientific Computing 23, no. 2, pp. 517-541.
-#            <10.1137/S1064827500366124>`
-
-#     .. [5] :doi:`Simple, direct, and efficient multi-way spectral clustering, 2019
-#            Anil Damle, Victor Minden, Lexing Ying
-#            <10.1093/imaiai/iay008>`
-
-#     Examples
-#     --------
-#     >>> from sklearn.cluster import SpectralClustering
-#     >>> import numpy as np
-#     >>> X = np.array([[1, 1], [2, 1], [1, 0],
-#     ...               [4, 7], [3, 5], [3, 6]])
-#     >>> clustering = SpectralClustering(n_clusters=2,
-#     ...         assign_labels='discretize',
-#     ...         random_state=0).fit(X)
-#     >>> clustering.labels_
-#     array([1, 1, 1, 0, 0, 0])
-#     >>> clustering
-#     SpectralClustering(assign_labels='discretize', n_clusters=2,
-#         random_state=0)
-
-#     Returns
-#     -------
-#     SpectralClustering: An instance of the SpectralClustering class from scikit-learn.
-#     """
-#     n_components = n_clusters if n_components == "n_clusters" else n_components
-
-#     def create_spectral_clustering():
-#         return SpectralClustering(
-#             n_clusters=n_clusters,
-#             eigen_solver=eigen_solver,
-#             random_state=random_state,
-#             n_components=n_components,
-#             n_init=n_init,
-#             gamma=gamma,
-#             affinity=affinity,
-#             n_neighbors=n_neighbors,
-#             eigen_tol=eigen_tol,
-#             assign_labels=assign_labels,
-#             degree=degree,
-#             coef0=coef0,
-#             kernel_params=kernel_params,
-#             n_jobs=n_jobs,
-#             verbose=verbose,
-#         )
-
-#     return create_spectral_clustering()
+        return cls.kmeans.value
 
 
 
 
 @NodeDecorator(
-    node_id="spectral_clustering",
-    name="Spectral Clustering",
+    node_id="sklearn.cluster.SpectralClustering",
+    name="SpectralClustering",
 )
 @controlled_wrapper(SpectralClustering, wrapper_attribute="__fnwrapped__")
 def spectral_clustering(
@@ -2323,7 +2048,7 @@ def spectral_clustering(
     kernel_params: Optional[dict] = None,
     n_jobs: Optional[int] = None,
     verbose: bool = False,
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     n_components = n_clusters if n_components == "n_clusters" else n_components
 
     def create_spectral_clustering():
@@ -2345,31 +2070,31 @@ def spectral_clustering(
             verbose=verbose,
         )
 
-    return create_spectral_clustering()
+    return create_spectral_clustering
 
 
 class SpectralBiclusteringMethod(Enum):
-    BISTOCHASTIC = "bistochastic"
-    SCLAE = "scale"
-    LOG = "log"
+    bistochastic = "bistochastic"
+    scale = "scale"
+    log = "log"
 
     @classmethod
     def default(cls):
-        return cls.BISTOCHASTIC.value
+        return cls.bistochastic.value
 
 
 class SVDMethod(Enum):
-    RANDOMIZED = "randomized"
-    ARPACK = "arpack"
+    randomized = "randomized"
+    arpack = "arpack"
 
     @classmethod
     def default(cls):
-        return cls.RANDOMIZED.value
+        return cls.randomized.value
 
 
 @NodeDecorator(
-    node_id="spectral_biclustering",
-    name="Spectral Biclustering",
+    node_id="sklearn.cluster.SpectralBiclustering",
+    name="SpectralBiclustering",
 )
 def spectral_biclustering(
     n_clusters: Union[int, Tuple[int, int]] = 2,
@@ -2381,7 +2106,7 @@ def spectral_biclustering(
     mini_batch: bool = False,
     init: Union[str, np.ndarray] = "k-means++",
     random_state: Optional[Union[int, RandomState]] = None,
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """Spectral biclustering (Kluger, 2003).
 
     Partitions rows and columns under the assumption that the data has
@@ -2526,12 +2251,12 @@ def spectral_biclustering(
             mini_batch=mini_batch,
         )
 
-    return create_spectral_biclustering()
+    return create_spectral_biclustering
 
 
 @NodeDecorator(
-    node_id="spectral_coclustering",
-    name="Spectral Co-clustering",
+    node_id="sklearn.cluster.SpectralCoclustering",
+    name="SpectralCoclustering",
 )
 def spectral_coclustering(
     n_clusters: int = 2,
@@ -2541,7 +2266,7 @@ def spectral_coclustering(
     init: Union[Callable, np.ndarray] = "k-means++",
     n_init: int = 10,
     random_state: Optional[Union[int, RandomState]] = None,
-) -> ClusterMixin:
+) -> Callable[[], ClusterMixin]:
     """Spectral Co-Clustering algorithm (Dhillon, 2001).
 
     Clusters rows and columns of an array `X` to solve the relaxed
@@ -2666,7 +2391,7 @@ def spectral_coclustering(
             init=init,
         )
 
-    return create_spectral_coclustering()
+    return create_spectral_coclustering
 
 
 CLUSTER_NODE_SHELFE = Shelf(

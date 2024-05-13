@@ -40,7 +40,7 @@ class TestEmpiricalCovariance(unittest.IsolatedAsyncioTestCase):
         cov.trigger()
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
         self.assertEqual(
             model.covariance_.tolist(),
@@ -61,7 +61,7 @@ class TestEllipticEnvelope(unittest.IsolatedAsyncioTestCase):
         cov.trigger()
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
         self.assertEqual(
             model.covariance_.tolist(),
@@ -80,7 +80,7 @@ class TestEllipticEnvelope(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(cov, fn.Node)
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
         self.assertEqual(model.predict([[0, 0], [3, 3]]).tolist(), [-1, -1])
 
@@ -103,7 +103,7 @@ class TestGraphicalLasso(unittest.IsolatedAsyncioTestCase):
         cov.trigger()
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
         # self.assertEqual(
         #     np.around(model.covariance_, decimals=3).tolist(),
@@ -133,7 +133,7 @@ class TestGraphicalLassoCV(unittest.IsolatedAsyncioTestCase):
         cov.trigger()
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
         # self.assertEqual(
         #     model.modelariance_.tolist(),
@@ -166,12 +166,12 @@ class TestGraphicalLassoCV(unittest.IsolatedAsyncioTestCase):
         dataset_size = len(X)
         splits = generate_random_splits(num_splits, dataset_size)
         cov: fn.Node = graphical_lasso_cv()
-        cov.inputs["mode"].value = Mode.LARS.value
+        cov.inputs["mode"].value = Mode.lars.value
         cov.inputs["cv"].value = splits
         self.assertIsInstance(cov, fn.Node)
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
 
         self.assertEqual(
@@ -186,7 +186,7 @@ class TestLedoitWolf(unittest.IsolatedAsyncioTestCase):
         cov.trigger()
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
         # self.assertEqual(
         #     model.covariance_.tolist(),
@@ -207,7 +207,7 @@ class TestLedoitWolf(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(cov, fn.Node)
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
 
         # self.assertEqual(
@@ -226,7 +226,7 @@ class TestMinCovDet(unittest.IsolatedAsyncioTestCase):
         cov.trigger()
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
         # self.assertEqual(
         #     model.modelariance_.tolist(),
@@ -245,7 +245,7 @@ class TestMinCovDet(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(cov, fn.Node)
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
         # print(model.covariance_)
         # self.assertEqual(
@@ -264,7 +264,7 @@ class TestOAS(unittest.IsolatedAsyncioTestCase):
         cov.trigger()
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
         self.assertEqual(
             np.around(model.covariance_, decimals=2).tolist(),
@@ -279,7 +279,7 @@ class TestShrunkCovariance(unittest.IsolatedAsyncioTestCase):
         cov.trigger()
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
         self.assertEqual(
             np.around(model.covariance_, decimals=2).tolist(),
@@ -296,7 +296,7 @@ class TestShrunkCovariance(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(cov, fn.Node)
         await cov
         out = cov.outputs["out"]
-        model = out.value
+        model = out.value()
         model.fit(X)
         self.assertEqual(
             np.around(model.covariance_, decimals=2).tolist(),

@@ -1,5 +1,5 @@
 from funcnodes import Shelf, NodeDecorator
-from typing import Union, Optional, Tuple, Iterator
+from typing import Union, Optional, Tuple, Iterator, Callable
 import numpy as np
 from numpy.random import RandomState
 from sklearn.base import BaseEstimator
@@ -18,12 +18,12 @@ from sklearn.covariance import (
 
 
 @NodeDecorator(
-    node_id = "empirical_covariance",
+    node_id="sklearn.covariance.EmpiricalCovariance",
     name="EmpiricalCovariance",
 )
 def empirical_covariance(
     store_precision: bool = True, assume_centered: bool = False
-) -> BaseEstimator:
+) -> Callable[[], BaseEstimator]:
     """Maximum likelihood covariance estimator.
 
     Read more in the :ref:`User Guide <covariance>`.
@@ -102,11 +102,11 @@ def empirical_covariance(
             store_precision=store_precision, assume_centered=assume_centered
         )
 
-    return create_empirical_covariance()
+    return create_empirical_covariance
 
 
 @NodeDecorator(
-    node_id = "elliptical_envelpoe",
+    node_id="sklearn.covariance.EllipticEnvelope",
     name="EllipticEnvelope",
 )
 def elliptical_envelpoe(
@@ -115,7 +115,7 @@ def elliptical_envelpoe(
     support_fraction: Optional[float] = None,
     contamination: float = 0.1,
     random_state: Optional[Union[int, RandomState]] = None,
-) -> BaseEstimator:
+) -> Callable[[], BaseEstimator]:
     """An object for detecting outliers in a Gaussian distributed dataset.
 
     Read more in the :ref:`User Guide <outlier_detection>`.
@@ -256,20 +256,20 @@ def elliptical_envelpoe(
             random_state=random_state,
         )
 
-    return create_elliptical_envelpoe()
+    return create_elliptical_envelpoe
 
 
 class Mode(Enum):
-    CD = "cd"
-    LARS = "lars"
+    cd = "cd"
+    lars = "lars"
 
     @classmethod
     def defalt(cls):
-        return cls.CD.value
+        return cls.cd.value
 
 
 class Covariance(Enum):
-    PRECOMPUTED = "precomputed"
+    precomputed = "precomputed"
     NONE = None
 
     @classmethod
@@ -278,7 +278,7 @@ class Covariance(Enum):
 
 
 @NodeDecorator(
-    node_id = "graphical_lasso",
+    node_id="sklearn.covariance.GraphicalLasso",
     name="GraphicalLasso",
 )
 def graphical_lasso(
@@ -291,7 +291,7 @@ def graphical_lasso(
     verbose: int = 0,
     eps: float = np.finfo(np.float64).eps,
     assume_centered: bool = False,
-) -> BaseEstimator:
+) -> Callable[[], BaseEstimator]:
     """Sparse inverse covariance estimation with an l1-penalized estimator.
 
     Read more in the :ref:`User Guide <sparse_inverse_covariance>`.
@@ -424,11 +424,11 @@ def graphical_lasso(
             eps=eps,
         )
 
-    return create_graphical_lasso()
+    return create_graphical_lasso
 
 
 @NodeDecorator(
-    node_id = "graphical_lasso_cv",
+    node_id="sklearn.covariance.GraphicalLassoCV",
     name="GraphicalLassoCV",
 )
 def graphical_lasso_cv(
@@ -445,7 +445,7 @@ def graphical_lasso_cv(
     verbose: bool = False,
     eps: float = np.finfo(np.float64).eps,
     assume_centered: bool = False,
-) -> BaseEstimator:
+) -> Callable[[], BaseEstimator]:
     """Sparse inverse covariance w/ cross-validated choice of the l1 penalty.
 
     See glossary entry for :term:`cross-validation estimator`.
@@ -647,18 +647,18 @@ def graphical_lasso_cv(
             verbose=verbose,
         )
 
-    return create_graphical_lasso_cv()
+    return create_graphical_lasso_cv
 
 
 @NodeDecorator(
-    node_id = "ledoit_wolf",
+    node_id="sklearn.covariance.LedoitWolf",
     name="LedoitWolf",
 )
 def ledoit_wolf(
     store_precision: bool = True,
     assume_centered: bool = False,
     block_size: int = 1000,
-) -> BaseEstimator:
+) -> Callable[[], BaseEstimator]:
     """LedoitWolf Estimator.
 
     Ledoit-Wolf is a particular form of shrinkage, where the shrinkage
@@ -770,11 +770,11 @@ def ledoit_wolf(
             block_size=block_size,
         )
 
-    return create_ledoit_wolf()
+    return create_ledoit_wolf
 
 
 @NodeDecorator(
-    node_id = "min_cov_det",
+    node_id="sklearn.covariance.MinCovDet",
     name="MinCovDet",
 )
 def min_cov_det(
@@ -782,7 +782,7 @@ def min_cov_det(
     assume_centered: bool = False,
     support_fraction: Optional[float] = None,
     random_state: Optional[Union[int, RandomState]] = None,
-) -> BaseEstimator:
+) -> Callable[[], BaseEstimator]:
     """Minimum Covariance Determinant (MCD): robust estimator of covariance.
 
     The Minimum Covariance Determinant covariance estimator is to be applied
@@ -919,17 +919,17 @@ def min_cov_det(
             random_state=random_state,
         )
 
-    return create_min_cov_det()
+    return create_min_cov_det
 
 
 @NodeDecorator(
-    node_id = "oas",
+    node_id="sklearn.covariance.OAS",
     name="OAS",
 )
 def oas(
     store_precision: bool = True,
     assume_centered: bool = False,
-) -> BaseEstimator:
+) -> Callable[[], BaseEstimator]:
     """Oracle Approximating Shrinkage Estimator as proposed in [1]_.
 
     Read more in the :ref:`User Guide <shrunk_covariance>`.
@@ -1040,18 +1040,18 @@ def oas(
             assume_centered=assume_centered,
         )
 
-    return create_oas()
+    return create_oas
 
 
 @NodeDecorator(
-    node_id = "shrunk_covariance",
+    node_id="sklearn.covariance.ShrunkCovariance",
     name="ShrunkCovariance",
 )
 def shrunk_covariance(
     store_precision: bool = True,
     assume_centered: bool = False,
     shrinkage: float = 0.1,
-) -> BaseEstimator:
+) -> Callable[[], BaseEstimator]:
     """Covariance estimator with shrinkage.
 
     Read more in the :ref:`User Guide <shrunk_covariance>`.
@@ -1148,7 +1148,7 @@ def shrunk_covariance(
             shrinkage=shrinkage,
         )
 
-    return create_shrunk_covariance()
+    return create_shrunk_covariance
 
 
 COVARIANCE_NODE_SHELFE = Shelf(

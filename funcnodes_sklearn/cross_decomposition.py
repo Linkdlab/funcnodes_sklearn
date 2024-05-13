@@ -1,3 +1,4 @@
+from typing import Callable
 from funcnodes import Shelf, NodeDecorator
 from sklearn.base import RegressorMixin
 from enum import Enum
@@ -10,7 +11,7 @@ from sklearn.cross_decomposition import (
 
 
 @NodeDecorator(
-    node_id = "cca",
+    node_id = "sklearn.cross_decomposition.CCA",
     name="CCA",
 )
 def cca(
@@ -19,7 +20,7 @@ def cca(
     max_iter: int = 500,
     tol: float = 1e-06,
     copy: bool = True,
-) -> RegressorMixin:
+) -> Callable[[], RegressorMixin]:
     """Canonical Correlation Analysis, also known as "Mode B" PLS.
 
     For a comparison between other cross decomposition algorithms, see
@@ -123,20 +124,20 @@ def cca(
             copy=copy,
         )
 
-    return create_cca()
+    return create_cca
 
 
 class Algorithm(Enum):
-    NIPALS = "nipals"
-    SVD = "svd"
+    nipals = "nipals"
+    svd = "svd"
 
     @classmethod
     def default(cls):
-        return cls.NIPALS.value
+        return cls.nipals.value
 
 
 @NodeDecorator(
-    node_id = "pls_canonical",
+    node_id = "sklearn.cross_decomposition.PLSCanonical",
     name="PLSCanonical",
 )
 def pls_canonical(
@@ -146,7 +147,7 @@ def pls_canonical(
     max_iter: int = 500,
     tol: float = 1e-06,
     copy: bool = True,
-) -> RegressorMixin:
+) -> Callable[[], RegressorMixin]:
     """Partial Least Squares transformer and regressor.
 
     For a comparison between other cross decomposition algorithms, see
@@ -259,11 +260,11 @@ def pls_canonical(
             copy=copy,
         )
 
-    return create_pls_canonical()
+    return create_pls_canonical
 
 
 @NodeDecorator(
-    node_id = "pls_regression",
+    node_id = "sklearn.cross_decomposition.PLSRegression",
     name="PLSRegression",
 )
 def pls_regression(
@@ -272,7 +273,7 @@ def pls_regression(
     max_iter: int = 500,
     tol: float = 1e-06,
     copy: bool = True,
-) -> RegressorMixin:
+) -> Callable[[], RegressorMixin]:
     """PLS regression.
 
     PLSRegression is also known as PLS2 or PLS1, depending on the number of
@@ -390,18 +391,18 @@ def pls_regression(
             copy=copy,
         )
 
-    return create_pls_regression()
+    return create_pls_regression
 
 
 @NodeDecorator(
-    node_id = "pls_svd",
+    node_id = "sklearn.cross_decomposition.PLSSVD",
     name="PLSSVD",
 )
 def pls_svd(
     n_components: int = 2,
     scale: bool = True,
     copy: bool = True,
-) -> RegressorMixin:
+) -> Callable[[], RegressorMixin]:
     """Partial Least Square SVD.
 
     This transformer simply performs a SVD on the cross-covariance matrix
@@ -480,7 +481,7 @@ def pls_svd(
             copy=copy,
         )
 
-    return create_pls_svd()
+    return create_pls_svd
 
 
 CROSS_DECOMPOSITION_NODE_SHELFE = Shelf(

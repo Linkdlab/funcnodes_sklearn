@@ -66,7 +66,7 @@ class Subset(Enum):
 
 
 @NodeDecorator(
-    node_id="_20newsgroups",
+    node_id="sklearn.datasets.fetch_20newsgroups",
     name="fetch_20newsgroups",
     outputs=[
         {"name": "data"},
@@ -193,7 +193,7 @@ def _20newsgroups(
 
 
 @NodeDecorator(
-    node_id="_20newsgroups_vectorized",
+    node_id="sklearn.datasets.fetch_20newsgroups_vectorized",
     name="fetch_20newsgroups_vectorized",
     outputs=[
         {"name": "data"},
@@ -320,7 +320,7 @@ def _20newsgroups_vectorized(
 
 
 @NodeDecorator(
-    node_id="_20newsgroups_vectorized_as_frame",
+    node_id="sklearn.datasets.fetch_20newsgroups_vectorized_as_frame",
     name="fetch_20newsgroups_vectorized_as_frame",
     outputs=[
         {"name": "data"},
@@ -445,7 +445,7 @@ def _20newsgroups_vectorized_as_frame(
 
 
 @NodeDecorator(
-    node_id="_california_housing",
+    node_id="sklearn.datasets.fetch_california_housing",
     name="fetch_california_housing",
     outputs=[
         {"name": "data"},
@@ -537,7 +537,7 @@ def _california_housing(
 
 
 @NodeDecorator(
-    node_id="_california_housing_as_frame",
+    node_id="sklearn.datasets.fetch_california_housing_as_frame",
     name="fetch_california_housing_as_frame",
     outputs=[
         {"name": "data"},
@@ -616,7 +616,7 @@ def _california_housing_as_frame(
 
 
 @NodeDecorator(
-    node_id="_covtype",
+    node_id="sklearn.datasets.fetch_covtype",
     name="fetch_covtype",
     outputs=[
         {"name": "data"},
@@ -713,7 +713,7 @@ def _covtype(
 
 
 @NodeDecorator(
-    node_id="_covtype_as_frame",
+    node_id="sklearn.datasets.fetch_covtype_as_frame",
     name="fetch_covtype_as_frame",
     outputs=[
         {"name": "data"},
@@ -811,8 +811,8 @@ def _covtype_as_frame(
 
 
 class KDDSubset(Enum):
-    SA = "SA"
-    SF = "SF"
+    sa = "SA"
+    sf = "SF"
     http = "http"
     smtp = "smtp"
     NONE = None
@@ -823,7 +823,7 @@ class KDDSubset(Enum):
 
 
 @NodeDecorator(
-    node_id="_kddcup99",
+    node_id="sklearn.datasets.fetch_kddcup99",
     name="fetch_kddcup99",
     outputs=[
         {"name": "data"},
@@ -923,7 +923,7 @@ def _kddcup99(
 
 
 @NodeDecorator(
-    node_id="_kddcup99_as_frame",
+    node_id="sklearn.datasets.fetch_kddcup99_as_frame",
     name="fetch_kddcup99_as_frame",
     outputs=[
         {"name": "data"},
@@ -1033,7 +1033,7 @@ class LFWSubet(Enum):
 
 
 @NodeDecorator(
-    node_id="_lfw_pairs",
+    node_id="sklearn.datasets.fetch_lfw_pairs",
     name="fetch_lfw_pairs",
     outputs=[
         {"name": "data"},
@@ -1152,7 +1152,7 @@ def _lfw_pairs(
 
 
 @NodeDecorator(
-    node_id="_lfw_people",
+    node_id="sklearn.datasets.fetch_lfw_people",
     name="fetch_lfw_people",
     outputs=[
         {"name": "data"},
@@ -1264,7 +1264,7 @@ def _lfw_people(
 
 
 @NodeDecorator(
-    node_id="_olivetti_faces",
+    node_id="sklearn.datasets.fetch_olivetti_faces",
     name="fetch_olivetti_faces",
     outputs=[
         {"name": "data"},
@@ -1599,7 +1599,7 @@ def _olivetti_faces(
 
 
 @NodeDecorator(
-    node_id="_rcv1",
+    node_id="sklearn.datasets.fetch_rcv1",
     name="fetch_rcv1",
     outputs=[
         {"name": "data"},
@@ -1813,7 +1813,7 @@ def _rcv1(
 
 
 @NodeDecorator(
-    node_id="_breast_cancer",
+    node_id="sklearn.datasets.load_breast_cancer",
     name="load_breast_cancer",
     outputs=[
         {"name": "data"},
@@ -1890,7 +1890,7 @@ def _breast_cancer() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, st
 
 
 @NodeDecorator(
-    node_id="_breast_cancer_as_frame",
+    node_id="sklearn.datasets.load_breast_cancer_as_frame",
     name="load_breast_cancer_as_frame",
     outputs=[
         {"name": "data"},
@@ -1967,7 +1967,7 @@ def _breast_cancer_as_frame() -> (
 
 
 @NodeDecorator(
-    node_id="_diabetes",
+    node_id="sklearn.datasets.load_diabetes",
     name="load_diabetes",
     outputs=[
         {"name": "data"},
@@ -2050,7 +2050,7 @@ def _diabetes(
 
 
 @NodeDecorator(
-    node_id="_diabetes_as_frame",
+    node_id="sklearn.datasets.load_diabetes_as_frame",
     name="load_diabetes_as_frame",
     outputs=[
         {"name": "data"},
@@ -2131,7 +2131,7 @@ def _diabetes_as_frame(
 
 
 @NodeDecorator(
-    node_id="_digits",
+    node_id="sklearn.datasets.load_digits",
     name="load_digits",
     outputs=[
         {"name": "data"},
@@ -2217,7 +2217,7 @@ def _digits(
 
 
 @NodeDecorator(
-    node_id="_digits_as_frame",
+    node_id="sklearn.datasets.load_digits_as_frame",
     name="load_digits_as_frame",
     outputs=[
         {"name": "data"},
@@ -2452,7 +2452,7 @@ def _digits_as_frame(
 
 
 @NodeDecorator(
-    node_id="_iris",
+    node_id="sklearn.datasets.load_iris",
     name="load_iris",
     outputs=[
         {"name": "data"},
@@ -2551,7 +2551,7 @@ def _iris() -> Tuple[np.ndarray, np.ndarray, List[str], List[str], str, str]:
 
 
 @NodeDecorator(
-    node_id="_iris_as_frame",
+    node_id="sklearn.datasets.load_iris_as_frame",
     name="load_iris_as_frame",
     outputs=[
         {"name": "data"},
@@ -2650,7 +2650,7 @@ def _iris_as_frame() -> Tuple[DataFrame, Series, List[str], List[str], str, str]
 
 
 @NodeDecorator(
-    node_id="_linnerud",
+    node_id="sklearn.datasets.load_linnerud",
     name="load_linnerud",
     outputs=[
         {"name": "data"},
@@ -2722,7 +2722,7 @@ def _linnerud() -> Tuple[np.ndarray, np.ndarray, List[str], List[str], str, str,
 
 
 @NodeDecorator(
-    node_id="_linnerud_as_frame",
+    node_id="sklearn.datasets.load_linnerud_as_frame",
     name="load_linnerud_as_frame",
     outputs=[
         {"name": "data"},
@@ -2796,16 +2796,16 @@ def _linnerud_as_frame() -> (
 
 
 class SampleImage(Enum):
-    CHINA = "china.jpg"
-    FLOWER = "flower.jpg"
+    china = "china.jpg"
+    flower = "flower.jpg"
 
     @classmethod
     def default(cls):
-        return cls.FLOWER.value
+        return cls.flower.value
 
 
 @NodeDecorator(
-    node_id="_sample_image",
+    node_id="sklearn.datasets.load_sample_image",
     name="load_sample_image",
 )
 def _sample_image(
@@ -2991,7 +2991,7 @@ def _sample_image(
 
 
 @NodeDecorator(
-    node_id="_wine",
+    node_id="sklearn.datasets.load_wine",
     name="load_wine",
     outputs=[
         {"name": "data"},
@@ -3062,7 +3062,7 @@ def _wine() -> Tuple[np.ndarray, np.ndarray, List[str], List[str], str]:
 
 
 @NodeDecorator(
-    node_id="_wine_as_frame",
+    node_id="sklearn.datasets.load_wine_as_frame",
     name="load_wine_as_frame",
     outputs=[
         {"name": "data"},
