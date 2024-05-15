@@ -38,17 +38,26 @@ from funcnodes_sklearn.datasets import (
     # # _svmlight_file
     _wine,
     _wine_as_frame,
-    # _biclusters,
-    # _blobs,
-    # _checkerboard,
-    # _circles,
-    # _friedman1,
-    # _friedman2,
-    # _friedman3,
-    # _gaussian_quantiles,
-    # _hastie_10_2,
-    # _low_rank_matrix,
-    # _moons,
+    _biclusters,
+    _blobs,
+    _checkerboard,
+    _circles,
+    _classification,
+    _friedman1,
+    _friedman2,
+    _friedman3,
+    _gaussian_quantiles,
+    _hastie_10_2,
+    _low_rank_matrix,
+    _moons,
+    _multilabel_classification,
+    _regression,
+    _s_curve,
+    _sparse_coded_signal,
+    _sparse_spd_matrix,
+    _sparse_uncorrelated,
+    _spd_matrix,
+    _swiss_roll,
 )
 
 
@@ -492,85 +501,321 @@ class TestWineAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, Series)
 
 
-# class TestWine(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _wine()
-#         self.assertIsInstance(dataset, dict)
-#         self.assertEqual(list(dataset.target_names), ['class_0', 'class_1', 'class_2'])
-
-# class TestBiClusters(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _biclusters(shape=(10, 10), n_clusters=5)
-#         self.assertIsInstance(dataset, Tuple)
-#         self.assertEqual(dataset[0].shape, (10, 10))
-#         self.assertEqual(dataset[1].shape, (5, 10))
-#         self.assertEqual(dataset[2].shape, (5, 10))
-
-# class TestBlobs(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _blobs()
-#         self.assertIsInstance(dataset, Tuple)
-#         self.assertEqual(dataset[0].shape, (100, 2))
-#         self.assertEqual(dataset[1].shape, (100,))
-
-# class TestCheckerboard(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _checkerboard(shape=(10, 10), n_clusters=5)
-#         self.assertIsInstance(dataset, Tuple)
-#         self.assertEqual(dataset[0].shape, (10, 10))
-#         self.assertEqual(dataset[1].shape, (25, 10))
-#         self.assertEqual(dataset[2].shape, (25, 10))
-# class TestCircles(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _circles(random_state=42)
-#         self.assertIsInstance(dataset, Tuple)
-#         self.assertEqual(dataset[0].shape, (100, 2))
-#         self.assertEqual(dataset[1].shape, (100,))
-
-# class TestFriedman1(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _friedman1(random_state=42)
-#         self.assertIsInstance(dataset, Tuple)
-#         self.assertEqual(dataset[0].shape, (100, 10))
-#         self.assertEqual(dataset[1].shape, (100,))
-
-# class TestFriedman2(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _friedman2(random_state=42)
-#         self.assertIsInstance(dataset, Tuple)
-#         self.assertEqual(dataset[0].shape, (100, 4))
-#         self.assertEqual(dataset[1].shape, (100,))
-
-# class TestFriedman3(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _friedman3(random_state=42)
-#         self.assertIsInstance(dataset, Tuple)
-#         self.assertEqual(dataset[0].shape, (100, 4))
-#         self.assertEqual(dataset[1].shape, (100,))
+# TODO: Fix test resulting in <NoValue>
+class TestBiClusters(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        shape = (300, 300)
+        n_clusters = 5
+        noise = 5
+        shuffle = False
+        random_state = 0
+        model: fn.Node = _biclusters()
+        model.inputs["shape"].value = shape
+        model.inputs["n_clusters"].value = n_clusters
+        model.inputs["noise"].value = noise
+        model.inputs["shuffle"].value = shuffle
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        rows = model.outputs["rows"].value
+        cols = model.outputs["cols"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(rows, np.ndarray)
+        self.assertIsInstance(cols, np.ndarray)
 
 
-# class TestGaussianQuantiles(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _gaussian_quantiles(random_state=42)
-#         self.assertIsInstance(dataset, Tuple)
-#         self.assertEqual(dataset[0].shape, (100, 2))
-#         self.assertEqual(dataset[1].shape, (100,))
+class TestBlobs(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        n_samples = 10
+        centers = 3
+        n_features = 2
+        random_state = 0
+        model: fn.Node = _blobs()
+        model.inputs["n_samples"].value = n_samples
+        model.inputs["centers"].value = centers
+        model.inputs["n_features"].value = n_features
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        y = model.outputs["y"].value
+        centers = model.outputs["centers"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+        self.assertIsInstance(centers, np.ndarray)
 
 
-# class TestHastie102(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _hastie_10_2(random_state=42)
-#         self.assertIsInstance(dataset, Tuple)
-#         self.assertEqual(dataset[0].shape, (100, 10))
-#         self.assertEqual(dataset[1].shape, (100,))
+class TestCheckerboard(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        shape = (300, 300)
+        n_clusters = (4, 3)
+        noise = 10
+        shuffle = False
+        random_state = 42
+        model: fn.Node = _checkerboard()
+        model.inputs["shape"].value = shape
+        model.inputs["n_clusters"].value = n_clusters
+        model.inputs["noise"].value = noise
+        model.inputs["shuffle"].value = shuffle
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        rows = model.outputs["rows"].value
+        cols = model.outputs["cols"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(rows, np.ndarray)
+        self.assertIsInstance(cols, np.ndarray)
 
-# class TestLowRankMatrix(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _low_rank_matrix(random_state=42)
-#         self.assertIsInstance(dataset, np.ndarray)
-# #         self.assertEqual(dataset.shape, (100, 100))
-# class TestMoons(unittest.IsolatedAsyncioTestCase):
-#     def test_default_parameters(self):
-#         dataset = _moons(random_state=42)
-#         self.assertIsInstance(dataset, )
-#         self.assertEqual(dataset.shape, (100, 100))
+
+class TestCircles(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        random_state = 42
+        model: fn.Node = _circles()
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        y = model.outputs["y"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
+
+class TestClassification(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        random_state = 42
+        model: fn.Node = _classification()
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        y = model.outputs["y"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
+
+class TestFriedman1(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        random_state = 42
+        model: fn.Node = _friedman1()
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        y = model.outputs["y"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
+
+class TestFriedman2(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        random_state = 42
+        model: fn.Node = _friedman2()
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        y = model.outputs["y"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
+
+class TestFriedman3(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        random_state = 42
+        model: fn.Node = _friedman3()
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        y = model.outputs["y"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
+
+class TestGaussianQuantiles(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        random_state = 42
+        model: fn.Node = _gaussian_quantiles()
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        y = model.outputs["y"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
+
+class TestHastie102(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        random_state = 1
+        model: fn.Node = _hastie_10_2()
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        y = model.outputs["y"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
+
+class TestLowRankMatrix(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        n_samples, n_features = 500, 10
+        random_state = np.random.RandomState(0)
+        model: fn.Node = _low_rank_matrix()
+        model.inputs["n_samples"].value = n_samples
+        model.inputs["n_features"].value = n_features
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        self.assertIsInstance(X, np.ndarray)
+
+
+class TestMoons(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        noise = 0.3
+        random_state = 0
+        model: fn.Node = _moons()
+        model.inputs["noise"].value = noise
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        y = model.outputs["y"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
+
+class TestMultilabelClassification(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        n_labels = 5
+        random_state = 42
+        model: fn.Node = _multilabel_classification()
+        model.inputs["n_labels"].value = n_labels
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        Y = model.outputs["Y"].value
+        p_c = model.outputs["p_c"].value
+        p_w_c = model.outputs["p_w_c"].value
+
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(Y, np.ndarray)
+        self.assertIsInstance(p_c, np.ndarray)
+        self.assertIsInstance(p_w_c, np.ndarray)
+
+
+class TestRegression(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        n_sample = 5
+        n_feature = 2
+        noise = 1
+        random_state = 42
+        model: fn.Node = _regression()
+        model.inputs["n_sample"].value = n_sample
+        model.inputs["n_feature"].value = n_feature
+        model.inputs["noise"].value = noise
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        y = model.outputs["y"].value
+        coef = model.outputs["coef"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+        self.assertIsInstance(coef, np.ndarray)
+
+
+class TestSCurve(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        n_sample = 1500
+        random_state = 0
+        model: fn.Node = _s_curve()
+        model.inputs["n_sample"].value = n_sample
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        t = model.outputs["t"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(t, np.ndarray)
+
+
+class TestSparseCodedSignal(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        n_samples = 1
+        n_components, n_features = 512, 100
+        n_nonzero_coefs = 17
+        random_state = 0
+        model: fn.Node = _sparse_coded_signal()
+        model.inputs["n_samples"].value = n_samples
+        model.inputs["n_components"].value = n_components
+        model.inputs["n_features"].value = n_features
+        model.inputs["n_nonzero_coefs"].value = n_nonzero_coefs
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        data = model.outputs["data"].value
+        dictionary = model.outputs["dictionary"].value
+        code = model.outputs["code"].value
+        self.assertIsInstance(data, np.ndarray)
+        self.assertIsInstance(dictionary, np.ndarray)
+        self.assertIsInstance(code, np.ndarray)
+
+
+class TestSparseSpdMatrix(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        n_dim = 4
+        norm_diag = False
+        random_state = 42
+        model: fn.Node = _sparse_spd_matrix()
+        model.inputs["n_dim"].value = n_dim
+        model.inputs["norm_diag"].value = norm_diag
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        prec = model.outputs["prec"].value
+        self.assertIsInstance(prec, np.ndarray)
+
+
+class TestSparseUncorrelated(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        random_state = 0
+        model: fn.Node = _sparse_uncorrelated()
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        y = model.outputs["y"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
+
+class TestSpdMatrix(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        n_dim = 2
+        random_state = 42
+        model: fn.Node = _spd_matrix()
+        model.inputs["n_dim"].value = n_dim
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        self.assertIsInstance(X, np.ndarray)
+
+
+class TestSwissRoll(unittest.IsolatedAsyncioTestCase):
+    async def test_default_parameters(self):
+        random_state = 0
+        model: fn.Node = _swiss_roll()
+        model.inputs["random_state"].value = random_state
+        self.assertIsInstance(model, fn.Node)
+        await model
+        X = model.outputs["X"].value
+        t = model.outputs["t"].value
+        self.assertIsInstance(X, np.ndarray)
+        self.assertIsInstance(t, np.ndarray)
