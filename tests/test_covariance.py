@@ -37,7 +37,7 @@ class TestEmpiricalCovariance(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = empirical_covariance()
         self.assertIsInstance(cov, fn.Node)
-        cov.trigger()
+        
         await cov
         out = cov.outputs["out"]
         model = out.value()
@@ -58,7 +58,7 @@ class TestEllipticEnvelope(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = elliptical_envelpoe()
         self.assertIsInstance(cov, fn.Node)
-        cov.trigger()
+        
         await cov
         out = cov.outputs["out"]
         model = out.value()
@@ -100,7 +100,7 @@ class TestGraphicalLasso(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = graphical_lasso()
         self.assertIsInstance(cov, fn.Node)
-        cov.trigger()
+        
         await cov
         out = cov.outputs["out"]
         model = out.value()
@@ -130,7 +130,7 @@ class TestGraphicalLassoCV(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = graphical_lasso_cv()
         self.assertIsInstance(cov, fn.Node)
-        cov.trigger()
+        
         await cov
         out = cov.outputs["out"]
         model = out.value()
@@ -183,7 +183,7 @@ class TestLedoitWolf(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = ledoit_wolf()
         self.assertIsInstance(cov, fn.Node)
-        cov.trigger()
+        
         await cov
         out = cov.outputs["out"]
         model = out.value()
@@ -223,7 +223,7 @@ class TestMinCovDet(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = min_cov_det()
         self.assertIsInstance(cov, fn.Node)
-        cov.trigger()
+        
         await cov
         out = cov.outputs["out"]
         model = out.value()
@@ -261,7 +261,7 @@ class TestOAS(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = oas()
         self.assertIsInstance(cov, fn.Node)
-        cov.trigger()
+        
         await cov
         out = cov.outputs["out"]
         model = out.value()
@@ -276,7 +276,7 @@ class TestShrunkCovariance(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = shrunk_covariance()
         self.assertIsInstance(cov, fn.Node)
-        cov.trigger()
+        
         await cov
         out = cov.outputs["out"]
         model = out.value()

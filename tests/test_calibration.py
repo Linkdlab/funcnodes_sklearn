@@ -30,7 +30,7 @@ class TestCalibratedClassifierCV(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         calibrated_clf: fn.Node = calibrated_classifier_cv()
         self.assertIsInstance(calibrated_clf, fn.Node)
-        calibrated_clf.trigger()
+        
         await calibrated_clf
         out = calibrated_clf.outputs["out"]
         model = out.value()

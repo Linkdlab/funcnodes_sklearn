@@ -3216,7 +3216,7 @@ def _biclusters(
 
     """
 
-    out = make_biclusters(
+    X, rows,cols = make_biclusters(
         shape=shape,
         n_clusters=n_clusters,
         noise=noise,
@@ -3225,9 +3225,7 @@ def _biclusters(
         shuffle=shuffle,
         random_state=random_state,
     )
-    X = out['X']    
-    rows = out['rows']
-    cols = out['cols']
+
 
     return X, rows,cols
 
@@ -3238,7 +3236,7 @@ def _biclusters(
     outputs=[
         {"name": "X"},
         {"name": "y"},
-        {"name": "centers"},
+        {"name": "center"},
     ],
 )
 def _blobs(
@@ -3292,10 +3290,6 @@ def _blobs(
         for reproducible output across multiple function calls.
         See :term:`Glossary <random_state>`.
 
-    return_centers : bool, default=False
-        If True, then return the centers of each cluster.
-
-        .. versionadded:: 0.23
 
     Returns
     -------
@@ -3306,8 +3300,7 @@ def _blobs(
         The integer labels for cluster membership of each sample.
 
     centers : ndarray of shape (n_centers, n_features)
-        The centers of each cluster. Only returned if
-        ``return_centers=True``.
+        The centers of each cluster.
 
     See Also
     --------
@@ -3331,7 +3324,7 @@ def _blobs(
 
     """
 
-    out = make_blobs(
+    X, y, center = make_blobs(
         n_samples=n_samples,
         n_features=n_features,
         centers=centers,
@@ -3341,11 +3334,8 @@ def _blobs(
         random_state=random_state,
         return_centers=True,
     )
-    X = out['X']    
-    y = out['y']
-    centers = out['centers']
 
-    return X, y,centers
+    return X, y,center
 
 
 @NodeDecorator(
@@ -3353,8 +3343,8 @@ def _blobs(
     name="make_checkerboard",
     outputs=[
         {"name": "X"},
-        {"name": "y"},
-        {"name": "centers"},
+        {"name": "rows"},
+        {"name": "cols"},
     ],
 )
 def _checkerboard(
@@ -3419,7 +3409,7 @@ def _checkerboard(
 
     """
 
-    out = make_checkerboard(
+    X, rows,cols = make_checkerboard(
         shape=shape,
         n_clusters=n_clusters,
         noise=noise,
@@ -3428,9 +3418,7 @@ def _checkerboard(
         shuffle=shuffle,
         random_state=random_state,
     )
-    X = out['X']    
-    rows = out['rows']
-    cols = out['cols']
+
 
     return X, rows,cols
 
@@ -3504,16 +3492,13 @@ def _circles(
 
     """
 
-    out = make_circles(
+    X, y = make_circles(
         n_samples=n_samples,
         shuffle=shuffle,
         noise=noise,
         random_state=random_state,
         factor=factor,
     )
-
-    X = out['X']    
-    y = out['y']
 
     return X, y
 
@@ -3675,7 +3660,7 @@ def _classification(
 
     """
 
-    out = make_classification(
+    X, y = make_classification(
         n_samples=n_samples,
         n_features=n_features,
         n_informative=n_informative,
@@ -3693,8 +3678,6 @@ def _classification(
         random_state=random_state,
     )
 
-    X = out['X']    
-    y = out['y']
 
     return X, y
 
@@ -3775,15 +3758,13 @@ def _friedman1(
 
     """
 
-    out = make_friedman1(
+    X, y = make_friedman1(
         n_samples=n_samples,
         n_features=n_features,
         noise=noise,
         random_state=random_state,
     )
 
-    X = out['X']    
-    y = out['y']
 
     return X, y
 
@@ -3863,13 +3844,11 @@ def _friedman2(
 
     """
 
-    out = make_friedman2(
+    X, y = make_friedman2(
         n_samples=n_samples,
         noise=noise,
         random_state=random_state,
     )
-    X = out['X']    
-    y = out['y']
 
     return X, y
 
@@ -3948,14 +3927,11 @@ def _friedman3(
 
     """
 
-    out = make_friedman3(
+    X, y = make_friedman3(
         n_samples=n_samples,
         noise=noise,
         random_state=random_state,
     )
-
-    X = out['X']    
-    y = out['y']
 
     return X, y
 
@@ -4046,7 +4022,7 @@ def _gaussian_quantiles(
 
     """
 
-    out = make_gaussian_quantiles(
+    X, y = make_gaussian_quantiles(
         mean=mean,
         cov=cov,
         n_samples=n_samples,
@@ -4056,9 +4032,6 @@ def _gaussian_quantiles(
         random_state=random_state,
     )
 
-
-    X = out['X']    
-    y = out['y']
 
     return X, y
 
@@ -4112,14 +4085,11 @@ def _hastie_10_2(
            Learning Ed. 2", Springer, 2009.
     """
 
-    out = make_hastie_10_2(
+    X, y = make_hastie_10_2(
         n_samples=n_samples,
         random_state=random_state,
     )
 
-
-    X = out['X']    
-    y = out['y']
 
     return X, y
 
@@ -4188,15 +4158,13 @@ def _low_rank_matrix(
 
     """
 
-    out = make_low_rank_matrix(
+    X = make_low_rank_matrix(
         n_samples=n_samples,
         n_features=n_features,
         effective_rank=effective_rank,
         tail_strength=tail_strength,
         random_state=random_state,
     )
-    X = out['X']    
-
     return X
 
 
@@ -4249,14 +4217,13 @@ def _moons(
 
     """
 
-    out = make_moons(
+    X, y = make_moons(
         n_samples=n_samples,
         shuffle=shuffle,
         noise=noise,
         random_state=random_state,
     )
-    X = out['X']    
-    y = out['y']
+
 
     return X, y
 
@@ -4380,7 +4347,7 @@ def _multilabel_classification(
 
     """
 
-    out = make_multilabel_classification(
+    X, Y, p_c, p_w_c = make_multilabel_classification(
         n_samples=n_samples,
         n_features=n_features,
         n_classes=n_classes,
@@ -4393,10 +4360,6 @@ def _multilabel_classification(
         random_state=random_state,
     )
 
-    X = out['X']
-    Y = out['Y']
-    p_c = out['p_c'] 
-    p_w_c = out['p_w_c'] 
 
     return X, Y, p_c, p_w_c
 
@@ -4407,7 +4370,7 @@ def _multilabel_classification(
     outputs=[
         {"name": "X"},
         {"name": "y"},
-        {"name": "coef"},
+        {"name": "coefs"},
     ],
 )
 
@@ -4425,7 +4388,7 @@ def _regression(
     coef: bool = True,
     random_state: Optional[Union[int, RandomState]] = None,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    out = make_s_curve(
+    X, y, coefs = make_regression(
         n_samples=n_samples,
         n_features=n_features,
         n_informative=n_informative,
@@ -4439,11 +4402,7 @@ def _regression(
         random_state=random_state,
     )
 
-    X = out['X']
-    y = out['y']
-    coef = out['coef'] 
-
-    return X, y, coef
+    return X, y, coefs
 
 
 @NodeDecorator(
@@ -4461,14 +4420,12 @@ def _s_curve(
     noise: float = 0.0,
     random_state: Optional[Union[int, RandomState]] = None,
 ) -> Tuple[np.ndarray, np.ndarray]:
-    out = make_s_curve(
+    X, t = make_s_curve(
         n_samples=n_samples,
         noise=noise,
         random_state=random_state,
     )
 
-    X = out['X']
-    t = out['t']
 
     return X, t
 @NodeDecorator(
@@ -4491,7 +4448,7 @@ def _sparse_coded_signal(
     random_state: Optional[Union[int, RandomState]] = None,
     data_transposed: bool = False,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    out = make_sparse_coded_signal(
+    data, dictionary, code = make_sparse_coded_signal(
         n_samples=n_samples,
         n_components=n_components,
         n_features=n_features,
@@ -4500,13 +4457,22 @@ def _sparse_coded_signal(
         random_state=random_state,
     )
 
-    data = out['data']
-    dictionary = out['dictionary']
-    code = out['code']
     
 
     return data, dictionary, code
-
+class SparseFormat(Enum):
+    bsr ='bsr'
+    csr ='csr'
+    dok = 'dok'
+    coo = 'coo'
+    lil = 'lil'
+    dia = 'dia'
+    csc = 'csc'
+    NONE = None
+    
+    @classmethod
+    def default(cls):
+        return cls.NONE.value
 @NodeDecorator(
     node_id="sklearn.datasets.make_sparse_spd_matrix",
     name="make_sparse_spd_matrix",
@@ -4522,10 +4488,10 @@ def _sparse_spd_matrix(
     norm_diag: bool=False,
     smallest_coef: float=0.1,
     largest_coef: float=0.9,
-    sparse_format: bool=False,
+    sparse_format: SparseFormat=SparseFormat.default(),
     random_state: Optional[Union[int, RandomState]] = None,
 ) -> np.ndarray:
-    out = make_sparse_spd_matrix(
+    prec = make_sparse_spd_matrix(
         n_dim=n_dim,
         alpha=alpha,
         norm_diag=norm_diag,
@@ -4534,8 +4500,6 @@ def _sparse_spd_matrix(
         sparse_format=sparse_format,
         random_state=random_state,
     )
-    prec = out['prec']
-
     return prec
 
 @NodeDecorator(
@@ -4553,14 +4517,11 @@ def _sparse_uncorrelated(
     n_features:int =10,
     random_state: Optional[Union[int, RandomState]] = None,
 ) -> Tuple[np.ndarray, np.ndarray]:
-    out = make_sparse_uncorrelated(
+    X, y = make_sparse_uncorrelated(
         n_samples=n_samples,
         n_features=n_features,
         random_state=random_state,
     )
-
-    X = out['X']
-    y = out['y']
 
     return X, y
 
@@ -4577,12 +4538,10 @@ def _spd_matrix(
     n_dim: int,
     random_state: Optional[Union[int, RandomState]] = None,
 ) -> np.ndarray:
-    out = make_spd_matrix(
+    X = make_spd_matrix(
         n_dim=n_dim,
         random_state=random_state,
     )
-
-    X = out['X']
 
     return X
 
@@ -4602,15 +4561,12 @@ def _swiss_roll(
     random_state: Optional[Union[int, RandomState]] = None,
     hole: bool = False,
 ) -> Tuple[np.ndarray, np.ndarray]:
-    out = make_swiss_roll(
+    X, t = make_swiss_roll(
         n_samples=n_samples,
         noise=noise,
         random_state=random_state,
         hole=hole,
     )
-
-    X = out['X']
-    t = out['t']
 
     return X, t
 SAMPLE_GENERATOR_NODE_SHELF = Shelf(

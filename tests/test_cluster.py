@@ -33,7 +33,7 @@ class TestAffinityPropagation(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = affinity_propagation()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -53,7 +53,7 @@ class TestAffinityPropagation(unittest.IsolatedAsyncioTestCase):
         convergence_iter = 20
         copy = False
         preference = np.array([0.1, 0.2, 0.3])
-        affinity = Affinity.PRECOMPUTED.value
+        affinity = Affinity.precomputed.value
         verbose = True
         random_state = 42
         model: fn.Node = affinity_propagation()
@@ -75,7 +75,7 @@ class TestAffinityPropagation(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(clustering.convergence_iter, convergence_iter)
         self.assertFalse(clustering.copy)
         np.testing.assert_array_equal(clustering.preference, preference)
-        self.assertEqual(clustering.affinity, Affinity.PRECOMPUTED.value)
+        self.assertEqual(clustering.affinity, Affinity.precomputed.value)
         self.assertTrue(clustering.verbose)
         self.assertEqual(clustering.random_state, random_state)
 
@@ -84,7 +84,7 @@ class TestAgglomerativeClustering(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = agglomerative_clustering()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -100,11 +100,11 @@ class TestAgglomerativeClustering(unittest.IsolatedAsyncioTestCase):
 
     async def test_custom_parameters(self):
         n_clusters = 3
-        metric = Metric.L1.value
+        metric = Metric.l1.value
         memory = "memory_cache"
         connectivity = np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1]])
         compute_full_tree = True
-        linkage = Linkage.AVERAGE.value
+        linkage = Linkage.average.value
         distance_threshold = 0.5
         compute_distances = True
         model: fn.Node = agglomerative_clustering()
@@ -159,7 +159,7 @@ class TestBirchFunction(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = birch()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -213,7 +213,7 @@ class TestDBSCAN(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = dbscan()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -229,9 +229,9 @@ class TestDBSCAN(unittest.IsolatedAsyncioTestCase):
     async def test_custom_parameters(self):
         eps = 1.0
         min_samples = 10
-        metric = Metric.MANHATTAN.value
+        metric = Metric.manhattan.value
         metric_params = {"p": 2}
-        algorithm = Algorithm.KD_TREE.value
+        algorithm = Algorithm.kd_tree.value
         leaf_size = 50
         p = 2
         n_jobs = -1
@@ -263,7 +263,7 @@ class TestFeatureAgglomeration(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = feature_agglomeration()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -280,11 +280,11 @@ class TestFeatureAgglomeration(unittest.IsolatedAsyncioTestCase):
 
     async def test_custom_parameters(self):
         n_clusters = 3
-        metric = Metric.L1.value
+        metric = Metric.l1.value
         memory = "memory_cache"
         connectivity = np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1]])
         compute_full_tree = True
-        linkage = Linkage.AVERAGE.value
+        linkage = Linkage.average.value
         pooling_func = np.median
         distance_threshold = 0.5
         compute_distances = True
@@ -318,7 +318,7 @@ class TestKMeans(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = kmeans()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -346,7 +346,7 @@ class TestKMeans(unittest.IsolatedAsyncioTestCase):
         verbose = 1
         random_state = 42
         copy_x = False
-        algorithm = (KMeansAlgorithm.ELKAN.value,)
+        algorithm = (KMeansAlgorithm.elkan.value,)
         model: fn.Node = kmeans()
         model.inputs["n_clusters"].value = n_clusters
         model.inputs["init"].value = init
@@ -377,7 +377,7 @@ class TestBisectingKMeans(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = bisecting_kmeans()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -410,7 +410,7 @@ class TestBisectingKMeans(unittest.IsolatedAsyncioTestCase):
         verbose = 1
         random_state = 42
         copy_x = False
-        algorithm = (KMeansAlgorithm.ELKAN.value,)
+        algorithm = (KMeansAlgorithm.elkan.value,)
         model: fn.Node = bisecting_kmeans()
         model.inputs["n_clusters"].value = n_clusters
         model.inputs["init"].value = init
@@ -441,7 +441,7 @@ class TestMiniBatchKMeans(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = mini_batch_kmeans()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -509,7 +509,7 @@ class TestMeanShift(unittest.IsolatedAsyncioTestCase):
         X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
         model: fn.Node = mean_shift()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -546,7 +546,7 @@ class TestOPTICS(unittest.IsolatedAsyncioTestCase):
         X = np.array([[1, 2], [2, 5], [3, 6], [8, 7], [8, 8], [7, 3]])
         model: fn.Node = optics()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -572,7 +572,7 @@ class TestSpectralClustering(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = spectral_clustering()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -626,7 +626,7 @@ class TestSpectralBiclustering(unittest.IsolatedAsyncioTestCase):
         X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
         model: fn.Node = spectral_biclustering()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()
@@ -656,7 +656,7 @@ class TestSpectralCoclustering(unittest.IsolatedAsyncioTestCase):
         X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
         model: fn.Node = spectral_coclustering()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         clustering = out.value()

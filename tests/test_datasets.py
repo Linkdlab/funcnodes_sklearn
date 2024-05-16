@@ -65,7 +65,7 @@ class Test20newsgroups(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _20newsgroups()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -81,7 +81,7 @@ class Test20newsgroupsVectorized(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _20newsgroups_vectorized()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -97,7 +97,7 @@ class Test20newsgroupsVectorizedAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _20newsgroups_vectorized_as_frame()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -113,7 +113,7 @@ class TestCaliforniaHousing(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _california_housing()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -129,7 +129,7 @@ class TestCaliforniaHousingAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _california_housing_as_frame()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -145,7 +145,7 @@ class TestCovtype(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _covtype()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -163,7 +163,7 @@ class TestCovtypeAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _covtype_as_frame()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -181,7 +181,7 @@ class TestKddcup99(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _kddcup99()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -216,7 +216,7 @@ class TestLfwPairs(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _lfw_pairs()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         pairs = model.outputs["pairs"].value
@@ -234,7 +234,7 @@ class TestLfwPeople(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _lfw_people()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         images = model.outputs["images"].value
@@ -252,7 +252,7 @@ class TestOlivettiFaces(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _olivetti_faces()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         images = model.outputs["images"].value
@@ -276,7 +276,7 @@ class TestRcv1(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _rcv1()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         sample_id = model.outputs["sample_id"].value
@@ -294,7 +294,7 @@ class TestRcv1(unittest.IsolatedAsyncioTestCase):
 #     async def test_default_parameters(self):
 #         model: fn.Node = _species_distributions()
 #         self.assertIsInstance(model, fn.Node)
-#         model.trigger()
+#         
 #         await model
 #         coverages = model.outputs["coverages"].value
 #         train = model.outputs["train"].value
@@ -318,7 +318,7 @@ class TestBreastCancer(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _breast_cancer()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -339,7 +339,7 @@ class TestBreastCancerAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _breast_cancer_as_frame()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -360,7 +360,7 @@ class TestDiabetes(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _diabetes()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -373,7 +373,7 @@ class TestDiabetesAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _diabetes_as_frame()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -386,7 +386,7 @@ class TestDigits(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _digits()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -398,7 +398,7 @@ class TestDigitsAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _diabetes_as_frame()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -416,7 +416,7 @@ class TestIris(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _iris()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -428,7 +428,7 @@ class TestIrisAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _iris_as_frame()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -440,7 +440,7 @@ class TestLinnerud(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _linnerud()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -452,7 +452,7 @@ class TestLinnerudAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _linnerud_as_frame()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -464,7 +464,7 @@ class TestSampleImage(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _sample_image()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         img = model.outputs["out"].value
         self.assertIsInstance(img, np.ndarray)
@@ -481,7 +481,7 @@ class TestWine(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _wine()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -493,7 +493,7 @@ class TestWineAsFrame(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _wine_as_frame()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -540,10 +540,10 @@ class TestBlobs(unittest.IsolatedAsyncioTestCase):
         await model
         X = model.outputs["X"].value
         y = model.outputs["y"].value
-        centers = model.outputs["centers"].value
+        center = model.outputs["center"].value
         self.assertIsInstance(X, np.ndarray)
         self.assertIsInstance(y, np.ndarray)
-        self.assertIsInstance(centers, np.ndarray)
+        self.assertIsInstance(center, np.ndarray)
 
 
 class TestCheckerboard(unittest.IsolatedAsyncioTestCase):
@@ -711,31 +711,31 @@ class TestMultilabelClassification(unittest.IsolatedAsyncioTestCase):
 
 class TestRegression(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
-        n_sample = 5
-        n_feature = 2
+        n_samples = 5
+        n_features = 2
         noise = 1
         random_state = 42
         model: fn.Node = _regression()
-        model.inputs["n_sample"].value = n_sample
-        model.inputs["n_feature"].value = n_feature
+        model.inputs["n_samples"].value = n_samples
+        model.inputs["n_features"].value = n_features
         model.inputs["noise"].value = noise
         model.inputs["random_state"].value = random_state
         self.assertIsInstance(model, fn.Node)
         await model
         X = model.outputs["X"].value
         y = model.outputs["y"].value
-        coef = model.outputs["coef"].value
+        coefs = model.outputs["coefs"].value
         self.assertIsInstance(X, np.ndarray)
         self.assertIsInstance(y, np.ndarray)
-        self.assertIsInstance(coef, np.ndarray)
+        self.assertIsInstance(coefs, np.ndarray)
 
 
 class TestSCurve(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
-        n_sample = 1500
+        n_samples = 1500
         random_state = 0
         model: fn.Node = _s_curve()
-        model.inputs["n_sample"].value = n_sample
+        model.inputs["n_samples"].value = n_samples
         model.inputs["random_state"].value = random_state
         self.assertIsInstance(model, fn.Node)
         await model

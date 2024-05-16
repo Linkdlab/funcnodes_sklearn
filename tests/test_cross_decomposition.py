@@ -19,7 +19,7 @@ class TestCCA(unittest.IsolatedAsyncioTestCase):
         Y = [[0.1, -0.2], [0.9, 1.1], [6.2, 5.9], [11.9, 12.3]]
         model: fn.Node = cca()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         cross_decomposition = out.value().fit(X, Y)
@@ -34,7 +34,7 @@ class TestPLSCanonical(unittest.IsolatedAsyncioTestCase):
         Y = [[0.1, -0.2], [0.9, 1.1], [6.2, 5.9], [11.9, 12.3]]
         model: fn.Node = pls_canonical()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         cross_decomposition = out.value().fit(X, Y)
@@ -63,7 +63,7 @@ class TestPLSRegression(unittest.IsolatedAsyncioTestCase):
         Y = [[0.1, -0.2], [0.9, 1.1], [6.2, 5.9], [11.9, 12.3]]
         model: fn.Node = pls_regression()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         cross_decomposition = out.value().fit(X, Y)
@@ -78,7 +78,7 @@ class TestPLSSVD(unittest.IsolatedAsyncioTestCase):
         Y = [[0.1, -0.2], [0.9, 1.1], [6.2, 5.9], [11.9, 12.3]]
         model: fn.Node = pls_svd()
         self.assertIsInstance(model, fn.Node)
-        model.trigger()
+        
         await model
         out = model.outputs["out"]
         cross_decomposition = out.value().fit(X, Y)
