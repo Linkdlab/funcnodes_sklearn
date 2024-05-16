@@ -8,7 +8,7 @@ from .cross_decomposition import CROSS_DECOMPOSITION_NODE_SHELFE
 from .datasets import DATASET_NODE_SHELF
 from .decomposition import DECOMPOSITION_NODE_SHELFE
 
-__version__ = "0.1.5"
+__version__ = "0.1.6"
 
 NODE_SHELF = fn.Shelf(
     name="sklearn",
