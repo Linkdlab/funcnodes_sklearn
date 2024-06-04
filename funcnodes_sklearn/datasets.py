@@ -76,7 +76,7 @@ class Subset(Enum):
     ],
 )
 def _20newsgroups(
-    subset: Subset = Subset.default(),
+    subset: Subset = "train",
     categories: Optional[List[str]] = None,
     shuffle: bool = True,
     random_state: Optional[Union[int, RandomState]] = None,
@@ -200,7 +200,7 @@ def _20newsgroups(
     ],
 )
 def _20newsgroups_vectorized(
-    subset: Subset = Subset.default(),
+    subset: Subset = "train",
     remove_headers: bool = False,
     remove_footers: bool = False,
     remove_quotes: bool = False,
@@ -325,7 +325,7 @@ def _20newsgroups_vectorized(
     ],
 )
 def _20newsgroups_vectorized_as_frame(
-    subset: Subset = Subset.default(),
+    subset: Subset = "train",
     remove_headers: bool = False,
     remove_footers: bool = False,
     remove_quotes: bool = False,
@@ -820,7 +820,7 @@ class KDDSubset(Enum):
     ],
 )
 def _kddcup99(
-    subset: Optional[KDDSubset] = KDDSubset.default(),
+    subset: Optional[KDDSubset] = None,
     shuffle: bool = False,
     random_state: Optional[Union[int, RandomState]] = None,
     percent10: bool = False,
@@ -918,7 +918,7 @@ def _kddcup99(
     ],
 )
 def _kddcup99_as_frame(
-    subset: Optional[KDDSubset] = KDDSubset.default(),
+    subset: Optional[KDDSubset] = None,
     shuffle: bool = False,
     random_state: Optional[Union[int, RandomState]] = None,
     percent10: bool = False,
@@ -1026,7 +1026,7 @@ class LFWSubet(Enum):
     ],
 )
 def _lfw_pairs(
-    subset: LFWSubet = LFWSubet.default(),
+    subset: LFWSubet = "train",
     funneled: bool = True,
     resize: float = 0.5,
     color: bool = True,
@@ -1586,7 +1586,7 @@ def _olivetti_faces(
     ],
 )
 def _rcv1(
-    subset: Subset = Subset.default(),
+    subset: Subset = "train",
     shuffle: bool = False,
     random_state: Union[int, RandomState, None] = 0,
     download_if_missing: bool = True,

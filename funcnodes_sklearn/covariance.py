@@ -283,8 +283,8 @@ class Covariance(Enum):
 )
 def graphical_lasso(
     alpha: float = 0.01,
-    mode: Mode = Mode.defalt(),
-    covariance: Covariance = Covariance.defalt(),
+    mode: Mode = "cd",
+    covariance: Covariance = None,
     tol: float = 1e-4,
     enet_tol: float = 1e-4,
     max_iter: int = 100,
@@ -440,7 +440,7 @@ def graphical_lasso_cv(
     tol: float = 1e-4,
     enet_tol: float = 1e-4,
     max_iter: int = 100,
-    mode: Mode = Mode.defalt(),
+    mode: Mode = "cd",
     n_jobs: Optional[int] = None,
     verbose: bool = False,
     eps: float = np.finfo(np.float64).eps,

@@ -54,8 +54,8 @@ def _dictionary_learning(
     alpha: float = 1.0,
     max_iter: int = 1000,
     tol: float = 1e-8,
-    fit_algorithm: FitAlgorithm = FitAlgorithm.default(),
-    transform_algorithm: TransformAlgorithm = TransformAlgorithm.default(),
+    fit_algorithm: FitAlgorithm = "lars",
+    transform_algorithm: TransformAlgorithm = "omp",
     transform_n_nonzero_coefs: Optional[int] = None,
     transform_alpha: Optional[float] = None,
     n_jobs: Optional[int] = None,
@@ -124,9 +124,9 @@ def _factor_analysis(
     copy: bool = True,
     max_iter: int = 1000,
     noise_variance_init: Optional[int] = None,
-    svd_method: SVDMethod = SVDMethod.default(),
+    svd_method: SVDMethod = "randomized",
     iterated_power: int = 3,
-    rotation: Rotation = Rotation.default(),
+    rotation: Rotation = None,
     random_state: Optional[Union[int, np.random.RandomState]] = 0,
 ) -> Callable[[], BaseEstimator]:
     if noise_variance_init == "np":
@@ -183,13 +183,13 @@ class WhitenSolver(Enum):
 @controlled_wrapper(FastICA, wrapper_attribute="__fnwrapped__")
 def _fast_ica(
     n_components: Optional[int] = None,
-    algorithm: Algorithm = Algorithm.default(),
-    fun: Optional[Union[Fun, Callable]] = Fun.default(),
+    algorithm: Algorithm = "parallel",
+    fun: Optional[Union[Fun, Callable]] = "logcosh",
     fun_args: Optional[dict] = None,
     max_iter: int = 200,
     tol: float = 1e-4,
     w_init: Optional[np.ndarray] = None,
-    whiten_solver: WhitenSolver = WhitenSolver.default(),
+    whiten_solver: WhitenSolver = "svd",
     random_state: Optional[Union[int, np.random.RandomState]] = None,
 ) -> Callable[[], BaseEstimator]:
     def create_fast_ica():
@@ -261,14 +261,14 @@ class EigenSolvers(Enum):
 @controlled_wrapper(KernelPCA, wrapper_attribute="__fnwrapped__")
 def _kernel_lpca(
     n_components: Optional[int] = None,
-    kernel: Optional[Union[Kernel, Callable]] = Kernel.default(),
+    kernel: Optional[Union[Kernel, Callable]] = "linear",
     gamma: Optional[float] = None,
     degree: int = 3,
     coef0: float = 1,
     kernel_params: Optional[dict] = None,
     alpha: float = 1.0,
     fit_inverse_transform: bool = False,
-    eigen_solver: EigenSolvers = EigenSolvers.default(),
+    eigen_solver: EigenSolvers = "auto",
     tol: float = 0.0,
     max_iter: Optional[int] = None,
     iterated_power: Optional[Union[int, Literal["auto"]]] = "auto",
@@ -318,7 +318,7 @@ def _latent_dirichlet_allocation(
     n_components: int = 10,
     doc_topic_prior: Optional[float] = None,
     topic_word_prior: Optional[float] = None,
-    learning_method: LearningMethod = LearningMethod.default(),
+    learning_method: LearningMethod = "batch",
     learning_decay: float = 0.7,
     learning_offset: float = 10.0,
     max_iter: int = 10,
@@ -369,12 +369,12 @@ def _mini_batch_dictionary_learning(
     n_components: Optional[int] = None,
     alpha: float = 1.0,
     max_iter: int = 1000,
-    fit_algorithm: FitAlgorithm = FitAlgorithm.default(),
+    fit_algorithm: FitAlgorithm = "lars",
     n_jobs: Optional[int] = None,
     batch_size: int = 256,
     shuffle: bool = True,
     dict_init: Optional[np.ndarray] = None,
-    transform_algorithm: TransformAlgorithm = TransformAlgorithm.default(),
+    transform_algorithm: TransformAlgorithm = "omp",
     transform_n_nonzero_coefs: Optional[int] = None,
     transform_alpha: Optional[float] = None,
     verbose: Union[bool, int] = False,
@@ -429,7 +429,7 @@ def _mini_batch_sparse_pca(
     verbose: Union[bool, int] = False,
     shuffle: bool = True,
     n_jobs: Optional[int] = None,
-    method: FitAlgorithm = FitAlgorithm.default(),
+    method: FitAlgorithm = "lars",
     random_state: Optional[Union[int, np.random.RandomState]] = None,
     tol: float = 1e-3,
     max_no_improvement: int = 10,
@@ -492,7 +492,7 @@ class BetaLoss(Enum):
 @controlled_wrapper(NMF, wrapper_attribute="__fnwrapped__")
 def _nmf(
     n_components: Optional[Union[int, Literal["auto"]]] = None,
-    init: Init = Init.default(),
+    init: Init = "frobenius",
     solver: Solver = Solver.default(),
     beta_loss: Union[BetaLoss, float] = BetaLoss.default(),
     tol: float = 1e-4,
@@ -530,7 +530,7 @@ def _nmf(
 @controlled_wrapper(MiniBatchNMF, wrapper_attribute="__fnwrapped__")
 def _mini_batch_nmf(
     n_components: Optional[Union[int, Literal["auto"]]] = None,
-    init: Init = Init.default(),
+    init: Init = "frobenius",
     batch_size: int = 1024,
     beta_loss: Union[BetaLoss, float] = BetaLoss.default(),
     tol: float = 1e-4,
@@ -595,16 +595,23 @@ class PowerIterationNormalizer(Enum):
 )
 @controlled_wrapper(PCA, wrapper_attribute="__fnwrapped__")
 def _pca(
-    n_components: Optional[Union[int, float, Literal["mle"]]] = None,
+    n_components: Optional[str] = None,
     copy: bool = True,
     whiten: bool = False,
-    svd_solver: SVDSolver = SVDSolver.default(),
+    svd_solver: SVDSolver = "auto",
     tol: float = 0.0,
     iterated_power: Union[int, Literal["auto"]] = "auto",
     n_oversamples:int=10,
-    power_iteration_normalizer: PowerIterationNormalizer=PowerIterationNormalizer.default(),
+    power_iteration_normalizer: PowerIterationNormalizer="auto",
     random_state: Optional[Union[int, np.random.RandomState]] = None,
 ) -> Callable[[], BaseEstimator]:
+    if not (
+        n_components is None or
+        (isinstance(n_components, int) and n_components > 0) or
+        (isinstance(n_components, float) and 0.0 < n_components < 1.0) or
+        n_components == 'mle'
+    ):
+        raise ValueError(f"Invalid value for n_components: {n_components}. n_components : int, float or 'mle'")
 
     def create_pca():
         return PCA(
@@ -632,7 +639,7 @@ def _sparse_pca(
     ridge_alpha: float = 0.01,
     max_iter: int = 1000,
     tol: float = 1e-8,
-    method: FitAlgorithm = FitAlgorithm.default(),
+    method: FitAlgorithm = "lars",
     n_jobs: Optional[int] = None,
     U_init: Optional[np.ndarray] = None,
     V_init: Optional[np.ndarray] = None,
@@ -701,10 +708,10 @@ class TSVDAlgorithm(Enum):
 @controlled_wrapper(TruncatedSVD, wrapper_attribute="__fnwrapped__")
 def _truncated_svd(
     n_components: int = 2,
-    algorithm: TSVDAlgorithm = TSVDAlgorithm.default(),
+    algorithm: TSVDAlgorithm = "randomized",
     n_iter: int = 5,
     n_oversamples:int=10,
-    power_iteration_normalizer: PowerIterationNormalizer=PowerIterationNormalizer.default(),
+    power_iteration_normalizer: PowerIterationNormalizer="auto",
     random_state: Optional[Union[int, np.random.RandomState]] = None,
     tol: float = 0.0,
 ) -> Callable[[], BaseEstimator]:

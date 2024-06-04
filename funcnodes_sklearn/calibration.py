@@ -24,7 +24,7 @@ class Method(Enum):
 )
 def calibrated_classifier_cv(
     estimator: Optional[BaseEstimator] = None,
-    method: Method = Method.default(),
+    method: Method = "isotonic",
     cv: Optional[
         Union[int, Iterator[Tuple[np.ndarray[int], np.ndarray[int]]], str]
     ] = None,
@@ -256,7 +256,7 @@ def calibrationcurve(
     y_prob: np.ndarray,
     pos_label: Optional[Union[int, float, bool, str]] = None,
     n_bins: int = 5,
-    strategy: Strategy = Strategy.default(),
+    strategy: Strategy = "uniform",
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Compute true and predicted probabilities for a calibration curve.
 

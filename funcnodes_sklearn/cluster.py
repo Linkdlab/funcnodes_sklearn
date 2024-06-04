@@ -44,7 +44,7 @@ def affinity_propagation(
     convergence_iter: int = 15,
     copy: bool = True,
     preference: Optional[Union[float, np.ndarray]] = None,
-    affinity: Affinity = Affinity.default(),
+    affinity: Affinity = "euclidean",
     verbose: bool = False,
     random_state: Optional[Union[int, RandomState]] = None,
 ) -> Callable[[], ClusterMixin]:
@@ -230,11 +230,11 @@ class Linkage(Enum):
 )
 def agglomerative_clustering(
     n_clusters: int = 2,
-    metric: Union[Metric, Callable] = Metric.default(),
+    metric: Union[Metric, Callable] = "euclidean",
     memory: Union[str, Memory] = None,
     connectivity: Optional[Union[np.ndarray, Callable]] = None,
     compute_full_tree: Union[Literal["auto"], bool] = "auto",
-    linkage: Linkage = Linkage.default(),
+    linkage: Linkage = "ward",
     distance_threshold: Optional[float] = None,
     compute_distances: bool = False,
 ) -> Callable[[], ClusterMixin]:
@@ -561,9 +561,9 @@ class Algorithm(Enum):
 def dbscan(
     eps: float = 0.5,
     min_samples: int = 5,
-    metric: Union[Metric, Callable] = Metric.default(),
+    metric: Union[Metric, Callable] = "euclidean",
     metric_params: Optional[dict] = None,
-    algorithm: Algorithm = Algorithm.default(),
+    algorithm: Algorithm = "auto",
     leaf_size: int = 30,
     p: Optional[float] = None,
     n_jobs: Optional[int] = None,
@@ -736,11 +736,11 @@ def dbscan(
 )
 def feature_agglomeration(
     n_clusters: Union[int, None] = 2,
-    metric: Union[Metric, Callable] = Metric.default(),
+    metric: Union[Metric, Callable] = "euclidean",
     memory: Union[str, Memory] = None,
     connectivity: Optional[Union[np.ndarray, Callable]] = None,
     compute_full_tree: Union[Literal["auto"], bool] = "auto",
-    linkage: Linkage = Linkage.default(),
+    linkage: Linkage = "ward",
     pooling_func: Callable = np.mean,
     distance_threshold: Optional[float] = None,
     compute_distances: bool = False,
@@ -932,7 +932,7 @@ def kmeans(
     verbose: int = 0,
     random_state: Optional[Union[int, RandomState]] = None,
     copy_x: bool = True,
-    algorithm: KMeansAlgorithm = KMeansAlgorithm.default(),
+    algorithm: KMeansAlgorithm = "lloyd",
 ) -> Callable[[], ClusterMixin]:
     """K-Means clustering.
 
@@ -1164,8 +1164,8 @@ def bisecting_kmeans(
     verbose: int = 0,
     tol: float = 1e-4,
     copy_x: bool = True,
-    algorithm: KMeansAlgorithm = KMeansAlgorithm.default(),
-    bisecting_strategy: BisectingStrategy = BisectingStrategy.default(),
+    algorithm: KMeansAlgorithm = "lloyd",
+    bisecting_strategy: BisectingStrategy = "biggest_inertia",
 ) -> Callable[[], ClusterMixin]:
     """Bisecting K-Means clustering.
 
@@ -1735,7 +1735,7 @@ def optics(
     xi: float = 0.05,
     predecessor_correction: bool = True,
     min_cluster_size: Optional[int] = None,
-    algorithm: Algorithm = Algorithm.default(),
+    algorithm: Algorithm = "auto",
     leaf_size: int = 30,
     n_jobs: Optional[int] = None,
     memory: Union[str, Memory] = None,
@@ -2032,24 +2032,24 @@ class AssignLabels(Enum):
 @controlled_wrapper(SpectralClustering, wrapper_attribute="__fnwrapped__")
 def spectral_clustering(
     n_clusters: int = 8,
-    eigen_solver: EigenSolvers = EigenSolvers.default(),
+    eigen_solver: EigenSolvers = None,
     n_components: Optional[int] = None,
     random_state: Optional[Union[int, RandomState]] = None,
     n_init: int = 10,
     gamma: float = 1.0,
     affinity: Union[
         SpectralClustringAffinity, Callable
-    ] = SpectralClustringAffinity.default(),
+    ] = "rbf",
     n_neighbors: int = 10,
     eigen_tol: Union[Literal["auto"], float] = "auto",
-    assign_labels: AssignLabels = AssignLabels.default(),
+    assign_labels: AssignLabels = "kmeans",
     degree: float = 3.0,
     coef0: float = 1.0,
     kernel_params: Optional[dict] = None,
     n_jobs: Optional[int] = None,
     verbose: bool = False,
 ) -> Callable[[], ClusterMixin]:
-    n_components = n_clusters if n_components == "n_clusters" else n_components
+    # n_components = n_clusters if n_components == "n_clusters" else n_components
 
     def create_spectral_clustering():
         return SpectralClustering(
@@ -2098,10 +2098,10 @@ class SVDMethod(Enum):
 )
 def spectral_biclustering(
     n_clusters: Union[int, Tuple[int, int]] = 2,
-    method: SpectralBiclusteringMethod = SpectralBiclusteringMethod.default(),
+    method: SpectralBiclusteringMethod = "bistochastic",
     n_components: int = 6,
     n_best: int = 3,
-    svd_method: SVDMethod = SVDMethod.default(),
+    svd_method: SVDMethod = "randomized",
     n_svd_vecs: Optional[int] = None,
     mini_batch: bool = False,
     init: Union[str, np.ndarray] = "k-means++",
@@ -2260,7 +2260,7 @@ def spectral_biclustering(
 )
 def spectral_coclustering(
     n_clusters: int = 2,
-    svd_method: SVDMethod = SVDMethod.default(),
+    svd_method: SVDMethod = "randomized",
     n_svd_vecs: Optional[int] = None,
     mini_batch: bool = False,
     init: Union[Callable, np.ndarray] = "k-means++",

@@ -143,7 +143,7 @@ class Algorithm(Enum):
 def pls_canonical(
     n_components: int = 2,
     scale: bool = True,
-    algorithm: Algorithm = Algorithm.default(),
+    algorithm: Algorithm = "nipals",
     max_iter: int = 500,
     tol: float = 1e-06,
     copy: bool = True,

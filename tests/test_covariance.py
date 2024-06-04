@@ -17,7 +17,6 @@ from funcnodes_sklearn.covariance import (
     empirical_covariance,
     elliptical_envelpoe,
     graphical_lasso,
-    Covariance,
     Mode,
     graphical_lasso_cv,
     ledoit_wolf,
