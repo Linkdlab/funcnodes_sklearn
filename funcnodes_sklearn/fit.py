@@ -26,40 +26,27 @@ def _fit(
     else:
         print(y)
         return model.fit(X, y)    
-    # # Determine if 'y' is in the parameters of the fit method
-    # if 'y' in fit_signature.parameters:
-    #     # Check if 'y' is optional
-    #     if fit_signature.parameters['y'].default == inspect.Parameter.empty:
-    #         # 'y' is a required parameter, ensure 'y' is provided
-    #         if y is None:
-    #             raise ValueError("The 'y' parameter is required for this model's fit method.")
-    #         return model.fit(X, y)
-    #     else:
-    #         # 'y' is an optional parameter, include it if provided
-    #         return model.fit(X, y) if y is not None else model.fit(X)
-    # else:
-    #     # 'y' is not a parameter in the fit method
-    #     return model.fit(X)
 
 
 
-@NodeDecorator(
-    node_id="sklearn.fit_transform",
-    name="fit_transform",
-)
-def _fit_transform(
-    model: Union[BaseEstimator, Callable[[], BaseEstimator]],
-    X: np.ndarray,
-    y: Optional[np.ndarray] = None,
-) -> np.ndarray:
 
-    def apply_fit_transform():
-        if not isinstance(model.fit_transform(X, y), np.ndarray):
-            return model.fit_transform(X, y).toarray()
-        else:
-            return model.fit_transform(X, y)
+# @NodeDecorator(
+#     node_id="sklearn.fit_transform",
+#     name="fit_transform",
+# )
+# def _fit_transform(
+#     model: Union[BaseEstimator, Callable[[], BaseEstimator]],
+#     X: np.ndarray,
+#     y: Optional[np.ndarray] = None,
+# ) -> np.ndarray:
 
-    return apply_fit_transform
+#     def apply_fit_transform():
+#         if not isinstance(model.fit_transform(X, y), np.ndarray):
+#             return model.fit_transform(X, y).toarray()
+#         else:
+#             return model.fit_transform(X, y)
+
+#     return apply_fit_transform
 
 
 @NodeDecorator(
@@ -107,7 +94,7 @@ def _predict(
         return model.predict(X)
 
 FIT_NODE_SHELFE = Shelf(
-    nodes=[_fit, _fit_transform, _inverse_transform, _transform, _predict],
+    nodes=[_fit, _inverse_transform, _transform, _predict],
     subshelves=[],
     name="Fit",
     description="Methods for fitting, transforming, and more.",
