@@ -19,10 +19,12 @@ def _fit(
     # Get the signature of the fit method
     fit_signature = inspect.signature(model.fit)
     parameter_names = list(fit_signature.parameters.keys())
+    print(parameter_names)
     
     if len(parameter_names) == 1:
         return model.fit(X)
     else:
+        print(y)
         return model.fit(X, y)    
     # # Determine if 'y' is in the parameters of the fit method
     # if 'y' in fit_signature.parameters:
@@ -68,14 +70,12 @@ def _inverse_transform(
     model: Union[BaseEstimator, Callable[[], BaseEstimator]],
     X: np.ndarray,
 ) -> np.ndarray:
-
-    def apply_inverse_transform():
-        if not isinstance(model.inverse_transform(X), np.ndarray):
-            return model.inverse_transform(X).toarray()
-        else:
-            return model.inverse_transform(X)
-
-    return apply_inverse_transform
+    if not isinstance(model, BaseEstimator):
+        model = model()
+    if not isinstance(model.inverse_transform(X), np.ndarray):
+        return model.inverse_transform(X).toarray()
+    else:
+        return model.inverse_transform(X)
 
 
 @NodeDecorator(
@@ -87,17 +87,27 @@ def _transform(
     X: np.ndarray,
 ) -> np.ndarray:
 
-    def apply_transform():
-        if not isinstance(model.transform(X), np.ndarray):
-            return model.transform(X).toarray()
-        else:
-            return model.transform(X)
+    if not isinstance(model.transform(X), np.ndarray):
+        return model.transform(X).toarray()
+    else:
+        return model.transform(X)
 
-    return apply_transform
+@NodeDecorator(
+    node_id="sklearn.predict",
+    name="predict",
+)
+def _predict(
+    model: Union[BaseEstimator, Callable[[], BaseEstimator]],
+    X: np.ndarray,
+) -> np.ndarray:
 
+    if not isinstance(model.predict(X), np.ndarray):
+        return model.predict(X).toarray()
+    else:
+        return model.predict(X)
 
 FIT_NODE_SHELFE = Shelf(
-    nodes=[_fit, _fit_transform, _inverse_transform, _transform],
+    nodes=[_fit, _fit_transform, _inverse_transform, _transform, _predict],
     subshelves=[],
     name="Fit",
     description="Methods for fitting, transforming, and more.",

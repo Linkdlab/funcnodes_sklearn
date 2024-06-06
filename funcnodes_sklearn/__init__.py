@@ -7,10 +7,11 @@ from .cluster import CLUSTER_NODE_SHELFE
 from .cross_decomposition import CROSS_DECOMPOSITION_NODE_SHELFE
 from .datasets import DATASET_NODE_SHELF
 from .decomposition import DECOMPOSITION_NODE_SHELFE
+from .discriminant_analysis import DISCRIMINANTANALYSIS_NODE_SHELFE
 from .preprocessing import PREPROCESSING_NODE_SHELFE
 from .fit import FIT_NODE_SHELFE
 
-__version__ = "0.1.7"
+__version__ = "0.1.9"
 
 NODE_SHELF = fn.Shelf(
     name="sklearn",
@@ -23,6 +24,7 @@ NODE_SHELF = fn.Shelf(
         CROSS_DECOMPOSITION_NODE_SHELFE,
         DATASET_NODE_SHELF,
         DECOMPOSITION_NODE_SHELFE,
+        DISCRIMINANTANALYSIS_NODE_SHELFE,
         PREPROCESSING_NODE_SHELFE,
         FIT_NODE_SHELFE
     ],

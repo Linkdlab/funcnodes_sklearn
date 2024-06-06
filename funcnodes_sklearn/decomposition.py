@@ -1,3 +1,4 @@
+from black import enable_unstable_feature_callback
 from funcnodes import Shelf, NodeDecorator
 from exposedfunctionality import controlled_wrapper
 from typing import Literal, Optional, Union, Callable
@@ -605,13 +606,15 @@ def _pca(
     power_iteration_normalizer: PowerIterationNormalizer="auto",
     random_state: Optional[Union[int, np.random.RandomState]] = None,
 ) -> Callable[[], BaseEstimator]:
-    if not (
-        n_components is None or
-        (isinstance(n_components, int) and n_components > 0) or
-        (isinstance(n_components, float) and 0.0 < n_components < 1.0) or
-        n_components == 'mle'
-    ):
-        raise ValueError(f"Invalid value for n_components: {n_components}. n_components : int, float or 'mle'")
+    if n_components is not None:
+        if isinstance(int(n_components), int):
+            n_components = int(n_components)
+        elif isinstance(n_components, float):
+            n_components = float(n_components)
+        elif n_components == "mle":
+            n_components = "mle"
+        else:
+            raise ValueError(f"Invalid value for n_components: {n_components}. n_components : int, float or 'mle'")
 
     def create_pca():
         return PCA(
