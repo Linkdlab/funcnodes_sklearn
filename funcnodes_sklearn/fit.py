@@ -30,7 +30,7 @@ def _fit(
     if y is not None:
         return model.fit(X, y)
     else:
-        return model.fit(Xs)
+        return model.fit(X)
 
 
 # @NodeDecorator(
