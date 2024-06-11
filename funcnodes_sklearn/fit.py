@@ -14,8 +14,8 @@ def _fit(
     X: np.ndarray,
     y: Optional[np.ndarray] = None,
 ) -> BaseEstimator:
-    # if not isinstance(model, BaseEstimator):
-    #     model = model()
+    if not isinstance(model, BaseEstimator):
+        model = model()
 
     # # Get the signature of the fit method
     # fit_signature = inspect.signature(model.fit)
