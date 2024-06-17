@@ -12,7 +12,7 @@ from .metrics import METRICS_NODE_SHELFE
 from .preprocessing import PREPROCESSING_NODE_SHELFE
 from .fit import FIT_NODE_SHELFE
 
-__version__ = "0.1.10"
+__version__ = "0.1.11"
 
 NODE_SHELF = fn.Shelf(
     name="sklearn",

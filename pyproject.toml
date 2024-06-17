@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "funcnodes-sklearn"
-version = "0.1.10"
+version = "0.1.11"
 description = ""
 authors = ["Kourosh Rezaei <kouroshrezaei90@gmail.com>"]
 readme = "README.md"
@@ -21,7 +21,6 @@ funcnodes-images = "^0.1.15"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
-black = "^24.4.0"
 
 
 [tool.poetry.group.test.dependencies]
