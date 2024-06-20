@@ -2,7 +2,6 @@ from funcnodes import Shelf, NodeDecorator
 from typing import Optional, Callable, Union
 import numpy as np
 from enum import Enum
-from matplotlib.figure import Figure
 from sklearn.metrics import (
     # model selection interface
     check_scoring,
@@ -121,18 +120,7 @@ def _confusion_matrix(
         normalize=normalize,
     )
 
-@NodeDecorator(
-    node_id="sklearn.metrics.ConfusionMatrixDisplay",
-    name="ConfusionMatrixDisplay",
-)
-def _confusion_matrix_display(
-    confusion_matrix: np.ndarray,
-    display_labels: Optional[np.ndarray] = None,
-) -> Figure:
-    return ConfusionMatrixDisplay(
-        confusion_matrix=confusion_matrix,
-        display_labels=display_labels,
-    ).plot()
+
     
     
 CLASSIFICATION_NODE_SHELFE = Shelf(
@@ -142,16 +130,11 @@ CLASSIFICATION_NODE_SHELFE = Shelf(
     description="The sklearn.metrics module implements several loss, score, and utility functions to measure classification performance. Some metrics might require probability estimates of the positive class, confidence values, or binary decisions values. Most implementations allow each sample to provide a weighted contribution to the overall score, through the sample_weight parameter.",
 )
 
-PLOTTING_NODE_SHELFE = Shelf(
-    nodes=[_confusion_matrix_display],
-    subshelves=[],
-    name="Plotting",
-    description="User guide. See the sklearn_visualizations section for further details.",
-)
+
 
 METRICS_NODE_SHELFE = Shelf(
     nodes=[],
-    subshelves=[CLASSIFICATION_NODE_SHELFE, PLOTTING_NODE_SHELFE],
+    subshelves=[CLASSIFICATION_NODE_SHELFE],
     name="Metrics",
     description="Score functions, performance metrics, pairwise metrics and distance computations.",
 )
