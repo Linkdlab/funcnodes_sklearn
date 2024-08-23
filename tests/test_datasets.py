@@ -59,13 +59,31 @@ from funcnodes_sklearn.datasets import (
     _spd_matrix,
     _swiss_roll,
 )
+import os
+import tempfile
+from sklearn.datasets import get_data_home
+from _setup_env import config
 
 
-class Test20newsgroups(unittest.IsolatedAsyncioTestCase):
+KEEPDATA = config("KEEPDATA", default=False, cast=bool)
+
+
+class DatasetsTestCase(unittest.IsolatedAsyncioTestCase):
+    def setUp(self):
+        # assert scikit-learn loads the dataset to a temporary directory
+        self.tempdir = tempfile.TemporaryDirectory()
+        if not KEEPDATA:
+            os.environ["SCIKIT_LEARN_DATA"] = self.tempdir.name
+
+    def tearDown(self):
+        self.tempdir.cleanup()
+
+
+class Test20newsgroups(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _20newsgroups()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -75,13 +93,14 @@ class Test20newsgroups(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, np.ndarray)
         self.assertIsInstance(DESCR, str)
         self.assertIsInstance(target_names, list)
+        print(get_data_home())
 
 
-class Test20newsgroupsVectorized(unittest.IsolatedAsyncioTestCase):
+class Test20newsgroupsVectorized(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _20newsgroups_vectorized()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -93,11 +112,11 @@ class Test20newsgroupsVectorized(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target_names, list)
 
 
-class Test20newsgroupsVectorizedAsFrame(unittest.IsolatedAsyncioTestCase):
+class Test20newsgroupsVectorizedAsFrame(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _20newsgroups_vectorized_as_frame()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -109,11 +128,11 @@ class Test20newsgroupsVectorizedAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target_names, list)
 
 
-class TestCaliforniaHousing(unittest.IsolatedAsyncioTestCase):
+class TestCaliforniaHousing(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _california_housing()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -125,11 +144,11 @@ class TestCaliforniaHousing(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target_names, list)
 
 
-class TestCaliforniaHousingAsFrame(unittest.IsolatedAsyncioTestCase):
+class TestCaliforniaHousingAsFrame(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _california_housing_as_frame()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -141,11 +160,11 @@ class TestCaliforniaHousingAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target_names, list)
 
 
-class TestCovtype(unittest.IsolatedAsyncioTestCase):
+class TestCovtype(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _covtype()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -159,11 +178,11 @@ class TestCovtype(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(feature_names, list)
 
 
-class TestCovtypeAsFrame(unittest.IsolatedAsyncioTestCase):
+class TestCovtypeAsFrame(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _covtype_as_frame()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -177,11 +196,11 @@ class TestCovtypeAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(feature_names, list)
 
 
-class TestKddcup99(unittest.IsolatedAsyncioTestCase):
+class TestKddcup99(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _kddcup99()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -195,7 +214,7 @@ class TestKddcup99(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(feature_names, list)
 
 
-class TestKddcup99AsFrame(unittest.IsolatedAsyncioTestCase):
+class TestKddcup99AsFrame(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _kddcup99_as_frame()
         self.assertIsInstance(model, fn.Node)
@@ -212,11 +231,11 @@ class TestKddcup99AsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(feature_names, list)
 
 
-class TestLfwPairs(unittest.IsolatedAsyncioTestCase):
+class TestLfwPairs(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _lfw_pairs()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         pairs = model.outputs["pairs"].value
@@ -230,11 +249,11 @@ class TestLfwPairs(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target_names, np.ndarray)
 
 
-class TestLfwPeople(unittest.IsolatedAsyncioTestCase):
+class TestLfwPeople(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _lfw_people()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         images = model.outputs["images"].value
@@ -248,11 +267,11 @@ class TestLfwPeople(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target_names, np.ndarray)
 
 
-class TestOlivettiFaces(unittest.IsolatedAsyncioTestCase):
+class TestOlivettiFaces(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _olivetti_faces()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         images = model.outputs["images"].value
@@ -264,7 +283,7 @@ class TestOlivettiFaces(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(DESCR, str)
 
 
-# class TestOpenml(unittest.IsolatedAsyncioTestCase):
+# class TestOpenml(DatasetsTestCase):
 #     def test_default_parameters(self):
 #         dataset = _openml()
 #         self.assertIsInstance(dataset, dict)
@@ -272,11 +291,11 @@ class TestOlivettiFaces(unittest.IsolatedAsyncioTestCase):
 #         #     list(dataset.keys()),
 #         #     ["data", "target", "frame", "target_names", "feature_names", "DESCR"],
 #         # )
-class TestRcv1(unittest.IsolatedAsyncioTestCase):
+class TestRcv1(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _rcv1()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         sample_id = model.outputs["sample_id"].value
@@ -290,11 +309,11 @@ class TestRcv1(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(DESCR, str)
 
 
-# class TestSpeciesDistributions(unittest.IsolatedAsyncioTestCase):
+# class TestSpeciesDistributions(DatasetsTestCase):
 #     async def test_default_parameters(self):
 #         model: fn.Node = _species_distributions()
 #         self.assertIsInstance(model, fn.Node)
-#         
+#
 #         await model
 #         coverages = model.outputs["coverages"].value
 #         train = model.outputs["train"].value
@@ -314,11 +333,11 @@ class TestRcv1(unittest.IsolatedAsyncioTestCase):
 #         self.assertIsInstance(grid_size, float)
 
 
-class TestBreastCancer(unittest.IsolatedAsyncioTestCase):
+class TestBreastCancer(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _breast_cancer()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -335,11 +354,11 @@ class TestBreastCancer(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(filename, str)
 
 
-class TestBreastCancerAsFrame(unittest.IsolatedAsyncioTestCase):
+class TestBreastCancerAsFrame(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _breast_cancer_as_frame()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -356,11 +375,11 @@ class TestBreastCancerAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(filename, str)
 
 
-class TestDiabetes(unittest.IsolatedAsyncioTestCase):
+class TestDiabetes(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _diabetes()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -369,11 +388,11 @@ class TestDiabetes(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, np.ndarray)
 
 
-class TestDiabetesAsFrame(unittest.IsolatedAsyncioTestCase):
+class TestDiabetesAsFrame(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _diabetes_as_frame()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -382,11 +401,11 @@ class TestDiabetesAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, Series)
 
 
-class TestDigits(unittest.IsolatedAsyncioTestCase):
+class TestDigits(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _digits()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -394,11 +413,11 @@ class TestDigits(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, np.ndarray)
 
 
-class TestDigitsAsFrame(unittest.IsolatedAsyncioTestCase):
+class TestDigitsAsFrame(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _diabetes_as_frame()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -406,17 +425,17 @@ class TestDigitsAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, Series)
 
 
-# # class TestTextFiles(unittest.IsolatedAsyncioTestCase):
+# # class TestTextFiles(DatasetsTestCase):
 # #     def test_default_parameters(self):
 # #         dataset = _text_files()
 # #         self.assertIsInstance(dataset, dict)
 
 
-class TestIris(unittest.IsolatedAsyncioTestCase):
+class TestIris(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _iris()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -424,11 +443,11 @@ class TestIris(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, np.ndarray)
 
 
-class TestIrisAsFrame(unittest.IsolatedAsyncioTestCase):
+class TestIrisAsFrame(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _iris_as_frame()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -436,11 +455,11 @@ class TestIrisAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, Series)
 
 
-class TestLinnerud(unittest.IsolatedAsyncioTestCase):
+class TestLinnerud(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _linnerud()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -448,11 +467,11 @@ class TestLinnerud(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, np.ndarray)
 
 
-class TestLinnerudAsFrame(unittest.IsolatedAsyncioTestCase):
+class TestLinnerudAsFrame(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _linnerud_as_frame()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -460,28 +479,28 @@ class TestLinnerudAsFrame(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, DataFrame)
 
 
-class TestSampleImage(unittest.IsolatedAsyncioTestCase):
+class TestSampleImage(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _sample_image()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         img = model.outputs["out"].value
         self.assertIsInstance(img, np.ndarray)
         self.assertEqual(img.shape, (427, 640, 3))
 
 
-# # class TestSVMFile(unittest.IsolatedAsyncioTestCase):
+# # class TestSVMFile(DatasetsTestCase):
 # #     def test_default_parameters(self):
 # #         dataset = _svmlight_file()
 # #         self.assertIsInstance(dataset, Tuple)
 
 
-class TestWine(unittest.IsolatedAsyncioTestCase):
+class TestWine(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _wine()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -489,11 +508,11 @@ class TestWine(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(target, np.ndarray)
 
 
-class TestWineAsFrame(unittest.IsolatedAsyncioTestCase):
+class TestWineAsFrame(DatasetsTestCase):
     async def test_default_parameters(self):
         model: fn.Node = _wine_as_frame()
         self.assertIsInstance(model, fn.Node)
-        
+
         await model
         data = model.outputs["data"].value
         target = model.outputs["target"].value
@@ -502,7 +521,7 @@ class TestWineAsFrame(unittest.IsolatedAsyncioTestCase):
 
 
 # TODO: Fix test resulting in <NoValue>
-class TestBiClusters(unittest.IsolatedAsyncioTestCase):
+class TestBiClusters(DatasetsTestCase):
     async def test_default_parameters(self):
         shape = (300, 300)
         n_clusters = 5
@@ -525,7 +544,7 @@ class TestBiClusters(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(cols, np.ndarray)
 
 
-class TestBlobs(unittest.IsolatedAsyncioTestCase):
+class TestBlobs(DatasetsTestCase):
     async def test_default_parameters(self):
         n_samples = 10
         centers = 3
@@ -546,7 +565,7 @@ class TestBlobs(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(center, np.ndarray)
 
 
-class TestCheckerboard(unittest.IsolatedAsyncioTestCase):
+class TestCheckerboard(DatasetsTestCase):
     async def test_default_parameters(self):
         shape = (300, 300)
         n_clusters = (4, 3)
@@ -569,7 +588,7 @@ class TestCheckerboard(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(cols, np.ndarray)
 
 
-class TestCircles(unittest.IsolatedAsyncioTestCase):
+class TestCircles(DatasetsTestCase):
     async def test_default_parameters(self):
         random_state = 42
         model: fn.Node = _circles()
@@ -582,7 +601,7 @@ class TestCircles(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(y, np.ndarray)
 
 
-class TestClassification(unittest.IsolatedAsyncioTestCase):
+class TestClassification(DatasetsTestCase):
     async def test_default_parameters(self):
         random_state = 42
         model: fn.Node = _classification()
@@ -595,7 +614,7 @@ class TestClassification(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(y, np.ndarray)
 
 
-class TestFriedman1(unittest.IsolatedAsyncioTestCase):
+class TestFriedman1(DatasetsTestCase):
     async def test_default_parameters(self):
         random_state = 42
         model: fn.Node = _friedman1()
@@ -608,7 +627,7 @@ class TestFriedman1(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(y, np.ndarray)
 
 
-class TestFriedman2(unittest.IsolatedAsyncioTestCase):
+class TestFriedman2(DatasetsTestCase):
     async def test_default_parameters(self):
         random_state = 42
         model: fn.Node = _friedman2()
@@ -621,7 +640,7 @@ class TestFriedman2(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(y, np.ndarray)
 
 
-class TestFriedman3(unittest.IsolatedAsyncioTestCase):
+class TestFriedman3(DatasetsTestCase):
     async def test_default_parameters(self):
         random_state = 42
         model: fn.Node = _friedman3()
@@ -634,7 +653,7 @@ class TestFriedman3(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(y, np.ndarray)
 
 
-class TestGaussianQuantiles(unittest.IsolatedAsyncioTestCase):
+class TestGaussianQuantiles(DatasetsTestCase):
     async def test_default_parameters(self):
         random_state = 42
         model: fn.Node = _gaussian_quantiles()
@@ -647,7 +666,7 @@ class TestGaussianQuantiles(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(y, np.ndarray)
 
 
-class TestHastie102(unittest.IsolatedAsyncioTestCase):
+class TestHastie102(DatasetsTestCase):
     async def test_default_parameters(self):
         random_state = 1
         model: fn.Node = _hastie_10_2()
@@ -660,7 +679,7 @@ class TestHastie102(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(y, np.ndarray)
 
 
-class TestLowRankMatrix(unittest.IsolatedAsyncioTestCase):
+class TestLowRankMatrix(DatasetsTestCase):
     async def test_default_parameters(self):
         n_samples, n_features = 500, 10
         random_state = np.random.RandomState(0)
@@ -674,7 +693,7 @@ class TestLowRankMatrix(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(X, np.ndarray)
 
 
-class TestMoons(unittest.IsolatedAsyncioTestCase):
+class TestMoons(DatasetsTestCase):
     async def test_default_parameters(self):
         noise = 0.3
         random_state = 0
@@ -689,7 +708,7 @@ class TestMoons(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(y, np.ndarray)
 
 
-class TestMultilabelClassification(unittest.IsolatedAsyncioTestCase):
+class TestMultilabelClassification(DatasetsTestCase):
     async def test_default_parameters(self):
         n_labels = 5
         random_state = 42
@@ -709,7 +728,7 @@ class TestMultilabelClassification(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(p_w_c, np.ndarray)
 
 
-class TestRegression(unittest.IsolatedAsyncioTestCase):
+class TestRegression(DatasetsTestCase):
     async def test_default_parameters(self):
         n_samples = 5
         n_features = 2
@@ -730,7 +749,7 @@ class TestRegression(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(coefs, np.ndarray)
 
 
-class TestSCurve(unittest.IsolatedAsyncioTestCase):
+class TestSCurve(DatasetsTestCase):
     async def test_default_parameters(self):
         n_samples = 1500
         random_state = 0
@@ -745,7 +764,7 @@ class TestSCurve(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(t, np.ndarray)
 
 
-class TestSparseCodedSignal(unittest.IsolatedAsyncioTestCase):
+class TestSparseCodedSignal(DatasetsTestCase):
     async def test_default_parameters(self):
         n_samples = 1
         n_components, n_features = 512, 100
@@ -767,7 +786,7 @@ class TestSparseCodedSignal(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(code, np.ndarray)
 
 
-class TestSparseSpdMatrix(unittest.IsolatedAsyncioTestCase):
+class TestSparseSpdMatrix(DatasetsTestCase):
     async def test_default_parameters(self):
         n_dim = 4
         norm_diag = False
@@ -782,7 +801,7 @@ class TestSparseSpdMatrix(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(prec, np.ndarray)
 
 
-class TestSparseUncorrelated(unittest.IsolatedAsyncioTestCase):
+class TestSparseUncorrelated(DatasetsTestCase):
     async def test_default_parameters(self):
         random_state = 0
         model: fn.Node = _sparse_uncorrelated()
@@ -795,7 +814,7 @@ class TestSparseUncorrelated(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(y, np.ndarray)
 
 
-class TestSpdMatrix(unittest.IsolatedAsyncioTestCase):
+class TestSpdMatrix(DatasetsTestCase):
     async def test_default_parameters(self):
         n_dim = 2
         random_state = 42
@@ -808,7 +827,7 @@ class TestSpdMatrix(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(X, np.ndarray)
 
 
-class TestSwissRoll(unittest.IsolatedAsyncioTestCase):
+class TestSwissRoll(DatasetsTestCase):
     async def test_default_parameters(self):
         random_state = 0
         model: fn.Node = _swiss_roll()

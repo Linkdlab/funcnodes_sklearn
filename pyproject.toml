@@ -21,6 +21,7 @@ funcnodes-numpy = "*"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
 black = "^24.4.2"
+python-decouple = "^3.8"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.1.1"
