@@ -61,7 +61,6 @@ class TestFactorAnalysis(unittest.IsolatedAsyncioTestCase):
     async def test_parameters(self):
         model1: fn.Node = _digits()
         self.assertIsInstance(model1, fn.Node)
-        model1.trigger()
         await model1
         X = model1.outputs["data"].value
         n_components = 7
@@ -82,7 +81,6 @@ class TestFastICA(unittest.IsolatedAsyncioTestCase):
     async def test_parameters(self):
         model1: fn.Node = _digits()
         self.assertIsInstance(model1, fn.Node)
-        model1.trigger()
         await model1
         X = model1.outputs["data"].value
         n_components = 7
@@ -104,7 +102,6 @@ class TestIncrementalPCA(unittest.IsolatedAsyncioTestCase):
     async def test_parameters(self):
         model1: fn.Node = _digits()
         self.assertIsInstance(model1, fn.Node)
-        model1.trigger()
         await model1
         X = model1.outputs["data"].value
         n_components = 7
@@ -126,7 +123,6 @@ class TestKernelPCA(unittest.IsolatedAsyncioTestCase):
     async def test_parameters(self):
         model1: fn.Node = _digits()
         self.assertIsInstance(model1, fn.Node)
-        model1.trigger()
         await model1
         X = model1.outputs["data"].value
         n_components = 7
