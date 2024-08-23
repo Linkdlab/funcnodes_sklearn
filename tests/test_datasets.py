@@ -4,6 +4,8 @@ from pandas.core.frame import DataFrame
 from pandas import Series
 from scipy.sparse import spmatrix
 
+from funcnodes_pandas import to_dict
+
 import funcnodes as fn
 
 # from typing import Tuple,
@@ -194,6 +196,18 @@ class TestCovtypeAsFrame(DatasetsTestCase):
         self.assertIsInstance(DESCR, str)
         self.assertIsInstance(target_names, list)
         self.assertIsInstance(feature_names, list)
+
+    async def test_to_dict(self):
+        model: fn.Node = _covtype_as_frame()
+
+        todictnode = to_dict()
+
+        model.outputs["data"].connect(todictnode.inputs["df"])
+
+        await fn.run_until_complete(model, todictnode)
+
+        self.assertIsInstance(todictnode.outputs["dict"].value, dict)
+       
 
 
 class TestKddcup99(DatasetsTestCase):
