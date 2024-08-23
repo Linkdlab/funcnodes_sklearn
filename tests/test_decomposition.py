@@ -54,7 +54,7 @@ class TestDictionaryLearning(unittest.IsolatedAsyncioTestCase):
         decomposition = out.value().fit(X)
         X_transformed = decomposition.transform(X)
         self.assertIsInstance(decomposition, BaseEstimator)
-        self.assertEqual(np.mean(X_transformed), 0.021422536390435117)
+        self.assertAlmostEqual(np.mean(X_transformed), 0.021422536390435117)
 
 
 class TestFactorAnalysis(unittest.IsolatedAsyncioTestCase):
