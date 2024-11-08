@@ -36,20 +36,23 @@ class TestEmpiricalCovariance(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = empirical_covariance()
         self.assertIsInstance(cov, fn.Node)
-        
+
         await cov
         out = cov.outputs["out"]
         model = out.value()
         model.fit(X)
-        self.assertEqual(
-            model.covariance_.tolist(),
+
+        np.testing.assert_array_almost_equal(
+            model.covariance_,
             [
                 [1.2222222222222223, 2.8888888888888893],
                 [2.8888888888888893, 7.555555555555555],
             ],
         )
-        self.assertEqual(
-            model.location_.tolist(), [2.3333333333333335, 3.3333333333333335]
+
+        np.testing.assert_array_almost_equal(
+            model.location_,
+            [2.3333333333333335, 3.3333333333333335],
         )
 
 
@@ -57,20 +60,23 @@ class TestEllipticEnvelope(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = elliptical_envelpoe()
         self.assertIsInstance(cov, fn.Node)
-        
+
         await cov
         out = cov.outputs["out"]
         model = out.value()
         model.fit(X)
-        self.assertEqual(
-            model.covariance_.tolist(),
+
+        np.testing.assert_array_almost_equal(
+            model.covariance_,
             [
                 [1.2222222222222223, 2.8888888888888893],
                 [2.8888888888888893, 7.555555555555555],
             ],
         )
-        self.assertEqual(
-            model.location_.tolist(), [2.3333333333333335, 3.3333333333333335]
+
+        np.testing.assert_array_almost_equal(
+            model.location_,
+            [2.3333333333333335, 3.3333333333333335],
         )
 
     async def test_predict(self):
@@ -81,7 +87,11 @@ class TestEllipticEnvelope(unittest.IsolatedAsyncioTestCase):
         out = cov.outputs["out"]
         model = out.value()
         model.fit(X)
-        self.assertEqual(model.predict([[0, 0], [3, 3]]).tolist(), [-1, -1])
+
+        np.testing.assert_array_almost_equal(
+            model.predict([[0, 0], [3, 3]]),
+            [-1, -1],
+        )
 
 
 class TestGraphicalLasso(unittest.IsolatedAsyncioTestCase):
@@ -99,19 +109,23 @@ class TestGraphicalLasso(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = graphical_lasso()
         self.assertIsInstance(cov, fn.Node)
-        
+
         await cov
         out = cov.outputs["out"]
         model = out.value()
         model.fit(X)
-        # self.assertEqual(
-        #     np.around(model.covariance_, decimals=3).tolist(),
-        #     [[1.222, 2.879], [2.879, 7.556]],
-        # )
-        # self.assertEqual(
-        #     np.around(model.location_, decimals=3).tolist(),
-        #     [0.073, 0.04, 0.038, 0.143],
-        # )
+
+        np.testing.assert_array_almost_equal(
+            model.covariance_,
+            [[1.222, 2.879], [2.879, 7.556]],
+            decimal=3,
+        )
+
+        np.testing.assert_array_almost_equal(
+            model.location_,
+            [2.333, 3.333],
+            decimal=3,
+        )
 
 
 class TestGraphicalLassoCV(unittest.IsolatedAsyncioTestCase):
@@ -129,21 +143,25 @@ class TestGraphicalLassoCV(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = graphical_lasso_cv()
         self.assertIsInstance(cov, fn.Node)
-        
+
         await cov
         out = cov.outputs["out"]
         model = out.value()
         model.fit(X)
-        # self.assertEqual(
-        #     model.modelariance_.tolist(),
-        #     [
-        #         [1.2222222222222223, 2.8888888888888893],
-        #         [2.8888888888888893, 7.555555555555555],
-        #     ],
-        # )
-        # self.assertEqual(
-        #     model.location_.tolist(), [2.3333333333333335, 3.3333333333333335]
-        # )
+
+        np.testing.assert_array_almost_equal(
+            model.covariance_,
+            [
+                [1.222, 2.843],
+                [2.843, 7.556],
+            ],
+            decimal=3,
+        )
+
+        np.testing.assert_array_almost_equal(
+            model.location_,
+            [2.3333333333333335, 3.3333333333333335],
+        )
 
     async def test_custom_parameters(self):
         def generate_random_splits(
@@ -173,8 +191,9 @@ class TestGraphicalLassoCV(unittest.IsolatedAsyncioTestCase):
         model = out.value()
         model.fit(X)
 
-        self.assertEqual(
-            model.location_.tolist(), [-0.02771408348295842, -0.04884843210402259]
+        np.testing.assert_array_almost_equal(
+            model.location_,
+            [-0.02771408348295842, -0.04884843210402259],
         )
 
 
@@ -182,21 +201,25 @@ class TestLedoitWolf(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = ledoit_wolf()
         self.assertIsInstance(cov, fn.Node)
-        
+
         await cov
         out = cov.outputs["out"]
         model = out.value()
         model.fit(X)
-        # self.assertEqual(
-        #     model.covariance_.tolist(),
-        #     [
-        #         [1.2222222222222223, 2.8888888888888893],
-        #         [2.8888888888888893, 7.555555555555555],
-        #     ],
-        # )
-        # self.assertEqual(
-        #     model.location_.tolist(), [2.3333333333333335, 3.3333333333333335]
-        # )
+
+        np.testing.assert_array_almost_equal(
+            model.covariance_,
+            [
+                [1.528977, 2.609042],
+                [2.609042, 7.248801],
+            ],
+            decimal=3,
+        )
+
+        np.testing.assert_array_almost_equal(
+            model.location_,
+            [2.3333333333333335, 3.3333333333333335],
+        )
 
     async def test_custom_parameters(self):
         cov: fn.Node = ledoit_wolf()
@@ -209,34 +232,40 @@ class TestLedoitWolf(unittest.IsolatedAsyncioTestCase):
         model = out.value()
         model.fit(X)
 
-        # self.assertEqual(
-        #     np.around(model.covariance_, decimals=2).tolist(),
-        #     [[8.73, 6.99], [6.99, 16.6]],
-        # )
-        # self.assertEqual(
-        #     model.location_.tolist(), [2.3333333333333335, 3.3333333333333335]
-        # )
+        np.testing.assert_array_almost_equal(
+            model.covariance_,
+            [[8.73, 6.99], [6.99, 16.6]],
+            decimal=2,
+        )
+
+        np.testing.assert_array_almost_equal(
+            model.location_,
+            [0, 0],
+        )
 
 
 class TestMinCovDet(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = min_cov_det()
         self.assertIsInstance(cov, fn.Node)
-        
+
         await cov
         out = cov.outputs["out"]
         model = out.value()
         model.fit(X)
-        # self.assertEqual(
-        #     model.modelariance_.tolist(),
-        #     [
-        #         [1.2222222222222223, 2.8888888888888893],
-        #         [2.8888888888888893, 7.555555555555555],
-        #     ],
-        # )
-        # self.assertEqual(
-        #     model.location_.tolist(), [2.3333333333333335, 3.3333333333333335]
-        # )
+
+        np.testing.assert_array_almost_equal(
+            model.covariance_,
+            [
+                [1.2222222222222223, 2.8888888888888893],
+                [2.8888888888888893, 7.555555555555555],
+            ],
+        )
+
+        np.testing.assert_array_almost_equal(
+            model.location_,
+            [2.3333333333333335, 3.3333333333333335],
+        )
 
     async def test_custom_parameters(self):
         cov: fn.Node = min_cov_det()
@@ -246,28 +275,34 @@ class TestMinCovDet(unittest.IsolatedAsyncioTestCase):
         out = cov.outputs["out"]
         model = out.value()
         model.fit(X)
-        # print(model.covariance_)
-        # self.assertEqual(
-        #     np.around(model.covariance_, decimals=2).tolist(),
-        #     [[8.73, 6.99], [6.9]],
-        # )
-        # self.assertEqual(
-        #     model.location_.tolist(), [2.3333333333333335, 3.3333333333333335]
-        # )
+
+        np.testing.assert_array_almost_equal(
+            model.location_,
+            [2.3333333333333335, 3.3333333333333335],
+        )
+
+        print(model.covariance_)
+        np.testing.assert_array_almost_equal(
+            model.covariance_,
+            [[1.22222222, 2.88888889], [2.88888889, 7.55555556]],
+            decimal=2,
+        )
 
 
 class TestOAS(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = oas()
         self.assertIsInstance(cov, fn.Node)
-        
+
         await cov
         out = cov.outputs["out"]
         model = out.value()
         model.fit(X)
-        self.assertEqual(
-            np.around(model.covariance_, decimals=2).tolist(),
+
+        np.testing.assert_array_almost_equal(
+            model.covariance_,
             [[3.1, 1.18], [1.18, 5.68]],
+            decimal=2,
         )
 
 
@@ -275,18 +310,21 @@ class TestShrunkCovariance(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         cov: fn.Node = shrunk_covariance()
         self.assertIsInstance(cov, fn.Node)
-        
+
         await cov
         out = cov.outputs["out"]
         model = out.value()
         model.fit(X)
-        self.assertEqual(
-            np.around(model.covariance_, decimals=2).tolist(),
+        np.testing.assert_array_almost_equal(
+            model.covariance_,
             [[1.54, 2.6], [2.6, 7.24]],
+            decimal=2,
         )
-        self.assertEqual(
-            np.around(model.location_, decimals=2).tolist(),
+
+        np.testing.assert_array_almost_equal(
+            model.location_,
             [2.33, 3.33],
+            decimal=2,
         )
 
     async def test_custom_parameters(self):
@@ -297,11 +335,15 @@ class TestShrunkCovariance(unittest.IsolatedAsyncioTestCase):
         out = cov.outputs["out"]
         model = out.value()
         model.fit(X)
-        self.assertEqual(
-            np.around(model.covariance_, decimals=2).tolist(),
+
+        np.testing.assert_array_almost_equal(
+            model.covariance_,
             [[2.81, 1.44], [1.44, 5.97]],
+            decimal=2,
         )
-        self.assertEqual(
-            np.around(model.location_, decimals=2).tolist(),
+
+        np.testing.assert_array_almost_equal(
+            model.location_,
             [2.33, 3.33],
+            decimal=2,
         )
