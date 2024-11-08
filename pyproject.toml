@@ -28,6 +28,7 @@ black = "^24.4.2"
 python-decouple = "^3.8"
 funcnodes-module = "^0.1.19"
 pre-commit = "*"
+pillow = "^11.0.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.1.1"
