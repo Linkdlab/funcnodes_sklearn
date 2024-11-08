@@ -4,12 +4,17 @@ from funcnodes_sklearn.preprocessing import (
     _label_encoder,
     _one_hot_encoder,
 )
+
+from funcnodes_sklearn.discriminant_analysis import (
+    _lda,
+)
+
 from funcnodes_sklearn.fit import (
     _fit,
     _inverse_transform,
     _transform,
+    _predict,
 )
-
 
 
 class TestFittingingNodes(unittest.IsolatedAsyncioTestCase):
@@ -103,3 +108,30 @@ class TestFittingingNodes(unittest.IsolatedAsyncioTestCase):
         out = it_model.outputs["out"]
         self.assertEqual(out.value.tolist(), [1, 1, 2, 6])
 
+    async def test_fit_predict(self):
+        model: fn.Node = _lda()
+        self.assertIsInstance(model, fn.Node)
+        X = [[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]]
+        y = [1, 1, 1, 2, 2, 2]
+
+        # async def test_fit(self):
+        ft_model: fn.Node = _fit()
+        ft_model.inputs["model"].connect(model.outputs["out"])
+
+        ft_model.inputs["X"].value = X
+        ft_model.inputs["y"].value = y
+
+        self.assertIsInstance(ft_model, fn.Node)
+        # await fn.run_until_complete(ft_model,model)
+        # print(ft_model.outputs["out"])
+
+        X_p = [[-0.8, -1]]
+        p_model: fn.Node = _predict()
+        p_model.inputs["model"].connect(ft_model.outputs["out"])
+        p_model.inputs["X"].value = X_p
+
+        self.assertIsInstance(p_model, fn.Node)
+
+        await fn.run_until_complete(p_model, ft_model, model)
+        out = p_model.outputs["out"]
+        self.assertEqual(out.value.tolist(), [1])

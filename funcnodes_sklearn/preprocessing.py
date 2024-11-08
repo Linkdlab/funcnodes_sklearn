@@ -1,6 +1,6 @@
 from funcnodes import Shelf, NodeDecorator
 from exposedfunctionality import controlled_wrapper
-from typing import Tuple, Literal, Optional, Union, Callable
+from typing import Literal, Optional, Union, Callable
 from enum import Enum
 import numpy as np
 from numpy.random import RandomState
@@ -56,7 +56,7 @@ from sklearn.preprocessing import (
 #     feature_names_out: Optional[Union[Callable, Literal["one-to-one"]]] = None,
 #     kw_args: Optional[dict] = None,
 #     inv_kw_args: Optional[dict] = None
-    
+
 # ) -> BaseEstimator:
 #     def create_function_transformer():
 #         return FunctionTransformer(
@@ -77,26 +77,26 @@ from sklearn.preprocessing import (
 #     onehot = "onehot"
 #     ordinal = "ordinal"
 #     onehot_dense = "onehot-dense"
-    
+
 #     @classmethod
 #     def default(cls):
 #         cls.onehot.value
-        
-        
+
+
 # class Strategy(Enum):
 #     uniform = "uniform"
 #     quantile = "quantile"
 #     kmeans = "kmeans"
-    
+
 #     @classmethod
 #     def default(cls):
 #         cls.quantile.value
-        
+
 # class Dtype(Enum):
 #     float32 = np.float32
 #     float64 = np.float64
 #     NONE = None
-    
+
 #     @classmethod
 #     def default(cls):
 #         cls.NONE.value
@@ -123,8 +123,8 @@ from sklearn.preprocessing import (
 #             random_state=random_state,
 #         )
 
-#     return create_kbins_discretizer    
-    
+#     return create_kbins_discretizer
+
 # @NodeDecorator(
 #     node_id="sklearn.preprocessing.KernelCenterer",
 #     name="KernelCenterer",
@@ -144,8 +144,7 @@ from sklearn.preprocessing import (
 #             feature_names_in=feature_names_in_,
 #         )
 
-#     return create_kbins_centerer    
-
+#     return create_kbins_centerer
 
 
 # PREPROCESSING_NODE_SHELFE = Shelf(
@@ -154,7 +153,7 @@ from sklearn.preprocessing import (
 #         _function_transformer,
 #         _kbins_discretizer,
 #         _kbins_centerer,
-        
+
 #     ],
 #     subshelves=[],
 #     name="Preprocessing",
@@ -189,7 +188,7 @@ def _function_transformer(
     check_inverse: bool = True,
     feature_names_out: Optional[Union[Callable, Literal["one-to-one"]]] = None,
     kw_args: Optional[dict] = None,
-    inv_kw_args: Optional[dict] = None
+    inv_kw_args: Optional[dict] = None,
 ) -> BaseEstimator:
     def create_function_transformer():
         return FunctionTransformer(
@@ -200,7 +199,7 @@ def _function_transformer(
             check_inverse=check_inverse,
             feature_names_out=feature_names_out,
             kw_args=kw_args,
-            inv_kw_args=inv_kw_args
+            inv_kw_args=inv_kw_args,
         )
 
     return create_function_transformer
@@ -210,31 +209,32 @@ class Encode(Enum):
     onehot = "onehot"
     ordinal = "ordinal"
     onehot_dense = "onehot-dense"
-    
+
     @classmethod
     def default(cls):
         cls.onehot.value
-        
-        
+
+
 class Strategy(Enum):
     uniform = "uniform"
     quantile = "quantile"
     kmeans = "kmeans"
-    
+
     @classmethod
     def default(cls):
         cls.quantile.value
-        
+
+
 class Dtype(Enum):
     float32 = np.float32
     float64 = np.float64
     NONE = None
-    
+
     @classmethod
     def default(cls):
         cls.NONE.value
-        
-        
+
+
 @NodeDecorator(
     node_id="sklearn.preprocessing.KBinsDiscretizer",
     name="KBinsDiscretizer",
@@ -258,22 +258,20 @@ def _kbins_discretizer(
             random_state=random_state,
         )
 
-    return create_kbins_discretizer    
-    
-    
+    return create_kbins_discretizer
+
+
 @NodeDecorator(
     node_id="sklearn.preprocessing.KernelCenterer",
     name="KernelCenterer",
 )
 @controlled_wrapper(KernelCenterer, wrapper_attribute="__fnwrapped__")
-def _kbins_centerer(
-) -> BaseEstimator:
+def _kbins_centerer() -> BaseEstimator:
     def create_kbins_centerer():
-        return KernelCenterer(
-        )
+        return KernelCenterer()
 
-    return create_kbins_centerer    
-    
+    return create_kbins_centerer
+
 
 @NodeDecorator(
     node_id="sklearn.preprocessing.LabelBinarizer",
@@ -281,9 +279,7 @@ def _kbins_centerer(
 )
 @controlled_wrapper(LabelBinarizer, wrapper_attribute="__fnwrapped__")
 def _label_binarizer(
-    neg_label: int = 0,
-    pos_label: int = 1,
-    sparse_output: bool = False
+    neg_label: int = 0, pos_label: int = 1, sparse_output: bool = False
 ) -> BaseEstimator:
     def create_label_binarizer():
         return LabelBinarizer(
@@ -293,8 +289,8 @@ def _label_binarizer(
         )
 
     return create_label_binarizer
-    
-    
+
+
 @NodeDecorator(
     node_id="sklearn.preprocessing.LabelEncoder",
     name="LabelEncoder",
@@ -305,7 +301,7 @@ def _label_encoder() -> BaseEstimator:
         return LabelEncoder()
 
     return create_label_encoder
-    
+
 
 @NodeDecorator(
     node_id="sklearn.preprocessing.MaxAbsScaler",
@@ -317,7 +313,7 @@ def _max_abs_scaler() -> BaseEstimator:
         return MaxAbsScaler()
 
     return create_max_abs_scaler
-    
+
 
 @NodeDecorator(
     node_id="sklearn.preprocessing.MinMaxScaler",
@@ -325,11 +321,10 @@ def _max_abs_scaler() -> BaseEstimator:
 )
 @controlled_wrapper(MinMaxScaler, wrapper_attribute="__fnwrapped__")
 def _min_max_scaler(
-    min: float = 0.0,
-    max: float = 1.0,
-    clip: bool = False
+    min: float = 0.0, max: float = 1.0, clip: bool = False
 ) -> BaseEstimator:
     feature_range = (min, max)
+
     def create_min_max_scaler():
         return MinMaxScaler(
             feature_range=feature_range,
@@ -337,7 +332,8 @@ def _min_max_scaler(
         )
 
     return create_min_max_scaler
-    
+
+
 @NodeDecorator(
     node_id="sklearn.preprocessing.MultiLabelBinarizer",
     name="MultiLabelBinarizer",
@@ -355,38 +351,40 @@ def _multi_label_binarizer(
 
     return creat_multi_label_binarizer
 
+
 class Norm(Enum):
     l1 = "l1"
     l2 = "l2"
     max = "max"
-    
+
     @classmethod
     def default(cls):
         cls.l2.value
+
+
 @NodeDecorator(
     node_id="sklearn.preprocessing.Normalizer",
     name="Normalizer",
 )
 @controlled_wrapper(Normalizer, wrapper_attribute="__fnwrapped__")
-def _normalizer(
-    norm: Norm = Norm.default()
-) -> BaseEstimator:
+def _normalizer(norm: Norm = Norm.default()) -> BaseEstimator:
     def create_normalizer():
         return Normalizer(
             norm=norm,
         )
 
     return create_normalizer
-    
-    
+
+
 class HandleUnknown1(Enum):
     error = "error"
     ignore = "ignore"
     infrequent_if_exist = "infrequent_if_exist"
-    
+
     @classmethod
     def default(cls):
         cls.ignore.value
+
 
 @NodeDecorator(
     node_id="sklearn.preprocessing.OneHotEncoder",
@@ -394,7 +392,7 @@ class HandleUnknown1(Enum):
 )
 @controlled_wrapper(OneHotEncoder, wrapper_attribute="__fnwrapped__")
 def _one_hot_encoder(
-    categories: Union[list,Literal["auto"]] = "auto",
+    categories: Union[list, Literal["auto"]] = "auto",
     drop: Optional[Union[Literal["first", "if_binary"], np.ndarray]] = None,
     sparse_output: bool = True,
     dtype: Dtype = np.float64,
@@ -416,14 +414,17 @@ def _one_hot_encoder(
         )
 
     return create_one_hot_encoder
-    
+
+
 class HandleUnknown2(Enum):
     error = "error"
     use_encoded_value = "use_encoded_value"
-    
+
     @classmethod
     def default(cls):
         cls.error.value
+
+
 @NodeDecorator(
     node_id="sklearn.preprocessing.OrdinalEncoder",
     name="OrdinalEncoder",
@@ -437,7 +438,6 @@ def _ordinal_encoder(
     encoded_missing_value: Optional[int] = None,
     min_frequency: Optional[float] = None,
     max_categories: Optional[int] = None,
-    
 ) -> BaseEstimator:
     def create_ordinal_encoder():
         return OrdinalEncoder(
@@ -451,14 +451,16 @@ def _ordinal_encoder(
         )
 
     return create_ordinal_encoder
-    
+
+
 class Order(Enum):
     C = "C"
     F = "F"
-    
+
     @classmethod
     def default(cls):
         cls.C.value
+
 
 @NodeDecorator(
     node_id="sklearn.preprocessing.PolynomialFeatures",
@@ -480,14 +482,17 @@ def _polynomial_features(
         )
 
     return create_polynomial_features
-    
+
+
 class PowerMethod(Enum):
     yeo_johnson = "yeo-johnson"
     box_cox = "box-cox"
-    
+
     @classmethod
     def default(cls):
         cls.yeo_johnson.value
+
+
 @NodeDecorator(
     node_id="sklearn.preprocessing.PowerTransformer",
     name="PowerTransformer",
@@ -504,14 +509,17 @@ def _power_transformer(
         )
 
     return create_power_transformer
-    
+
+
 class OutputDistribution(Enum):
     uniform = "uniform"
     normal = "normal"
-    
+
     @classmethod
     def default(cls):
         cls.uniform.value
+
+
 @NodeDecorator(
     node_id="sklearn.preprocessing.QuantileTransformer",
     name="QuantileTransformer",
@@ -534,7 +542,7 @@ def _quantile_transformer(
         )
 
     return create_quantile_transformer
-    
+
 
 @NodeDecorator(
     node_id="sklearn.preprocessing.RobustScaler",
@@ -546,9 +554,10 @@ def _robust_scaler(
     with_scaling: bool = True,
     q_min: float = 25.0,
     q_max: float = 75.0,
-    unit_variance: bool = False
+    unit_variance: bool = False,
 ) -> BaseEstimator:
     quantile_range = (q_min, q_max)
+
     def create_robust_scaler():
         return RobustScaler(
             with_centering=with_centering,
@@ -558,18 +567,19 @@ def _robust_scaler(
         )
 
     return create_robust_scaler
-    
-    
+
+
 class Extrapolation(Enum):
     error = "error"
     constant = "constant"
     linear = "linear"
     contineu = "continue"
     periodic = "periodic"
-    
+
     @classmethod
     def default(cls):
         cls.constant.value
+
 
 @NodeDecorator(
     node_id="sklearn.preprocessing.SplineTransformer",
@@ -583,8 +593,7 @@ def _spline_transformer(
     extrapolation: Extrapolation = Extrapolation.default(),
     include_bias: bool = True,
     order: Order = Order.default(),
-    sparse_output: bool = False
-    
+    sparse_output: bool = False,
 ) -> BaseEstimator:
     def create_spline_transformer():
         return SplineTransformer(
@@ -599,15 +608,13 @@ def _spline_transformer(
 
     return create_spline_transformer
 
+
 @NodeDecorator(
     node_id="sklearn.preprocessing.StandardScaler",
     name="StandardScaler",
 )
 @controlled_wrapper(StandardScaler, wrapper_attribute="__fnwrapped__")
-def _standard_scaler(
-    with_mean: bool = True,
-    with_std: bool = True
-) -> BaseEstimator:
+def _standard_scaler(with_mean: bool = True, with_std: bool = True) -> BaseEstimator:
     def create_standard_scaler():
         return StandardScaler(
             with_mean=with_mean,
@@ -615,17 +622,18 @@ def _standard_scaler(
         )
 
     return create_standard_scaler
-    
-    
+
+
 class TargetType(Enum):
     auto = "auto"
     binary = "binary"
     multi_class = "multiclass"
     continuous = "continuous"
-    
+
     @classmethod
     def default(cls):
         cls.auto.value
+
 
 @NodeDecorator(
     node_id="sklearn.preprocessing.TargetEncoder",
@@ -633,12 +641,12 @@ class TargetType(Enum):
 )
 @controlled_wrapper(TargetEncoder, wrapper_attribute="__fnwrapped__")
 def _target_encoder(
-    category: Union[list, Literal["auto"]] = "auto",
+    categories: Union[list, Literal["auto"]] = "auto",
     target_type: TargetType = TargetType.default(),
 ) -> BaseEstimator:
     def create_target_encoder():
         return TargetEncoder(
-            category=category,
+            categories=categories,
             target_type=target_type,
         )
 
@@ -664,7 +672,7 @@ PREPROCESSING_NODE_SHELFE = Shelf(
         _quantile_transformer,
         _robust_scaler,
         _standard_scaler,
-        _target_encoder
+        _target_encoder,
     ],
     subshelves=[],
     name="Preprocessing",
