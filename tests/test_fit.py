@@ -1,5 +1,6 @@
 import unittest
 import funcnodes as fn
+import numpy as np
 from funcnodes_sklearn.preprocessing import (
     _label_encoder,
     _one_hot_encoder,
@@ -39,8 +40,8 @@ class TestFittingingNodes(unittest.IsolatedAsyncioTestCase):
 
         await fn.run_until_complete(t_model, ft_model, model)
         out = t_model.outputs["out"]
-        self.assertEqual(
-            out.value.tolist(), [[1.0, 0.0, 1.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0, 0.0]]
+        np.testing.assert_array_equal(
+            out.value, [[1.0, 0.0, 1.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0, 0.0]]
         )
 
     async def test_fit_inverse_transform_one_hot_encoder(self):
@@ -62,7 +63,7 @@ class TestFittingingNodes(unittest.IsolatedAsyncioTestCase):
 
         await fn.run_until_complete(it_model, ft_model, model)
         out = it_model.outputs["out"]
-        self.assertEqual(out.value.tolist(), [["Male", 1], [None, 2]])
+        np.testing.assert_array_equal(out.value, [["Male", 1], [None, 2]])
 
     async def test_fit_transform_label_encoder(self):
         model: fn.Node = _label_encoder()
@@ -85,7 +86,7 @@ class TestFittingingNodes(unittest.IsolatedAsyncioTestCase):
 
         await fn.run_until_complete(t_model, ft_model, model)
         out = t_model.outputs["out"]
-        self.assertEqual(out.value.tolist(), [0, 0, 1, 2])
+        np.testing.assert_array_equal(out.value, [0, 0, 1, 2])
 
     async def test_fit_inverse_transform_label_encoder(self):
         model: fn.Node = _label_encoder()
@@ -106,7 +107,7 @@ class TestFittingingNodes(unittest.IsolatedAsyncioTestCase):
 
         await fn.run_until_complete(it_model, ft_model, model)
         out = it_model.outputs["out"]
-        self.assertEqual(out.value.tolist(), [1, 1, 2, 6])
+        np.testing.assert_array_equal(out.value, [1, 1, 2, 6])
 
     async def test_fit_predict(self):
         model: fn.Node = _lda()
@@ -134,4 +135,4 @@ class TestFittingingNodes(unittest.IsolatedAsyncioTestCase):
 
         await fn.run_until_complete(p_model, ft_model, model)
         out = p_model.outputs["out"]
-        self.assertEqual(out.value.tolist(), [1])
+        np.testing.assert_array_equal(out.value, [1])

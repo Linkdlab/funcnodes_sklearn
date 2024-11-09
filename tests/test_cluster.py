@@ -514,9 +514,9 @@ class TestMeanShift(unittest.IsolatedAsyncioTestCase):
         clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, ClusterMixin)
-        self.assertEqual(clustering.labels_.tolist(), [4, 3, 5, 0, 2, 1])
-        self.assertTrue(
-            np.array_equal(clustering.predict([[0, 0], [5, 5]]), np.array([5, 2]))
+        np.testing.assert_array_equal(clustering.labels_, [4, 3, 5, 0, 2, 1])
+        np.testing.assert_array_equal(
+            clustering.predict([[0, 0], [5, 5]]), np.array([5, 2])
         )
 
     async def test_custom_parameters(self):
@@ -534,10 +534,10 @@ class TestMeanShift(unittest.IsolatedAsyncioTestCase):
         clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, ClusterMixin)
-        self.assertEqual(clustering.seeds.tolist(), seeds.tolist())
+        np.testing.assert_array_equal(clustering.seeds, seeds)
         self.assertEqual(clustering.bin_seeding, bin_seeding)
         self.assertEqual(clustering.bandwidth, bandwidth)
-        self.assertEqual(clustering.labels_.tolist(), [0, 0, 0, 0, 0, 0])
+        np.testing.assert_array_equal(clustering.labels_, [0, 0, 0, 0, 0, 0])
 
 
 class TestOPTICS(unittest.IsolatedAsyncioTestCase):
@@ -551,7 +551,7 @@ class TestOPTICS(unittest.IsolatedAsyncioTestCase):
         clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, ClusterMixin)
-        self.assertEqual(clustering.labels_.tolist(), [0, 0, 0, 0, 0, 0])
+        np.testing.assert_array_equal(clustering.labels_, [0, 0, 0, 0, 0, 0])
 
     async def test_custom_parameters(self):
         X = np.array([[1, 2], [2, 5], [3, 6], [8, 7], [8, 8], [7, 3]])
@@ -564,7 +564,7 @@ class TestOPTICS(unittest.IsolatedAsyncioTestCase):
         clustering = out.value()
         clustering.fit(X)
         self.assertIsInstance(clustering, ClusterMixin)
-        self.assertEqual(clustering.labels_.tolist(), [0, 0, 0, 1, 1, 1])
+        np.testing.assert_array_equal(clustering.labels_, [0, 0, 0, 1, 1, 1])
 
 
 class TestSpectralClustering(unittest.IsolatedAsyncioTestCase):
@@ -598,26 +598,6 @@ class TestSpectralClustering(unittest.IsolatedAsyncioTestCase):
         # print(model.func.ef_funcmeta)
         clustering.fit(X)
         self.assertIsInstance(clustering, ClusterMixin)
-        # print(clustering.n_components)
-
-    #     self.assertEqual(clustering.n_clusters, n_clusters)
-    #     self.assertEqual(clustering.random_state, random_state)
-    #     self.assertEqual(clustering.labels_.tolist(), [1, 1, 1, 2, 0, 0])
-
-
-#     def setUp(self):
-#         self.X = np.array([[1, 1], [2, 1], [1, 0], [4, 7], [3, 5], [3, 6]])
-
-#     def test_default_parameters(self):
-#         clustering = spectral_clustering().fit(self.X)
-#         self.assertIsInstance(clustering, SpectralClustering)
-
-#     def test_custom_parameters(self):
-#         clustering = spectral_clustering(
-#             n_clusters=2, assign_labels=AssignLabels.DISCRETIZE.value, random_state=0
-#         ).fit(self.X)
-#         self.assertIsInstance(clustering, SpectralClustering)
-#         self.assertEqual(clustering.labels_.tolist(), [1, 1, 1, 0, 0, 0])
 
 
 class TestSpectralBiclustering(unittest.IsolatedAsyncioTestCase):
@@ -647,7 +627,7 @@ class TestSpectralBiclustering(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(clustering, BaseEstimator)
         self.assertEqual(clustering.n_clusters, n_clusters)
         self.assertEqual(clustering.random_state, random_state)
-        self.assertEqual(clustering.row_labels_.tolist(), [1, 1, 1, 0, 0, 0])
+        np.testing.assert_array_equal(clustering.row_labels_, [1, 1, 1, 0, 0, 0])
 
 
 class TestSpectralCoclustering(unittest.IsolatedAsyncioTestCase):
@@ -677,4 +657,4 @@ class TestSpectralCoclustering(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(clustering, BaseEstimator)
         self.assertEqual(clustering.n_clusters, n_clusters)
         self.assertEqual(clustering.random_state, random_state)
-        self.assertEqual(clustering.row_labels_.tolist(), [0, 1, 1, 0, 0, 0])
+        np.testing.assert_array_equal(clustering.row_labels_, [0, 1, 1, 0, 0, 0])

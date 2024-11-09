@@ -3,9 +3,8 @@ import funcnodes as fn
 import numpy as np
 from funcnodes_sklearn.metrics import (
     _confusion_matrix,
-    
-    
 )
+
 
 class TestMetrics(unittest.IsolatedAsyncioTestCase):
     async def test_confusion_matrix(self):
@@ -17,5 +16,4 @@ class TestMetrics(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(metric, fn.Node)
         await metric
         out = metric.outputs["out"]
-        self.assertEqual(out.value.tolist(), [[2, 0, 0], [0, 0, 1], [1, 0, 2]])
-
+        np.testing.assert_array_equal(out.value, [[2, 0, 0], [0, 0, 1], [1, 0, 2]])
