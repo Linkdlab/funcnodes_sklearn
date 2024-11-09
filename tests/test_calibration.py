@@ -30,7 +30,7 @@ class TestCalibratedClassifierCV(unittest.IsolatedAsyncioTestCase):
     async def test_default_parameters(self):
         calibrated_clf: fn.Node = calibrated_classifier_cv()
         self.assertIsInstance(calibrated_clf, fn.Node)
-        
+
         await calibrated_clf
         out = calibrated_clf.outputs["out"]
         model = out.value()
@@ -61,8 +61,9 @@ class TestCalibratedClassifierCV(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, ClassifierMixin)
         model.fit(X, y)
         self.assertEqual(len(model.calibrated_classifiers_), _cv)
-        self.assertAlmostEqual(
-            model.predict_proba(X)[:5, :].tolist(),
+
+        np.testing.assert_array_almost_equal(
+            model.predict_proba(X)[:5, :],
             [
                 [0.09961242910399655, 0.9003875708960035],
                 [0.0, 1.0],
@@ -92,10 +93,8 @@ class TestCalibratedClassifierCV(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(model, ClassifierMixin)
         model.fit(X_calib, y_calib)
         self.assertEqual(len(model.calibrated_classifiers_), 1)
-        print(model.predict_proba([[-0.5, 0.5]]))
-        self.assertAlmostEqual(
-            model.predict_proba([[-0.5, 0.5]]).tolist(), [[1.0, 0.0]]
-        )
+
+        np.testing.assert_almost_equal(model.predict_proba([[-0.5, 0.5]]), [[1.0, 0.0]])
 
     async def test_isotonic_calibration(self):
         calibrated_clf: fn.Node = calibrated_classifier_cv()
