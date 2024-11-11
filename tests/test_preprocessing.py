@@ -1,5 +1,4 @@
 import unittest
-import numpy as np
 import funcnodes as fn
 from sklearn.base import BaseEstimator
 from funcnodes_sklearn.preprocessing import (
@@ -11,6 +10,7 @@ from funcnodes_sklearn.preprocessing import (
     _label_encoder,
     _max_abs_scaler,
     _min_max_scaler,
+    _multi_label_binarizer,
     _normalizer,
     _one_hot_encoder,
     _ordinal_encoder,
@@ -18,12 +18,12 @@ from funcnodes_sklearn.preprocessing import (
     _power_transformer,
     _quantile_transformer,
     _robust_scaler,
-    _standard_scaler
+    _standard_scaler,
+    _target_encoder,
 )
 
 
 class TestPreprocessingNodes(unittest.IsolatedAsyncioTestCase):
-
     # async def test_default_parameters(self):
     #     tests = [
     #         _binarizer,
@@ -43,7 +43,7 @@ class TestPreprocessingNodes(unittest.IsolatedAsyncioTestCase):
     #         _robust_scaler,
     #         _standard_scaler
     #     ]
-        
+
     #     for test in tests:
     #         model: fn.Node = test()
     #         self.assertIsInstance(model, fn.Node)
@@ -179,6 +179,23 @@ class TestPreprocessingNodes(unittest.IsolatedAsyncioTestCase):
         out = model.outputs["out"]
         pp = out.value()
         self.assertIsInstance(pp, BaseEstimator)
+
+    async def test_multi_label_binarizer(self):
+        model: fn.Node = _multi_label_binarizer()
+        self.assertIsInstance(model, fn.Node)
+        await model
+        out = model.outputs["out"]
+        pp = out.value()
+        self.assertIsInstance(pp, BaseEstimator)
+
+    async def test_target_encoder(self):
+        model: fn.Node = _target_encoder()
+        self.assertIsInstance(model, fn.Node)
+        await model
+        out = model.outputs["out"]
+        pp = out.value()
+        self.assertIsInstance(pp, BaseEstimator)
+
 
 # if __name__ == "__main__":
 #     unittest.main()

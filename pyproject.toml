@@ -1,13 +1,17 @@
 [tool.poetry]
 name = "funcnodes-sklearn"
-version = "0.1.13"
-description = ""
+version = "0.1.14"
+description = "Funcnodes interface to scikit-learn"
 authors = ["Kourosh Rezaei <kouroshrezaei90@gmail.com>"]
 readme = "README.md"
+license = "MIT"
 
-homepage = "https://linkdlab.de/"
+[tool.poetry.urls]
+homepage  = "https://github.com/Linkdlab/funcnodes_sklearn"
+source  = "https://github.com/Linkdlab/funcnodes_sklearn"
+tracker  = "https://github.com/Linkdlab/funcnodes_sklearn/issues"
+download = "https://pypi.org/project/funcnodes-sklearn/#files"
 
-repository = "https://github.com/kouroshrezaei/funcnodes_sklearn"
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -19,9 +23,12 @@ funcnodes-numpy = "*"
 
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.1.1"
+pytest = "*"
 black = "^24.4.2"
 python-decouple = "^3.8"
+funcnodes-module = "^0.1.19"
+pre-commit = "*"
+pillow = "^11.0.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.1.1"
@@ -29,3 +36,7 @@ pytest = "^8.1.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.plugins."funcnodes.module"]
+module = "funcnodes_sklearn"
+shelf = "funcnodes_sklearn:NODE_SHELF"

@@ -4,7 +4,6 @@ import unittest
 import funcnodes as fn
 from sklearn.base import BaseEstimator
 from sklearn.datasets import (
-    make_sparse_coded_signal,
     make_multilabel_classification,
     make_sparse_coded_signal,
     make_friedman1,
@@ -153,7 +152,7 @@ class TestLatentDirichletAllocation(unittest.IsolatedAsyncioTestCase):
         decomposition = out.value().fit(X)
         X_transformed = decomposition.transform(X[-2:])
         self.assertIsInstance(out.value(), BaseEstimator)
-        # self.assertEqual(X_transformed.tolist(), [[0.00360392, 0.25499205, 0.0036211,  0.64236448, 0.09541846],[0.15297572, 0.00362644, 0.44412786, 0.39568399, 0.003586  ]])
+        self.assertEqual(X_transformed.shape, (2, n_components))
 
 
 class TestMiniBatchDictionaryLearning(unittest.IsolatedAsyncioTestCase):
@@ -258,6 +257,7 @@ class TestPCA(unittest.IsolatedAsyncioTestCase):
         # X_transformed = out.value().fit_transform(X)
         self.assertIsInstance(out.value(), BaseEstimator)
         # self.assertEqual(X_transformed.shape, (6, n_components))
+        self.assertEqual(decomposition.components_.shape, (n_components, 2))
 
 
 class TestSparsePCA(unittest.IsolatedAsyncioTestCase):
@@ -295,8 +295,8 @@ class TestSparseCoder(unittest.IsolatedAsyncioTestCase):
         out = model.outputs["out"]
         X_transformed = out.value().transform(X)
         self.assertIsInstance(out.value(), BaseEstimator)
-        self.assertEqual(
-            X_transformed.tolist(),
+        np.testing.assert_array_almost_equal(
+            X_transformed,
             [[0.0, 0.0, -1.0, 0.0, 0.0], [0.0, 1.0, 0.9999999999999999, 0.0, 0.0]],
         )
 
@@ -319,3 +319,4 @@ class TestTruncatedSVD(unittest.IsolatedAsyncioTestCase):
         out = model.outputs["out"]
         decomposition = out.value().fit(X)
         self.assertIsInstance(out.value(), BaseEstimator)
+        self.assertEqual(decomposition.components_.shape, (n_components, 100))

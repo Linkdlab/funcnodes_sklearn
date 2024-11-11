@@ -3139,12 +3139,19 @@ LOADERS_NODE_SHELF = Shelf(
     ],
     subshelves=[],
     name="Loaders",
-    description="The sklearn.datasets package embeds some small toy datasets as introduced in the Getting Started section. This package also features helpers to fetch larger datasets commonly used by the machine learning community to benchmark algorithms on data that comes from the ‘real world’. To evaluate the impact of the scale of the dataset (n_samples and n_features) while controlling the statistical properties of the data (typically the correlation and informativeness of the features), it is also possible to generate synthetic data.",
+    description=(
+        "The sklearn.datasets package embeds some small toy datasets as introduced in the Getting Started "
+        "section. This package also features helpers to fetch larger datasets commonly used by the machine learning "
+        "community to benchmark algorithms on data that comes from the ‘real world’. To evaluate the impact of the "
+        "scale of the dataset (n_samples and n_features) while controlling the statistical properties of the data "
+        "(typically the correlation and informativeness of the features), it is also possible to "
+        "generate synthetic data."
+    ),
 )
 
 
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_biclusters",
+    node_id="sklearn.datasets.make_biclusters",
     name="make_biclusters",
     outputs=[
         {"name": "X"},
@@ -3216,7 +3223,7 @@ def _biclusters(
 
     """
 
-    X, rows,cols = make_biclusters(
+    X, rows, cols = make_biclusters(
         shape=shape,
         n_clusters=n_clusters,
         noise=noise,
@@ -3226,12 +3233,11 @@ def _biclusters(
         random_state=random_state,
     )
 
-
-    return X, rows,cols
+    return X, rows, cols
 
 
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_blobs",
+    node_id="sklearn.datasets.make_blobs",
     name="make_blobs",
     outputs=[
         {"name": "X"},
@@ -3335,11 +3341,11 @@ def _blobs(
         return_centers=True,
     )
 
-    return X, y,center
+    return X, y, center
 
 
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_checkerboard",
+    node_id="sklearn.datasets.make_checkerboard",
     name="make_checkerboard",
     outputs=[
         {"name": "X"},
@@ -3409,7 +3415,7 @@ def _checkerboard(
 
     """
 
-    X, rows,cols = make_checkerboard(
+    X, rows, cols = make_checkerboard(
         shape=shape,
         n_clusters=n_clusters,
         noise=noise,
@@ -3419,12 +3425,11 @@ def _checkerboard(
         random_state=random_state,
     )
 
-
-    return X, rows,cols
+    return X, rows, cols
 
 
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_circles",
+    node_id="sklearn.datasets.make_circles",
     name="make_circles",
     outputs=[
         {"name": "X"},
@@ -3504,7 +3509,7 @@ def _circles(
 
 
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_classification",
+    node_id="sklearn.datasets.make_classification",
     name="make_classification",
     outputs=[
         {"name": "X"},
@@ -3678,12 +3683,11 @@ def _classification(
         random_state=random_state,
     )
 
-
     return X, y
 
 
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_friedman1",
+    node_id="sklearn.datasets.make_friedman1",
     name="make_friedman1",
     outputs=[
         {"name": "X"},
@@ -3765,13 +3769,11 @@ def _friedman1(
         random_state=random_state,
     )
 
-
     return X, y
 
 
-
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_friedman2",
+    node_id="sklearn.datasets.make_friedman2",
     name="make_friedman2",
     outputs=[
         {"name": "X"},
@@ -3854,7 +3856,7 @@ def _friedman2(
 
 
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_friedman3",
+    node_id="sklearn.datasets.make_friedman3",
     name="make_friedman3",
     outputs=[
         {"name": "X"},
@@ -3936,9 +3938,8 @@ def _friedman3(
     return X, y
 
 
-
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_gaussian_quantiles",
+    node_id="sklearn.datasets.make_gaussian_quantiles",
     name="make_gaussian_quantiles",
     outputs=[
         {"name": "X"},
@@ -4032,12 +4033,11 @@ def _gaussian_quantiles(
         random_state=random_state,
     )
 
-
     return X, y
 
 
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_hastie_10_2",
+    node_id="sklearn.datasets.make_hastie_10_2",
     name="make_hastie_10_2",
     outputs=[
         {"name": "X"},
@@ -4090,12 +4090,11 @@ def _hastie_10_2(
         random_state=random_state,
     )
 
-
     return X, y
 
 
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_low_rank_matrix",
+    node_id="sklearn.datasets.make_low_rank_matrix",
     name="make_low_rank_matrix",
     outputs=[
         {"name": "X"},
@@ -4169,7 +4168,7 @@ def _low_rank_matrix(
 
 
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_moons",
+    node_id="sklearn.datasets.make_moons",
     name="make_moons",
     outputs=[
         {"name": "X"},
@@ -4224,7 +4223,6 @@ def _moons(
         random_state=random_state,
     )
 
-
     return X, y
 
 
@@ -4239,7 +4237,7 @@ class ReturnIndicator(Enum):
 
 
 @NodeDecorator(
-    node_id = "sklearn.datasets.make_multilabel_classification",
+    node_id="sklearn.datasets.make_multilabel_classification",
     name="make_multilabel_classification",
     outputs=[
         {"name": "X"},
@@ -4328,7 +4326,7 @@ def _multilabel_classification(
         The label sets. Sparse matrix should be of CSR format.
 
     p_c : ndarray of shape (n_classes,)
-        The probability of each class being drawn. 
+        The probability of each class being drawn.
 
     p_w_c : ndarray of shape (n_features, n_classes)
         The probability of each feature being drawn given each class.
@@ -4360,7 +4358,6 @@ def _multilabel_classification(
         random_state=random_state,
     )
 
-
     return X, Y, p_c, p_w_c
 
 
@@ -4373,7 +4370,6 @@ def _multilabel_classification(
         {"name": "coefs"},
     ],
 )
-
 @controlled_wrapper(make_regression, wrapper_attribute="__fnwrapped__")
 def _regression(
     n_samples: int = 100,
@@ -4413,7 +4409,6 @@ def _regression(
         {"name": "t"},
     ],
 )
-
 @controlled_wrapper(make_s_curve, wrapper_attribute="__fnwrapped__")
 def _s_curve(
     n_samples: int = 100,
@@ -4426,8 +4421,9 @@ def _s_curve(
         random_state=random_state,
     )
 
-
     return X, t
+
+
 @NodeDecorator(
     node_id="sklearn.datasets.make_sparse_coded_signal",
     name="make_sparse_coded_signal",
@@ -4435,10 +4431,8 @@ def _s_curve(
         {"name": "data"},
         {"name": "dictionary"},
         {"name": "code"},
-        
     ],
 )
-
 @controlled_wrapper(make_sparse_coded_signal, wrapper_attribute="__fnwrapped__")
 def _sparse_coded_signal(
     n_samples: int,
@@ -4446,33 +4440,33 @@ def _sparse_coded_signal(
     n_features: int,
     n_nonzero_coefs: int,
     random_state: Optional[Union[int, RandomState]] = None,
-    data_transposed: bool = False,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     data, dictionary, code = make_sparse_coded_signal(
         n_samples=n_samples,
         n_components=n_components,
         n_features=n_features,
         n_nonzero_coefs=n_nonzero_coefs,
-        data_transposed=data_transposed,
         random_state=random_state,
     )
 
-    
-
     return data, dictionary, code
+
+
 class SparseFormat(Enum):
-    bsr ='bsr'
-    csr ='csr'
-    dok = 'dok'
-    coo = 'coo'
-    lil = 'lil'
-    dia = 'dia'
-    csc = 'csc'
+    bsr = "bsr"
+    csr = "csr"
+    dok = "dok"
+    coo = "coo"
+    lil = "lil"
+    dia = "dia"
+    csc = "csc"
     NONE = None
-    
+
     @classmethod
     def default(cls):
         return cls.NONE.value
+
+
 @NodeDecorator(
     node_id="sklearn.datasets.make_sparse_spd_matrix",
     name="make_sparse_spd_matrix",
@@ -4480,15 +4474,14 @@ class SparseFormat(Enum):
         {"name": "prec"},
     ],
 )
-
 @controlled_wrapper(make_sparse_spd_matrix, wrapper_attribute="__fnwrapped__")
 def _sparse_spd_matrix(
-    n_dim: int=1,
-    alpha: float=0.95,
-    norm_diag: bool=False,
-    smallest_coef: float=0.1,
-    largest_coef: float=0.9,
-    sparse_format: SparseFormat=SparseFormat.default(),
+    n_dim: int = 1,
+    alpha: float = 0.95,
+    norm_diag: bool = False,
+    smallest_coef: float = 0.1,
+    largest_coef: float = 0.9,
+    sparse_format: SparseFormat = SparseFormat.default(),
     random_state: Optional[Union[int, RandomState]] = None,
 ) -> np.ndarray:
     prec = make_sparse_spd_matrix(
@@ -4502,6 +4495,7 @@ def _sparse_spd_matrix(
     )
     return prec
 
+
 @NodeDecorator(
     node_id="sklearn.datasets.make_sparse_uncorrelated",
     name="make_sparse_uncorrelated",
@@ -4510,11 +4504,10 @@ def _sparse_spd_matrix(
         {"name": "y"},
     ],
 )
-
 @controlled_wrapper(make_sparse_uncorrelated, wrapper_attribute="__fnwrapped__")
 def _sparse_uncorrelated(
     n_samples: int = 100,
-    n_features:int =10,
+    n_features: int = 10,
     random_state: Optional[Union[int, RandomState]] = None,
 ) -> Tuple[np.ndarray, np.ndarray]:
     X, y = make_sparse_uncorrelated(
@@ -4525,6 +4518,7 @@ def _sparse_uncorrelated(
 
     return X, y
 
+
 @NodeDecorator(
     node_id="sklearn.datasets.make_spd_matrix",
     name="make_spd_matrix",
@@ -4532,7 +4526,6 @@ def _sparse_uncorrelated(
         {"name": "X"},
     ],
 )
-
 @controlled_wrapper(make_spd_matrix, wrapper_attribute="__fnwrapped__")
 def _spd_matrix(
     n_dim: int,
@@ -4545,6 +4538,7 @@ def _spd_matrix(
 
     return X
 
+
 @NodeDecorator(
     node_id="sklearn.datasets.make_swiss_roll",
     name="make_swiss_roll",
@@ -4553,11 +4547,10 @@ def _spd_matrix(
         {"name": "t"},
     ],
 )
-
 @controlled_wrapper(make_swiss_roll, wrapper_attribute="__fnwrapped__")
 def _swiss_roll(
     n_samples: int = 100,
-    noise:float =0.0,
+    noise: float = 0.0,
     random_state: Optional[Union[int, RandomState]] = None,
     hole: bool = False,
 ) -> Tuple[np.ndarray, np.ndarray]:
@@ -4569,6 +4562,8 @@ def _swiss_roll(
     )
 
     return X, t
+
+
 SAMPLE_GENERATOR_NODE_SHELF = Shelf(
     nodes=[
         _biclusters,
@@ -4590,16 +4585,26 @@ SAMPLE_GENERATOR_NODE_SHELF = Shelf(
         _sparse_spd_matrix,
         _sparse_uncorrelated,
         _spd_matrix,
-        _swiss_roll
+        _swiss_roll,
     ],
     subshelves=[],
     name="Samples generator",
-    description="The sklearn.datasets package embeds some small toy datasets as introduced in the Getting Started section. This package also features helpers to fetch larger datasets commonly used by the machine learning community to benchmark algorithms on data that comes from the ‘real world’. To evaluate the impact of the scale of the dataset (n_samples and n_features) while controlling the statistical properties of the data (typically the correlation and informativeness of the features), it is also possible to generate synthetic data.",
+    description=(
+        "The sklearn.datasets package embeds some small toy datasets as introduced in the Getting "
+        "Started section. This package also features helpers to fetch larger datasets commonly used by the "
+        "machine learning community to benchmark algorithms on data that comes from the ‘real world’. "
+        "To evaluate the impact of the scale of the dataset (n_samples and n_features) while controlling the "
+        "statistical properties of the data (typically the correlation and informativeness of the features), "
+        "it is also possible to generate synthetic data."
+    ),
 )
 
 DATASET_NODE_SHELF = Shelf(
     nodes=[],
     subshelves=[LOADERS_NODE_SHELF, SAMPLE_GENERATOR_NODE_SHELF],
     name="Datasets",
-    description="The sklearn.datasets module includes utilities to load datasets, including methods to load and fetch popular reference datasets. It also features some artificial data generators.",
+    description=(
+        "The sklearn.datasets module includes utilities to load datasets, including methods to load "
+        "and fetch popular reference datasets. It also features some artificial data generators."
+    ),
 )
