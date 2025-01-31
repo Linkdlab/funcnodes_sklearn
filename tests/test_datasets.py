@@ -63,7 +63,6 @@ from funcnodes_sklearn.datasets import (
 )
 import os
 import tempfile
-from sklearn.datasets import get_data_home
 from _setup_env import config
 
 
@@ -95,7 +94,6 @@ class Test20newsgroups(DatasetsTestCase):
         self.assertIsInstance(target, np.ndarray)
         self.assertIsInstance(DESCR, str)
         self.assertIsInstance(target_names, list)
-        print(get_data_home())
 
 
 class Test20newsgroupsVectorized(DatasetsTestCase):
@@ -207,7 +205,6 @@ class TestCovtypeAsFrame(DatasetsTestCase):
         await fn.run_until_complete(model, todictnode)
 
         self.assertIsInstance(todictnode.outputs["dict"].value, dict)
-       
 
 
 class TestKddcup99(DatasetsTestCase):

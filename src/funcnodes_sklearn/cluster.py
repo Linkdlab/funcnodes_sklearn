@@ -1116,7 +1116,7 @@ def kmeans(
 
     For a comparison between K-Means and MiniBatchKMeans refer to example
     :ref:`sphx_glr_auto_examples_cluster_plot_mini_batch_kmeans.py`.
-    
+
     Returns
     -------
     KMeans: An instance of the KMeans class from scikit-learn.
@@ -1531,7 +1531,7 @@ def mini_batch_kmeans(
            [1.06896552, 1.        ]])
     >>> kmeans.predict([[0, 0], [4, 4]])
     array([1, 0], dtype=int32)
-    
+
     Returns
     -------
     MiniBatchKMeans: An instance of the MiniBatchKMeans class from scikit-learn.
@@ -2023,8 +2023,6 @@ class AssignLabels(Enum):
         return cls.kmeans.value
 
 
-
-
 @NodeDecorator(
     node_id="sklearn.cluster.SpectralClustering",
     name="SpectralClustering",
@@ -2037,9 +2035,7 @@ def spectral_clustering(
     random_state: Optional[Union[int, RandomState]] = None,
     n_init: int = 10,
     gamma: float = 1.0,
-    affinity: Union[
-        SpectralClustringAffinity, Callable
-    ] = "rbf",
+    affinity: Union[SpectralClustringAffinity, Callable] = "rbf",
     n_neighbors: int = 10,
     eigen_tol: Union[Literal["auto"], float] = "auto",
     assign_labels: AssignLabels = "kmeans",
@@ -2374,7 +2370,7 @@ def spectral_coclustering(
     array([0, 0], dtype=int32)
     >>> clustering
     SpectralCoclustering(n_clusters=2, random_state=0)
-    
+
     Returns
     -------
     SpectralCoclustering: An instance of the SpectralCoclustering class from scikit-learn.

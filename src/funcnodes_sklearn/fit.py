@@ -2,7 +2,6 @@ from funcnodes import Shelf, NodeDecorator
 from typing import Optional, Callable, Union
 import numpy as np
 from sklearn.base import BaseEstimator
-import inspect
 
 
 @NodeDecorator(
