@@ -1,4 +1,3 @@
-from black import enable_unstable_feature_callback
 from funcnodes import Shelf, NodeDecorator
 from exposedfunctionality import controlled_wrapper
 from typing import Literal, Optional, Union, Callable
@@ -20,7 +19,6 @@ from sklearn.decomposition import (
     SparsePCA,
     SparseCoder,
     TruncatedSVD,
-    randomized_svd,
 )
 
 
@@ -549,6 +547,7 @@ def _mini_batch_nmf(
 ) -> Callable[[], BaseEstimator]:
     if transform_max_iter == "max_iter":
         transform_max_iter = None
+
     def create_mini_batch_nmf():
         return MiniBatchNMF(
             n_components=n_components,
@@ -571,25 +570,29 @@ def _mini_batch_nmf(
 
     return create_mini_batch_nmf
 
+
 class SVDSolver(Enum):
     auto = "auto"
     full = "full"
     randomized = "randomized"
     arpack = "arpack"
-    
+
     @classmethod
     def default(cls):
         return cls.auto.value
+
 
 class PowerIterationNormalizer(Enum):
     auto = "auto"
     QR = "QR"
     LU = "LU"
     NONE = None
-    
+
     @classmethod
     def default(cls):
         return cls.auto.value
+
+
 @NodeDecorator(
     node_id="sklearn.decomposition.PCA",
     name="PCA",
@@ -602,8 +605,8 @@ def _pca(
     svd_solver: SVDSolver = "auto",
     tol: float = 0.0,
     iterated_power: Union[int, Literal["auto"]] = "auto",
-    n_oversamples:int=10,
-    power_iteration_normalizer: PowerIterationNormalizer="auto",
+    n_oversamples: int = 10,
+    power_iteration_normalizer: PowerIterationNormalizer = "auto",
     random_state: Optional[Union[int, np.random.RandomState]] = None,
 ) -> Callable[[], BaseEstimator]:
     if n_components is not None:
@@ -614,7 +617,9 @@ def _pca(
         elif n_components == "mle":
             n_components = "mle"
         else:
-            raise ValueError(f"Invalid value for n_components: {n_components}. n_components : int, float or 'mle'")
+            raise ValueError(
+                f"Invalid value for n_components: {n_components}. n_components : int, float or 'mle'"
+            )
 
     def create_pca():
         return PCA(
@@ -630,6 +635,7 @@ def _pca(
         )
 
     return create_pca
+
 
 @NodeDecorator(
     node_id="sklearn.decomposition.SparsePCA",
@@ -649,7 +655,6 @@ def _sparse_pca(
     verbose: Union[bool, int] = False,
     random_state: Optional[Union[int, np.random.RandomState]] = None,
 ) -> Callable[[], BaseEstimator]:
-
     def create_sparse_pca():
         return SparsePCA(
             n_components=n_components,
@@ -667,22 +672,22 @@ def _sparse_pca(
 
     return create_sparse_pca
 
+
 @NodeDecorator(
     node_id="sklearn.decomposition.SparseCoder",
     name="SparseCoder",
 )
 @controlled_wrapper(SparseCoder, wrapper_attribute="__fnwrapped__")
 def _sparse_coder(
-    dictionary:np.ndarray,
+    dictionary: np.ndarray,
     transform_algorithm: TransformAlgorithm = TransformAlgorithm.lasso_lars,
     transform_n_nonzero_coefs: Optional[int] = None,
-    transform_alpha:  Optional[float] = None,
+    transform_alpha: Optional[float] = None,
     split_sign: bool = False,
     n_jobs: Optional[int] = None,
     positive_code: bool = False,
-    transform_max_iter: int= 1000,
+    transform_max_iter: int = 1000,
 ) -> Callable[[], BaseEstimator]:
-
     def create_sparse_coder():
         return SparseCoder(
             dictionary=dictionary,
@@ -697,13 +702,16 @@ def _sparse_coder(
 
     return create_sparse_coder
 
+
 class TSVDAlgorithm(Enum):
     arpack = "arpack"
     randomized = "randomized"
-    
+
     @classmethod
     def default(cls):
         return cls.randomized.value
+
+
 @NodeDecorator(
     node_id="sklearn.decomposition.TruncatedSVD",
     name="TruncatedSVD",
@@ -713,12 +721,11 @@ def _truncated_svd(
     n_components: int = 2,
     algorithm: TSVDAlgorithm = "randomized",
     n_iter: int = 5,
-    n_oversamples:int=10,
-    power_iteration_normalizer: PowerIterationNormalizer="auto",
+    n_oversamples: int = 10,
+    power_iteration_normalizer: PowerIterationNormalizer = "auto",
     random_state: Optional[Union[int, np.random.RandomState]] = None,
     tol: float = 0.0,
 ) -> Callable[[], BaseEstimator]:
-
     def create_truncated_svd():
         return TruncatedSVD(
             n_components=n_components,
@@ -731,6 +738,7 @@ def _truncated_svd(
         )
 
     return create_truncated_svd
+
 
 DECOMPOSITION_NODE_SHELFE = Shelf(
     nodes=[
@@ -747,10 +755,11 @@ DECOMPOSITION_NODE_SHELFE = Shelf(
         _pca,
         _sparse_pca,
         _sparse_coder,
-        _truncated_svd
-        
+        _truncated_svd,
     ],
     subshelves=[],
     name="Matrix Decomposition",
-    description="The sklearn.decomposition module includes matrix decomposition algorithms, including among others PCA, NMF or ICA. Most of the algorithms of this module can be regarded as dimensionality reduction techniques.",
+    description="The sklearn.decomposition module includes matrix decomposition algorithms, "
+    "including among others PCA, NMF or ICA. Most of the algorithms of this module can be "
+    "regarded as dimensionality reduction techniques.",
 )

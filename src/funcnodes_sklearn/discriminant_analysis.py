@@ -20,7 +20,6 @@ class Solver(Enum):
         return cls.svd.value
 
 
-
 @NodeDecorator(
     node_id="sklearn.discriminant_analysis.LinearDiscriminantAnalysis",
     name="LinearDiscriminantAnalysis",
@@ -84,5 +83,7 @@ DISCRIMINANTANALYSIS_NODE_SHELFE = Shelf(
     nodes=[_lda, _qda],
     subshelves=[],
     name="Discriminant Analysis",
-    description="Linear Discriminant Analysis (LinearDiscriminantAnalysis) and Quadratic Discriminant Analysis (QuadraticDiscriminantAnalysis) are two classic classifiers, with, as their names suggest, a linear and a quadratic decision surface, respectively.",
+    description="Linear Discriminant Analysis (LinearDiscriminantAnalysis) "
+    "and Quadratic Discriminant Analysis (QuadraticDiscriminantAnalysis) are two classic "
+    "classifiers, with, as their names suggest, a linear and a quadratic decision surface, respectively.",
 )
