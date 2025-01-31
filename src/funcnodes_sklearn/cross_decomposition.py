@@ -11,7 +11,7 @@ from sklearn.cross_decomposition import (
 
 
 @NodeDecorator(
-    node_id = "sklearn.cross_decomposition.CCA",
+    node_id="sklearn.cross_decomposition.CCA",
     name="CCA",
 )
 def cca(
@@ -137,7 +137,7 @@ class Algorithm(Enum):
 
 
 @NodeDecorator(
-    node_id = "sklearn.cross_decomposition.PLSCanonical",
+    node_id="sklearn.cross_decomposition.PLSCanonical",
     name="PLSCanonical",
 )
 def pls_canonical(
@@ -264,7 +264,7 @@ def pls_canonical(
 
 
 @NodeDecorator(
-    node_id = "sklearn.cross_decomposition.PLSRegression",
+    node_id="sklearn.cross_decomposition.PLSRegression",
     name="PLSRegression",
 )
 def pls_regression(
@@ -395,7 +395,7 @@ def pls_regression(
 
 
 @NodeDecorator(
-    node_id = "sklearn.cross_decomposition.PLSSVD",
+    node_id="sklearn.cross_decomposition.PLSSVD",
     name="PLSSVD",
 )
 def pls_svd(
@@ -493,5 +493,7 @@ CROSS_DECOMPOSITION_NODE_SHELFE = Shelf(
     ],
     subshelves=[],
     name="Cross decomposition",
-    description="The cross decomposition module contains supervised estimators for dimensionality reduction and regression, belonging to the “Partial Least Squares” family.",
+    description="The cross decomposition module contains supervised estimators "
+    "for dimensionality reduction and regression, "
+    "belonging to the 'Partial Least Squares' family.",
 )

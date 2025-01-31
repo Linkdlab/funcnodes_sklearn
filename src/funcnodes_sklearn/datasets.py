@@ -1873,9 +1873,9 @@ def _breast_cancer() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, st
         {"name": "filename"},
     ],
 )
-def _breast_cancer_as_frame() -> (
-    Tuple[DataFrame, Series, np.ndarray, np.ndarray, str, str]
-):
+def _breast_cancer_as_frame() -> Tuple[
+    DataFrame, Series, np.ndarray, np.ndarray, str, str
+]:
     """Load and return the breast cancer wisconsin dataset (classification).
 
     The breast cancer dataset is a classic and very easy binary classification
@@ -2706,9 +2706,9 @@ def _linnerud() -> Tuple[np.ndarray, np.ndarray, List[str], List[str], str, str,
         {"name": "target_filename"},
     ],
 )
-def _linnerud_as_frame() -> (
-    Tuple[DataFrame, DataFrame, List[str], List[str], str, str, str]
-):
+def _linnerud_as_frame() -> Tuple[
+    DataFrame, DataFrame, List[str], List[str], str, str, str
+]:
     """Load and return the physical exercise Linnerud dataset.
 
     This dataset is suitable for multi-output regression tasks.

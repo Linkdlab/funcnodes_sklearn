@@ -5,8 +5,6 @@ from enum import Enum
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.calibration import CalibratedClassifierCV, calibration_curve
-from sklearn.svm import LinearSVC
-from sklearn.naive_bayes import GaussianNB
 
 
 class Method(Enum):
@@ -213,7 +211,7 @@ def calibrated_classifier_cv(
     1
     >>> calibrated_clf.predict_proba([[-0.5, 0.5]])
     array([[0.936..., 0.063...]])
-    
+
     Returns
     -------
         CalibratedClassifierCV : ClassifierMixin
